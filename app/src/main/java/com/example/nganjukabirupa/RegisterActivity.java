@@ -13,6 +13,12 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
 public class RegisterActivity extends AppCompatActivity {
 
     private static final String PREF_NAME = "user_prefs";
@@ -45,7 +51,6 @@ public class RegisterActivity extends AppCompatActivity {
             String password = etPassword.getText().toString().trim();
             String confirmPassword = etConfirmPassword.getText().toString().trim();
 
-            // Validasi input
             if (TextUtils.isEmpty(name)) {
                 Toast.makeText(this, "Harap isi Nama Lengkap", Toast.LENGTH_SHORT).show();
                 return;
@@ -75,22 +80,51 @@ public class RegisterActivity extends AppCompatActivity {
                 return;
             }
 
-            // ✅ Semua valid — simpan ke SharedPreferences
-            SharedPreferences prefs = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = prefs.edit();
-            editor.putBoolean(KEY_IS_LOGGED_IN, true);
-            editor.putString(KEY_USERNAME, email); // atau name, terserah
-            editor.apply();
+            // 💡 Kirim data ke server
+            RegisterRequest request = new RegisterRequest();
+            request.nama_customer = name;
+            request.email = email;
+            request.no_tlp = phone;
+            request.password = password;
 
-            Toast.makeText(this, "Registrasi berhasil!", Toast.LENGTH_SHORT).show();
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl("https://nganjukabirupa.atwebpages.com/") // GANTI DENGAN URL KAMU
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
 
-            // Sembunyikan keyboard
-            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+            ApiService apiService = retrofit.create(ApiService.class);
+            Call<RegisterResponse> call = apiService.register(request);
 
-            // Pindah ke MainActivity
-            startActivity(new Intent(RegisterActivity.this, MainActivity.class));
-            finish();
+            call.enqueue(new Callback<RegisterResponse>() {
+                @Override
+                public void onResponse(Call<RegisterResponse> call, Response<RegisterResponse> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        if (response.body().isSuccess()) {
+                            Toast.makeText(RegisterActivity.this, "Registrasi berhasil!", Toast.LENGTH_SHORT).show();
+
+                            // Simpan status login
+                            SharedPreferences prefs = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+                            SharedPreferences.Editor editor = prefs.edit();
+                            editor.putBoolean(KEY_IS_LOGGED_IN, true);
+                            editor.putString(KEY_USERNAME, email);
+                            editor.apply();
+
+                            // Pindah ke MainActivity
+                            startActivity(new Intent(RegisterActivity.this, MainActivity.class));
+                            finish();
+                        } else {
+                            Toast.makeText(RegisterActivity.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(RegisterActivity.this, "Gagal registrasi", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<RegisterResponse> call, Throwable t) {
+                    Toast.makeText(RegisterActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
         });
     }
 }

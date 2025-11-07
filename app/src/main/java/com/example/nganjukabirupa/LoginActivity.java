@@ -23,6 +23,12 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
 public class LoginActivity extends AppCompatActivity {
 
     private static final int ANIMATION_DURATION = 700;
@@ -103,25 +109,49 @@ public class LoginActivity extends AppCompatActivity {
                 return;
             }
 
-            if (VALID_USERNAME.equals(username) && VALID_PASSWORD.equals(password)) {
-                Toast.makeText(LoginActivity.this, "Login berhasil!", Toast.LENGTH_SHORT).show();
+            // 💡 Kirim data ke server
+            LoginRequest request = new LoginRequest();
+            request.email = username;
+            request.password = password;
 
-                // 💾 Simpan ke SharedPreferences (AUTO-LOGIN)
-                SharedPreferences prefs = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = prefs.edit();
-                editor.putBoolean(KEY_IS_LOGGED_IN, true);
-                editor.putString(KEY_USERNAME, username);
-                editor.apply();
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl("https://nganjukabirupa.atwebpages.com/") // GANTI DENGAN URL KAMU
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
 
-                // Sembunyikan keyboard
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+            ApiService apiService = retrofit.create(ApiService.class);
+            Call<LoginResponse> call = apiService.login(request);
 
-                startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                finish();
-            } else {
-                Toast.makeText(LoginActivity.this, "Username atau password salah", Toast.LENGTH_SHORT).show();
-            }
+            call.enqueue(new Callback<LoginResponse>() {
+                @Override
+                public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        if (response.body().isSuccess()) {
+                            Toast.makeText(LoginActivity.this, "Login berhasil!", Toast.LENGTH_SHORT).show();
+
+                            // Simpan status login
+                            SharedPreferences prefs = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+                            SharedPreferences.Editor editor = prefs.edit();
+                            editor.putBoolean(KEY_IS_LOGGED_IN, true);
+                            editor.putString(KEY_USERNAME, username);
+                            editor.apply();
+
+                            // Pindah ke MainActivity
+                            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                            finish();
+                        } else {
+                            Toast.makeText(LoginActivity.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(LoginActivity.this, "Gagal login", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<LoginResponse> call, Throwable t) {
+                    Toast.makeText(LoginActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
         });
     }
 }
