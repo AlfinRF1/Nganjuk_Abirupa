@@ -26,12 +26,16 @@
         <!-- Login screen -->
         <activity
             android:name=".LoginActivity"
-            android:exported="true" />
+            android:exported="false" />
+
+        <activity
+            android:name=".RegisterActivity"
+            android:exported="false" />
 
         <!-- Main screen -->
         <activity
             android:name=".MainActivity"
-            android:exported="true" />
+            android:exported="false" />
     </application>
 
 </manifest>
