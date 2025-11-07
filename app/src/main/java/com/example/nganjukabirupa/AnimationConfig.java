@@ -1,12 +1,10 @@
 package com.example.nganjukabirupa;
 
-public class AnimationConfig {
-    public Animation slideUp;
-    public Animation fadeOut;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.Interpolator;
 
-    public static class Animation {
-        public int duration;
-        public int fps;
-        public String interpolator;
-    }
+public class AnimationConfig {
+    public static final int SLIDE_UP_DURATION = 700;
+    public static final int FADE_OUT_DURATION = 500;
+    public static final Interpolator DEFAULT_INTERPOLATOR = new AccelerateDecelerateInterpolator();
 }
