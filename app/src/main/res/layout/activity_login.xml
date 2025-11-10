@@ -2,194 +2,198 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/gradient_background">
-    <ImageView
-        android:id="@+id/logoImage"
-        android:layout_width="220dp"
-        android:layout_height="200dp"
-        android:adjustViewBounds="true"
-        android:contentDescription="Logo Nganjuk Abirupa"
-        android:src="@drawable/logo_nganjuk_abirupa"
-        android:importantForAccessibility="no"
+    android:background="#F5F5F5"
+    tools:context=".LoginActivity">
+
+    <View
+        android:id="@+id/view_gradient_background"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@drawable/gradient_background"
+        app:layout_constraintHeight_percent="0.5"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="56dp" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Frame Putih -->
-    <LinearLayout
-        android:id="@+id/loginFrame"
-        android:layout_width="0dp"
+    <!-- Teks Logo (Opsional, untuk menyesuaikan visual dari gambar) -->
+
+
+    <!-- Bagian 2: Content Card (Rounded Top, Putih) -->
+
+    <ImageView
+        android:id="@+id/iv_logo"
+        android:layout_width="283dp"
+        android:layout_height="191dp"
+        android:layout_marginTop="40dp"
+        android:contentDescription="Logo Nganjuk Abirupa"
+        android:src="@drawable/logo_nganjuk_abirupa"
+        android:tint="@android:color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.503"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_content_card"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:orientation="vertical"
         android:background="@drawable/frame_rounded_top"
         android:paddingStart="24dp"
+        android:paddingTop="32dp"
         android:paddingEnd="24dp"
-        android:paddingTop="24dp"
-        android:paddingBottom="24dp"
-        android:elevation="8dp"
-        app:layout_constraintTop_toBottomOf="@id/logoImage"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:paddingBottom="32dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginTop="16dp">
+        app:layout_constraintVertical_bias="1.0"
+        app:layout_constraintHeight_percent="0.75"
+        app:layout_constraintTop_toBottomOf="@id/view_gradient_background"
+        android:layout_marginTop="-100dp"> <!-- Margin negatif menciptakan efek tumpang tindih dengan logo/header -->
 
-        <!-- Space di atas -->
-        <Space
+        <!-- ScrollView untuk memastikan konten dapat digulir di layar kecil -->
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="24dp" /> <!-- Dikurangi sedikit biar tidak terlalu turun -->
+            android:layout_height="match_parent"
+            android:fillViewport="true">
 
-        <!-- Judul Selamat Datang -->
-        <TextView
-            android:id="@+id/tvWelcomeTitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Selamat Datang"
-            android:textSize="28sp"
-            android:textStyle="bold"
-            android:fontFamily="@font/tilt_warp"
-            android:textColor="@color/gradientStart"
-            android:layout_marginBottom="6dp" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/tvWelcomeSubtitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Di Nganjuk Abirupa !"
-            android:textSize="28sp"
-            android:textStyle="bold"
-            android:fontFamily="@font/tilt_warp"
-            android:textColor="@color/gradientStart"
-            android:layout_marginBottom="20dp" />
+                <!-- Title -->
+                <TextView
+                    android:id="@+id/tv_welcome_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Selamat Datang\nDi Nganjuk Abirupa !"
+                    android:textColor="#4e4e4e"
+                    android:fontFamily="@font/poppins_bold"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"/>
 
-        <!-- Deskripsi kecil -->
-        <TextView
-            android:id="@+id/tvDescription"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Login atau Register sekarang! untuk menikmati semua fitur yang tersedia di Nganjuk Abirupa"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:fontFamily="@font/tilt_warp"
-            android:textColor="#4E4E4E"
-            android:layout_marginBottom="24dp" />
+                <!-- Subtitle -->
+                <TextView
+                    android:id="@+id/tv_welcome_subtitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Login atau Register sekarang! untuk menikmati semua fitur yang tersedia di Nganjuk Abirupa by A4/STECUUU"
+                    android:textColor="#616161"
+                    android:fontFamily="@font/poppins_font_family"
+                    android:textSize="12sp"
+                    app:layout_constraintTop_toBottomOf="@id/tv_welcome_title"
+                    app:layout_constraintStart_toStartOf="parent"/>
 
-        <!-- Label Nama Pengguna -->
-        <TextView
-            android:id="@+id/tvLabelUsername"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Nama Pengguna"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:fontFamily="@font/tilt_warp"
-            android:textColor="#4E4E4E"
-            android:layout_marginBottom="6dp" />
+                <!-- Nama Pengguna (Label) -->
+                <TextView
+                    android:id="@+id/tv_username_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="32dp"
+                    android:text="Nama Pengguna"
+                    android:textColor="#4e4e4e"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:textSize="14sp"
+                    app:layout_constraintTop_toBottomOf="@id/tv_welcome_subtitle"
+                    app:layout_constraintStart_toStartOf="parent"/>
 
-        <!-- Input Nama Pengguna -->
-        <EditText
-            android:id="@+id/etUsername"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:hint=""
-            android:background="@drawable/edittext_background"
-            android:padding="14dp"
-            android:textColor="@android:color/black"
-            android:textSize="18sp"
-            android:fontFamily="@font/tilt_warp"
-            android:inputType="text"
-            android:imeOptions="actionNext"
-            android:autofillHints="username"
-            android:layout_marginBottom="16dp" />
+                <!-- Nama Pengguna (Input) -->
+                <EditText
+                    android:id="@+id/et_username"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="@drawable/border_kolomkatasandi"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:inputType="text"
+                    android:hint="Masukkan Nama Pengguna"
+                    android:fontFamily="@font/Poppins_Regular"
+                    android:textSize="14sp"
+                    android:layout_marginTop="4dp"
+                    app:layout_constraintTop_toBottomOf="@id/tv_username_label"
+                    app:layout_constraintStart_toStartOf="parent"
+                    tools:background="@drawable/border_kolomkatasandi"/>
 
-        <!-- Label Kata Sandi -->
-        <TextView
-            android:id="@+id/tvLabelPassword"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Kata Sandi"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:fontFamily="@font/tilt_warp"
-            android:textColor="#4E4E4E"
-            android:layout_marginBottom="6dp" />
+                <!-- Kata Sandi (Label) -->
+                <TextView
+                    android:id="@+id/tv_password_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="Kata Sandi"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:textColor="#4e4e4e"
+                    android:textSize="12sp"
+                    app:layout_constraintTop_toBottomOf="@id/et_username"
+                    app:layout_constraintStart_toStartOf="parent"/>
 
-        <!-- Input Kata Sandi -->
-        <EditText
-            android:id="@+id/etPassword"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:hint=""
-            android:inputType="textPassword"
-            android:background="@drawable/edittext_background"
-            android:padding="14dp"
-            android:textColor="@android:color/black"
-            android:textSize="18sp"
-            android:fontFamily="@font/tilt_warp"
-            android:imeOptions="actionDone"
-            android:autofillHints="password"
-            android:layout_marginBottom="20dp" />
+                <!-- Kata Sandi (Input) -->
+                <EditText
+                    android:id="@+id/et_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="@drawable/border_kolomkatasandi"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:inputType="textPassword"
+                    android:hint="Masukkan Kata Sandi"
+                    android:fontFamily="@font/Poppins_Regular"
+                    android:textSize="14sp"
+                    android:layout_marginTop="4dp"
+                    app:layout_constraintTop_toBottomOf="@id/tv_password_label"
+                    app:layout_constraintStart_toStartOf="parent"
+                    tools:background="@drawable/border_kolomkatasandi"/>
 
-        <!-- Link Lupa Kata Sandi -->
-        <TextView
-            android:id="@+id/forgotPassword"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Lupa kata sandi?"
-            android:textColor="@color/gradientEnd"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:fontFamily="@font/tilt_warp"
-            android:layout_gravity="end"
-            android:clickable="true"
-            android:focusable="true"
-            android:background="?attr/selectableItemBackground"
-            android:layout_marginBottom="24dp" />
+                <!-- Lupa Kata Sandi? -->
+                <TextView
+                    android:id="@+id/tv_forgot_password"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Lupa kata sandi?"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:textColor="#4DB6AC"
+                    android:textSize="12sp"
+                    app:layout_constraintTop_toBottomOf="@id/et_password"
+                    app:layout_constraintEnd_toEndOf="parent"/>
 
-        <!-- Tombol Login -->
-        <Button
-            android:id="@+id/btnLogin"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:text="Login"
-            android:textSize="22sp"
-            android:fontFamily="@font/tilt_warp"
-            android:textColor="@android:color/white"
-            android:backgroundTint="@color/gradientMiddle"
-            android:layout_marginBottom="16dp"
-            android:elevation="4dp"
-            android:stateListAnimator="@null"
-            android:layout_marginStart="28dp"
-            android:layout_marginEnd="28dp" />
+                <!-- Login Button (Menggunakan MaterialButton) -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_login"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:backgroundTint="#32A8A7"
+                    android:text="Login"
+                    android:fontFamily="@font/poppins_bold"
+                    android:textColor="@android:color/white"
+                    android:textSize="18sp"
+                    android:paddingVertical="12dp"
+                    app:cornerRadius="8dp"
+                    app:layout_constraintTop_toBottomOf="@id/tv_forgot_password"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"/>
 
-        <!-- Google Sign-In Button -->
-        <com.google.android.gms.common.SignInButton
-            android:id="@+id/googleSignInButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginStart="32dp"
-            android:layout_marginEnd="32dp"
-            android:layout_marginBottom="16dp" />
+                <!-- Registrasi Link -->
+                <TextView
+                    android:id="@+id/tv_register_link"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="16dp"
+                    android:text="Belum memiliki akun? registrasi"
+                    android:fontFamily="@font/poppins_font_family"
+                    android:textSize="12sp"
+                    app:layout_constraintTop_toBottomOf="@id/btn_login"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"/>
 
-        <!-- Link Registrasi -->
-        <TextView
-            android:id="@+id/registerLink"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Belum memiliki akun? Registrasi"
-            android:textColor="@color/gradientEnd"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:fontFamily="@font/tilt_warp"
-            android:layout_gravity="center_horizontal"
-            android:clickable="true"
-            android:focusable="true"
-            android:background="?attr/selectableItemBackground"
-            android:layout_marginTop="8dp" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-    </LinearLayout>
+        </ScrollView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
