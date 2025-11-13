@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="#F5F5F5"
-    tools:context=".RiwayatPesananActivity">
+    tools:context=".RiwayatActivity">
 
     <!-- Header -->
     <LinearLayout
@@ -44,8 +44,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gap="12dp">
+            android:orientation="vertical">
 
             <!-- Template Item Transaksi (Hapus atau duplikasi saat runtime) -->
             <androidx.cardview.widget.CardView

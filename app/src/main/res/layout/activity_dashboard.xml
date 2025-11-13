@@ -70,17 +70,20 @@ android:src="@drawable/ic_search"
 android:contentDescription="Search"
 android:layout_marginEnd="8dp" />
 
-<EditText
-android:id="@+id/searchBar"
-android:layout_width="0dp"
-android:layout_height="wrap_content"
-android:layout_weight="1"
-android:hint="Mau Liburan Kemana?"
-android:textSize="14sp"
-android:background="@android:color/transparent"
-android:inputType="text"
-android:imeOptions="actionSearch"
-android:autofillHints="search_query" />
+    <!-- Search Bar (di tengah header) -->
+    <SearchView
+        android:id="@+id/searchBar"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:background="@drawable/search_bar_background"
+        android:queryHint="Mau Liburan Kemana?"
+        android:iconifiedByDefault="false"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="80dp"
+        android:elevation="4dp"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp" />
     </LinearLayout>
     </FrameLayout>
 

@@ -78,14 +78,10 @@ public class LoginActivity extends AppCompatActivity {
 
         // Animasi frame naik
         View loginFrame = findViewById(R.id.loginFrame);
-        // ... (kode animasi tetap sama)
-
-        // Styling teks registrasi
-        // ... (kode styling tetap sama)
 
         // Login manual
         btnLogin.setOnClickListener(v -> {
-            // ... (kode login manual tetap sama)
+
         });
 
         // 🔥 Google Sign-In (tanpa ID token)
@@ -143,7 +139,7 @@ public class LoginActivity extends AppCompatActivity {
         editor.apply();
 
         Toast.makeText(this, "Login dengan Google berhasil!", Toast.LENGTH_SHORT).show();
-        startActivity(new Intent(LoginActivity.this, MainActivity.class));
+        startActivity(new Intent(LoginActivity.this, DashboardActivity.class));
         finish();
     }
 }

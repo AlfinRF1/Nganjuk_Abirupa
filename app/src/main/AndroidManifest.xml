@@ -39,6 +39,16 @@
         <activity
             android:name=".MainActivity"
             android:exported="false" />
+
+        <activity
+            android:name=".DashboardActivity"
+            android:exported="false" />
+        <activity
+            android:name=".DetailWisataActivity"
+            android:exported="false" />
+        <activity
+            android:name=".PemesananActivity"
+            android:exported="false" />
     </application>
 
 </manifest>
