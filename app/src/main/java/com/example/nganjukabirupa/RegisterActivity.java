@@ -88,12 +88,12 @@ public class RegisterActivity extends AppCompatActivity {
             request.password = password;
 
             Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl("https://nganjukabirupa.atwebpages.com/") // GANTI DENGAN URL KAMU
+                    .baseUrl("http://10.0.2.2/nganjukabirupa/") // GANTI DENGAN URL KAMU
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
 
             ApiService apiService = retrofit.create(ApiService.class);
-            Call<RegisterResponse> call = apiService.register(request);
+            Call<RegisterResponse> call = apiService.registerCustomer(request);
 
             call.enqueue(new Callback<RegisterResponse>() {
                 @Override

@@ -239,7 +239,7 @@ app:layout_constraintBottom_toTopOf="@id/footer">
             android:layout_width="match_parent"
             android:layout_height="180dp"
             android:scaleType="centerCrop"
-            android:src="@drawable/wisata_taman_rekreasi"
+            android:src="@drawable/wisata_goa_margotresno"
             android:contentDescription="Taman Rekreasi"
             android:layout_marginBottom="8dp" />
 
@@ -293,7 +293,7 @@ app:layout_constraintBottom_toTopOf="@id/footer">
             android:layout_width="match_parent"
             android:layout_height="180dp"
             android:scaleType="centerCrop"
-            android:src="@drawable/wisata_museum"
+            android:src="@drawable/wisata_sritanjung"
             android:contentDescription="Museum"
             android:layout_marginBottom="8dp" />
 
@@ -347,7 +347,7 @@ app:layout_constraintBottom_toTopOf="@id/footer">
             android:layout_width="match_parent"
             android:layout_height="180dp"
             android:scaleType="centerCrop"
-            android:src="@drawable/wisata_pantai"
+            android:src="@drawable/wisata_tral"
             android:contentDescription="Pantai"
             android:layout_marginBottom="8dp" />
 

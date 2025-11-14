@@ -26,18 +26,20 @@ public class SplashScreenActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
 
+        // 🔧 Reset login status sementara untuk testing
+        SharedPreferences.Editor editor = getSharedPreferences(PREF_NAME, MODE_PRIVATE).edit();
+        editor.clear();
+        editor.apply();
+
         handler = new Handler(Looper.getMainLooper());
         runnable = () -> {
-            // 🔍 Cek apakah user sudah login
             SharedPreferences prefs = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
             boolean isLoggedIn = prefs.getBoolean(KEY_IS_LOGGED_IN, false);
 
             Intent intent;
             if (isLoggedIn) {
-                // ✅ Sudah login → langsung ke MainActivity
                 intent = new Intent(SplashScreenActivity.this, MainActivity.class);
             } else {
-                // ❌ Belum login → ke LoginActivity
                 intent = new Intent(SplashScreenActivity.this, LoginActivity.class);
             }
 
@@ -52,7 +54,6 @@ public class SplashScreenActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        // Batalkan handler jika activity dihancurkan
         if (handler != null && runnable != null) {
             handler.removeCallbacks(runnable);
         }

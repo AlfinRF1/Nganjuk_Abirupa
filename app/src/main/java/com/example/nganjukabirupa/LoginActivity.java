@@ -3,27 +3,13 @@ package com.example.nganjukabirupa;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.text.SpannableString;
-import android.text.Spanned;
-import android.text.TextPaint;
-import android.text.method.LinkMovementMethod;
-import android.text.style.ClickableSpan;
-import android.text.style.ForegroundColorSpan;
-import android.view.View;
-import android.view.ViewTreeObserver;
-import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -37,6 +23,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -45,11 +32,10 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private static final int ANIMATION_DURATION = 700;
+    private static final int RC_GOOGLE_SIGN_IN = 101;
     private static final String PREF_NAME = "user_prefs";
     private static final String KEY_IS_LOGGED_IN = "isLoggedIn";
     private static final String KEY_USERNAME = "username";
-    private static final int RC_GOOGLE_SIGN_IN = 101;
 
     private EditText etUsername, etPassword;
     private Button btnLogin;
@@ -63,39 +49,32 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        // Inisialisasi view
-        etUsername = findViewById(R.id.etUsername);
-        etPassword = findViewById(R.id.etPassword);
-        btnLogin = findViewById(R.id.btnLogin);
+        etUsername = findViewById(R.id.et_username);
+        etPassword = findViewById(R.id.et_password);
+        btnLogin = findViewById(R.id.btn_login);
         googleSignInButton = findViewById(R.id.googleSignInButton);
 
-        // 🔥 Firebase Auth + Google Sign-In INIT
         firebaseAuth = FirebaseAuth.getInstance();
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
-        googleSignInClient = GoogleSignIn.getClient(this, gso); // ← INI YANG WAJIB ADA
+        googleSignInClient = GoogleSignIn.getClient(this, gso);
 
-        // Animasi frame naik
-        View loginFrame = findViewById(R.id.loginFrame);
-
-        // Login manual
-        btnLogin.setOnClickListener(v -> {
-
-        });
-
-        // 🔥 Google Sign-In (tanpa ID token)
         googleSignInButton.setOnClickListener(v -> {
-            Intent signInIntent = googleSignInClient.getSignInIntent();
-            startActivityForResult(signInIntent, RC_GOOGLE_SIGN_IN);
+            googleSignInClient.signOut().addOnCompleteListener(this, task -> {
+                Intent signInIntent = googleSignInClient.getSignInIntent();
+                startActivityForResult(signInIntent, RC_GOOGLE_SIGN_IN);
+            });
         });
 
-        // Auto-login (cek login manual via SharedPreferences)
         SharedPreferences prefs = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         if (prefs.getBoolean(KEY_IS_LOGGED_IN, false)) {
             startActivity(new Intent(LoginActivity.this, MainActivity.class));
             finish();
         }
+
+        // TODO: Tambahkan login manual di sini kalau diperlukan
     }
 
     @Override
@@ -122,7 +101,7 @@ public class LoginActivity extends AppCompatActivity {
                         if (user != null) {
                             String email = user.getEmail() != null ? user.getEmail() : "user@example.com";
                             String name = user.getDisplayName() != null ? user.getDisplayName() : "User";
-                            handleGoogleLoginSuccess(email, name);
+                            sendUserToLocalDatabase(email, name);
                         }
                     } else {
                         Toast.makeText(LoginActivity.this, "Autentikasi gagal.", Toast.LENGTH_SHORT).show();
@@ -130,8 +109,33 @@ public class LoginActivity extends AppCompatActivity {
                 });
     }
 
-    private void handleGoogleLoginSuccess(String email, String name) {
-        // Simpan status login
+    private void sendUserToLocalDatabase(String email, String name) {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("http://192.168.1.5/nganjukabirupa/") // Ganti sesuai folder backend kamu
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        ApiService apiService = retrofit.create(ApiService.class);
+        GoogleUserRequest request = new GoogleUserRequest(email, name);
+        Call<GenericResponse> call = apiService.sendGoogleUser(request);
+        call.enqueue(new Callback<GenericResponse>() {
+            @Override
+            public void onResponse(Call<GenericResponse> call, Response<GenericResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    handleGoogleLoginSuccess(email);
+                } else {
+                    Toast.makeText(LoginActivity.this, "Gagal simpan user: response kosong", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<GenericResponse> call, Throwable t) {
+                Toast.makeText(LoginActivity.this, "Gagal simpan user: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void handleGoogleLoginSuccess(String email) {
         SharedPreferences prefs = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean(KEY_IS_LOGGED_IN, true);

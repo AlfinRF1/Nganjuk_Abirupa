@@ -1,19 +1,19 @@
 package com.example.nganjukabirupa;
 
+import com.google.gson.annotations.SerializedName;
+
 public class RegisterRequest {
-    public String nama_customer;
-    public String email;
-    public String no_tlp;
-    public String password;
+    @SerializedName("nama_customer")
+    private String nama_customer;
 
-    // Constructor (opsional, tapi bagus buat kejelasan)
-    public RegisterRequest(String nama_customer, String email, String no_tlp, String password) {
-        this.nama_customer = nama_customer;
-        this.email = email;
-        this.no_tlp = no_tlp;
-        this.password = password;
-    }
+    @SerializedName("email")
+    private String email;
 
-    // Constructor kosong (WAJIB untuk Gson/Retrofit)
-    public RegisterRequest() {}
+    @SerializedName("no_tlp")
+    private String no_tlp;
+
+    @SerializedName("password")
+    private String password;
+
+    // Constructor, getters, setters
 }

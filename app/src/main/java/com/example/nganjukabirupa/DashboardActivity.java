@@ -26,11 +26,6 @@ public class DashboardActivity extends AppCompatActivity {
 
         // Inisialisasi card & data
         cards = new View[] {
-                findViewById(R.id.card1),
-                findViewById(R.id.card2),
-                findViewById(R.id.card3),
-                findViewById(R.id.card4),
-                findViewById(R.id.card5)
         };
 
         namaWisata = new String[] {
@@ -94,9 +89,9 @@ public class DashboardActivity extends AppCompatActivity {
         int[] drawables = {
                 R.drawable.wisata_air_terjun_sedudo,
                 R.drawable.wisata_roro_kuning,
-                R.drawable.wisata_taman_rekreasi,
-                R.drawable.wisata_museum,
-                R.drawable.wisata_pantai
+                R.drawable.wisata_goa_margotresno,
+                R.drawable.wisata_sritanjung,
+                R.drawable.wisata_tral
         };
         return drawables[index];
     }
