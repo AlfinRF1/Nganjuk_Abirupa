@@ -59,12 +59,7 @@ public class DashboardActivity extends AppCompatActivity {
             }
         });
 
-        // Handle klik card
-        setupCardClick(R.id.btnDetail1, 0);
-        setupCardClick(R.id.btnDetail2, 1);
-        setupCardClick(R.id.btnDetail3, 2);
-        setupCardClick(R.id.btnDetail4, 3);
-        setupCardClick(R.id.btnDetail5, 4);
+
 
         // Footer navigation
         findViewById(R.id.navHome).setOnClickListener(v -> { /* udah di home */ });

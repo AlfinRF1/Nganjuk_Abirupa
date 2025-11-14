@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.View;
+import android.util.Log;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -13,17 +13,17 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import retrofit2.*;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    private static final String PREF_NAME = "user_prefs";
-    private static final String KEY_IS_LOGGED_IN = "isLoggedIn";
-    private static final String KEY_USERNAME = "username";
+    private static final String PREF_NAME = "user_session";
+    private static final String KEY_ID_CUSTOMER = "id_customer";
+    private static final String TAG = "RegisterDebug";
 
     private EditText etName, etEmail, etPhone, etPassword, etConfirmPassword;
     private Button btnCreateAccount;
@@ -31,7 +31,7 @@ public class RegisterActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(com.example.nganjukabirupa.R.layout.activity_register);
+        setContentView(R.layout.activity_register);
 
         etName = findViewById(R.id.etName);
         etEmail = findViewById(R.id.etEmail);
@@ -40,11 +40,11 @@ public class RegisterActivity extends AppCompatActivity {
         etConfirmPassword = findViewById(R.id.etConfirmPassword);
         btnCreateAccount = findViewById(R.id.btnCreateAccount);
 
-        // Handle back arrow
         findViewById(R.id.backArrow).setOnClickListener(v -> finish());
 
-        // Register logic
         btnCreateAccount.setOnClickListener(v -> {
+            hideKeyboard();
+
             String name = etName.getText().toString().trim();
             String email = etEmail.getText().toString().trim();
             String phone = etPhone.getText().toString().trim();
@@ -52,79 +52,100 @@ public class RegisterActivity extends AppCompatActivity {
             String confirmPassword = etConfirmPassword.getText().toString().trim();
 
             if (TextUtils.isEmpty(name)) {
-                Toast.makeText(this, "Harap isi Nama Lengkap", Toast.LENGTH_SHORT).show();
+                etName.setError("Harap isi Nama Lengkap");
                 return;
             }
             if (TextUtils.isEmpty(email)) {
-                Toast.makeText(this, "Harap isi Alamat Email", Toast.LENGTH_SHORT).show();
+                etEmail.setError("Harap isi Email");
                 return;
             }
             if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-                Toast.makeText(this, "Format email tidak valid", Toast.LENGTH_SHORT).show();
+                etEmail.setError("Format email tidak valid");
                 return;
             }
             if (TextUtils.isEmpty(phone)) {
-                Toast.makeText(this, "Harap isi No.Telp", Toast.LENGTH_SHORT).show();
+                etPhone.setError("Harap isi No.Telp");
                 return;
             }
             if (TextUtils.isEmpty(password)) {
-                Toast.makeText(this, "Harap isi Kata Sandi", Toast.LENGTH_SHORT).show();
+                etPassword.setError("Harap isi Kata Sandi");
                 return;
             }
             if (password.length() < 6) {
-                Toast.makeText(this, "Kata sandi minimal 6 karakter", Toast.LENGTH_SHORT).show();
+                etPassword.setError("Minimal 6 karakter");
                 return;
             }
             if (!password.equals(confirmPassword)) {
-                Toast.makeText(this, "Kata sandi tidak cocok", Toast.LENGTH_SHORT).show();
+                etConfirmPassword.setError("Kata sandi tidak cocok");
                 return;
             }
 
-            // 💡 Kirim data ke server
-            RegisterRequest request = new RegisterRequest();
-            request.nama_customer = name;
-            request.email = email;
-            request.no_tlp = phone;
-            request.password = password;
+            RegisterRequest request = new RegisterRequest(name, email, phone, password);
+
+            Gson gson = new GsonBuilder().setLenient().create();
 
             Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl("http://10.0.2.2/nganjukabirupa/") // GANTI DENGAN URL KAMU
-                    .addConverterFactory(GsonConverterFactory.create())
+                    .baseUrl("http://172.16.106.127/NganjukAbirupa/") // Ganti IP sesuai ipconfig
+                    .addConverterFactory(GsonConverterFactory.create(gson))
                     .build();
 
             ApiService apiService = retrofit.create(ApiService.class);
-            Call<RegisterResponse> call = apiService.registerCustomer(request);
+            Call<RegisterResponse> call = apiService.register(request);
 
             call.enqueue(new Callback<RegisterResponse>() {
                 @Override
                 public void onResponse(Call<RegisterResponse> call, Response<RegisterResponse> response) {
-                    if (response.isSuccessful() && response.body() != null) {
-                        if (response.body().isSuccess()) {
-                            Toast.makeText(RegisterActivity.this, "Registrasi berhasil!", Toast.LENGTH_SHORT).show();
+                    if (response.isSuccessful()) {
+                        try {
+                            RegisterResponse body = response.body();
+                            if (body != null) {
+                                Log.d(TAG, "Response JSON: " + new Gson().toJson(body));
+                                if (body.success) {
+                                    String id_customer = body.idCustomer;
 
-                            // Simpan status login
-                            SharedPreferences prefs = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-                            SharedPreferences.Editor editor = prefs.edit();
-                            editor.putBoolean(KEY_IS_LOGGED_IN, true);
-                            editor.putString(KEY_USERNAME, email);
-                            editor.apply();
+                                    SharedPreferences prefs = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+                                    prefs.edit().putString(KEY_ID_CUSTOMER, id_customer).apply();
 
-                            // Pindah ke MainActivity
-                            startActivity(new Intent(RegisterActivity.this, MainActivity.class));
-                            finish();
-                        } else {
-                            Toast.makeText(RegisterActivity.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(RegisterActivity.this, "Registrasi berhasil!", Toast.LENGTH_SHORT).show();
+                                    startActivity(new Intent(RegisterActivity.this, DashboardActivity.class));
+                                    finish();
+                                } else {
+                                    Toast.makeText(RegisterActivity.this, body.message, Toast.LENGTH_SHORT).show();
+                                }
+                            } else {
+                                String errorBody = response.errorBody() != null ? response.errorBody().string() : "null";
+                                Log.e(TAG, "Body null. Error: " + errorBody);
+                                Toast.makeText(RegisterActivity.this, "Gagal parsing response", Toast.LENGTH_LONG).show();
+                            }
+                        } catch (Exception e) {
+                            Log.e(TAG, "Exception: " + e.getMessage());
+                            Toast.makeText(RegisterActivity.this, "Exception: " + e.getMessage(), Toast.LENGTH_LONG).show();
                         }
                     } else {
-                        Toast.makeText(RegisterActivity.this, "Gagal registrasi", Toast.LENGTH_SHORT).show();
+                        try {
+                            String errorBody = response.errorBody() != null ? response.errorBody().string() : "null";
+                            Log.e(TAG, "Error response: " + errorBody);
+                            Toast.makeText(RegisterActivity.this, "Gagal registrasi. Server error.", Toast.LENGTH_LONG).show();
+                        } catch (Exception e) {
+                            Log.e(TAG, "Exception: " + e.getMessage());
+                            Toast.makeText(RegisterActivity.this, "Exception: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                        }
                     }
                 }
 
                 @Override
                 public void onFailure(Call<RegisterResponse> call, Throwable t) {
-                    Toast.makeText(RegisterActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, "Retrofit failure: " + t.getMessage());
+                    Toast.makeText(RegisterActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
                 }
             });
         });
+    }
+
+    private void hideKeyboard() {
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (getCurrentFocus() != null) {
+            imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+        }
     }
 }

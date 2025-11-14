@@ -50,6 +50,10 @@
         <activity
             android:name=".PemesananActivity"
             android:exported="false" />
+        <activity android:name=".ProfileActivity"
+            android:exported="false" />
+        <activity android:name=".RiwayatActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

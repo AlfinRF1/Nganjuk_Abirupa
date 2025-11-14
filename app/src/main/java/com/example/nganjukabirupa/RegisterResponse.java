@@ -1,11 +1,14 @@
 package com.example.nganjukabirupa;
 
-public class RegisterResponse {
-    private boolean success;
-    private String message;
-    private Customer customer;
+import com.google.gson.annotations.SerializedName;
 
-    public boolean isSuccess() { return success; }
-    public String getMessage() { return message; }
-    public Customer getCustomer() { return customer; }
+public class RegisterResponse {
+    @SerializedName("success")
+    public boolean success;
+
+    @SerializedName("message")
+    public String message;
+
+    @SerializedName("id_customer")
+    public String idCustomer;
 }

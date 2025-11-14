@@ -8,15 +8,11 @@ import android.os.Looper;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-/**
- * SplashScreenActivity menampilkan logo branding dengan latar gradasi,
- * lalu transisi ke LoginActivity atau MainActivity berdasarkan status login.
- */
 public class SplashScreenActivity extends AppCompatActivity {
 
     private static final int SPLASH_DELAY = 2000;
-    private static final String PREF_NAME = "user_prefs";
-    private static final String KEY_IS_LOGGED_IN = "isLoggedIn";
+    private static final String PREF_NAME = "user_session";
+    private static final String KEY_ID_CUSTOMER = "id_customer";
 
     private Handler handler;
     private Runnable runnable;
@@ -26,19 +22,14 @@ public class SplashScreenActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
 
-        // 🔧 Reset login status sementara untuk testing
-        SharedPreferences.Editor editor = getSharedPreferences(PREF_NAME, MODE_PRIVATE).edit();
-        editor.clear();
-        editor.apply();
-
         handler = new Handler(Looper.getMainLooper());
         runnable = () -> {
             SharedPreferences prefs = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
-            boolean isLoggedIn = prefs.getBoolean(KEY_IS_LOGGED_IN, false);
+            String id_customer = prefs.getString(KEY_ID_CUSTOMER, null);
 
             Intent intent;
-            if (isLoggedIn) {
-                intent = new Intent(SplashScreenActivity.this, MainActivity.class);
+            if (id_customer != null) {
+                intent = new Intent(SplashScreenActivity.this, DashboardActivity.class);
             } else {
                 intent = new Intent(SplashScreenActivity.this, LoginActivity.class);
             }

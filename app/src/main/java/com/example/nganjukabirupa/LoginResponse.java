@@ -1,17 +1,24 @@
 package com.example.nganjukabirupa;
 
 public class LoginResponse {
-    private boolean success;
-    private String message;
-    private Customer customer;
+    public boolean success;
+    public String message;
+    public String id_customer;
+    public String nama_customer;
 
-    // Getter & Setter
-    public boolean isSuccess() { return success; }
-    public void setSuccess(boolean success) { this.success = success; }
+    public boolean isSuccess() {
+        return success;
+    }
 
-    public String getMessage() { return message; }
-    public void setMessage(String message) { this.message = message; }
+    public String getMessage() {
+        return message;
+    }
 
-    public Customer getCustomer() { return customer; }
-    public void setCustomer(Customer customer) { this.customer = customer; }
+    public String getId_customer() {
+        return id_customer;
+    }
+
+    public String getNama_customer() {
+        return nama_customer;
+    }
 }

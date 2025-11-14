@@ -12,14 +12,11 @@ public class ProfileResponse {
     @SerializedName("profile")
     public Profile profile;
 
-    public class Profile {
-        @SerializedName("nama_customer")
-        public String nama_customer;
+    public static class Profile {
+        @SerializedName("namaCustomer")
+        public String namaCustomer;
 
-        @SerializedName("email_customer")
-        public String email_customer;
-
-        @SerializedName("no_tlp")
-        public String no_tlp;
+        @SerializedName("emailCustomer")
+        public String emailCustomer;
     }
 }

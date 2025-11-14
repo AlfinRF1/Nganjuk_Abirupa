@@ -7,13 +7,26 @@ import retrofit2.http.POST;
 
 public interface ApiService {
 
-    @POST("logincustomer.php")
-    Call<LoginResponse> loginCustomer(@Body LoginRequest request);
-
+    // 🔐 Registrasi akun baru
     @Headers("Content-Type: application/json")
     @POST("register.php")
-    Call<RegisterResponse> registerCustomer(@Body RegisterRequest request);
+    Call<RegisterResponse> register(@Body RegisterRequest request);
 
+    // 🔐 Login manual
+    @Headers("Content-Type: application/json")
+    @POST("login.php")
+    Call<LoginResponse> login(@Body LoginRequest request);
+
+    // 🔐 Login Google
+    @Headers("Content-Type: application/json")
     @POST("google_login.php")
-    Call<GenericResponse> sendGoogleUser(@Body GoogleUserRequest request);
+    Call<LoginResponse> googleLogin(@Body GoogleLoginRequest request);
+
+    // 📄 Ambil profil user
+    @Headers("Content-Type: application/json")
+    @POST("get_profile.php")
+    Call<ProfileResponse> getProfile(@Body ProfileRequest request);
+    @Headers("Content-Type: application/json")
+    @POST("get_profile_by_email.php")
+    Call<ProfileResponse> getProfileByEmail(@Body EmailRequest request);
 }
