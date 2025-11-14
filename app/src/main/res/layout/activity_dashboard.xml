@@ -1,156 +1,492 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5">
+    android:background="@android:color/white"
+    android:clipChildren="false"
+    android:clipToPadding="false">
 
-    <!-- Header Gradient Lengkung -->
-    <LinearLayout
-        android:id="@+id/headerContainer"
+    <!-- Header dengan background rounded top -->
+<FrameLayout
+android:id="@+id/header"
+android:layout_width="match_parent"
+android:layout_height="150dp"
+    android:background="@drawable/header_rounded"
+    android:elevation="8dp"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintEnd_toEndOf="parent">
+
+    <!-- Logo & Welcome Text -->
+<LinearLayout
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:orientation="horizontal"
+android:padding="16dp">
+
+<ImageView
+    android:id="@+id/logoImage"
+    android:layout_width="48dp"
+    android:layout_height="48dp"
+    android:src="@drawable/logo_nganjuk_abirupa"
+    android:contentDescription="Logo Nganjuk Abirupa"
+    android:importantForAccessibility="no" />
+
+<TextView
+    android:id="@+id/tvWelcome"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_weight="1"
+    android:text="Selamat Datang, Nandar!"
+    android:textSize="16sp"
+    android:textStyle="bold"
+    android:fontFamily="@font/tilt_warp"
+    android:textColor="#FFFFFF"
+    android:layout_gravity="center_vertical"
+    android:layout_marginStart="8dp" />
+</LinearLayout>
+
+    <!-- Search Bar (di tengah header) -->
+<LinearLayout
+android:layout_width="match_parent"
+android:layout_height="52dp"
+android:background="@drawable/search_bar_background"
+android:orientation="horizontal"
+android:paddingStart="16dp"
+android:paddingEnd="16dp"
+android:layout_marginStart="16dp"
+android:layout_marginEnd="16dp"
+android:layout_marginTop="80dp"
+    android:elevation="4dp"
+    android:gravity="center_vertical">
+
+<ImageView
+android:layout_width="20dp"
+android:layout_height="20dp"
+android:src="@drawable/ic_search"
+android:contentDescription="Search"
+android:layout_marginEnd="8dp" />
+
+    <!-- Search Bar (di tengah header) -->
+    <SearchView
+        android:id="@+id/searchBar"
         android:layout_width="match_parent"
-        android:layout_height="220dp"
-        android:orientation="vertical"
-        android:background="@drawable/header_rounded"
-        android:padding="24dp">
-
-        <ImageView
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:src="@drawable/logo_nganjuk_abirupa"
-            android:contentDescription="Logo" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Selamat Datang, Nama Kamu!"
-            android:textColor="#FFFFFF"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:layout_marginTop="8dp"
-            android:fontFamily="@font/tilt_warp" />
+        android:layout_height="52dp"
+        android:background="@drawable/search_bar_background"
+        android:queryHint="Mau Liburan Kemana?"
+        android:iconifiedByDefault="false"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="80dp"
+        android:elevation="4dp"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp" />
     </LinearLayout>
+    </FrameLayout>
 
-    <!-- Search Bar Timbul -->
-    <androidx.cardview.widget.CardView
-        android:id="@+id/searchCard"
+    <!-- Main Content (Scrollable) -->
+<androidx.core.widget.NestedScrollView
+android:layout_width="match_parent"
+android:layout_height="0dp"
+android:fillViewport="true"
+app:layout_constraintTop_toBottomOf="@id/header"
+app:layout_constraintStart_toStartOf="parent"
+app:layout_constraintEnd_toEndOf="parent"
+app:layout_constraintBottom_toTopOf="@id/footer">
+
+<!-- Destinasi Wisata Terkini -->
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="#FFFFFF"
+    android:padding="16dp">
+
+    <!-- Title -->
+    <TextView
+        android:id="@+id/tvSectionTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
-        android:layout_marginTop="180dp"
-        app:cardCornerRadius="12dp"
-        app:cardElevation="8dp"
-        app:cardUseCompatPadding="true">
+        android:text="Destinasi Wisata Terkini"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:fontFamily="@font/poppins_semibold"
+        android:textColor="#000000"
+        android:layout_marginBottom="16dp" />
 
-        <SearchView
-            android:id="@+id/searchBar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:queryHint="Mau Liburan Kemana?"
-            android:iconifiedByDefault="false"
-            android:background="@android:color/transparent"
-            android:padding="8dp" />
-    </androidx.cardview.widget.CardView>
-
-    <!-- ScrollView Destinasi -->
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/searchCard"
-        android:layout_marginTop="16dp"
-        android:padding="24dp">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <!-- Card 1 -->
-            <include layout="@layout/item_wisata1" />
-            <!-- Card 2 -->
-            <include layout="@layout/item_wisata2" />
-            <!-- Card 3 -->
-            <include layout="@layout/item_wisata3" />
-            <!-- Card 4 -->
-            <include layout="@layout/item_wisata4" />
-            <!-- Card 5 -->
-            <include layout="@layout/item_wisata5" />
-        </LinearLayout>
-    </ScrollView>
-
-    <!-- Bottom Navigation -->
+    <!-- Card 1: Air Terjun Sedudo -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_alignParentBottom="true"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:background="#FFFFFF"
-        android:elevation="8dp"
-        android:orientation="horizontal"
-        android:gravity="center">
+        android:layout_marginBottom="16dp"
+        android:elevation="4dp"
+        android:padding="16dp">
 
-        <LinearLayout
-            android:id="@+id/navHome"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical">
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/wisata_air_terjun_sedudo"
+            android:contentDescription="Air Terjun Sedudo"
+            android:layout_marginBottom="8dp" />
 
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/ic_home_dashboard" />
+        <TextView
+            android:id="@+id/tvWisataName1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Air Terjun Sedudo"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:fontFamily="@font/tilt_warp"
+            android:textColor="#000000"
+            android:layout_marginBottom="4dp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Home"
-                android:textSize="12sp"
-                android:textColor="#4CAF50" />
-        </LinearLayout>
+        <TextView
+            android:id="@+id/tvWisataLocation1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Desa Ngliman, Kec Sawahan, Kab Nganjuk"
+            android:textSize="12sp"
+            android:fontFamily="@font/tilt_warp"
+            android:textColor="#4E4E4E"
+            android:layout_marginBottom="8dp" />
 
-        <LinearLayout
-            android:id="@+id/navRiwayat"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/ic_history" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Riwayat"
-                android:textSize="12sp"
-                android:textColor="#666666" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/navProfile"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/ic_profile" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Profile"
-                android:textSize="12sp"
-                android:textColor="#666666"
-                android:textStyle="bold" />
-        </LinearLayout>
+        <Button
+            android:id="@+id/btnDetail1"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:text="Selengkapnya"
+            android:textSize="10sp"
+            android:fontFamily="@font/tilt_warp"
+            android:textColor="@android:color/white"
+            android:backgroundTint="#2E9FA6"
+            android:layout_gravity="end"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:stateListAnimator="@null" />
     </LinearLayout>
-</RelativeLayout>
+
+    <!-- Card 2: Roro Kuning & Situs Jendral Sudirman -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="#FFFFFF"
+        android:layout_marginBottom="16dp"
+        android:elevation="4dp"
+        android:padding="16dp">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/wisata_roro_kuning"
+            android:contentDescription="Roro Kuning &amp; Situs Jendral Sudirman"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:id="@+id/tvWisataName2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Roro Kuning &amp; Situs Jendral Sudirman"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:fontFamily="@font/tilt_warp"
+            android:textColor="#000000"
+            android:layout_marginBottom="4dp" />
+
+        <TextView
+            android:id="@+id/tvWisataLocation2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Desa Bajulan, Kec Loceret, Kab Nganjuk"
+            android:textSize="12sp"
+            android:fontFamily="@font/tilt_warp"
+            android:textColor="#4E4E4E"
+            android:layout_marginBottom="8dp" />
+
+        <Button
+            android:id="@+id/btnDetail2"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:text="Selengkapnya"
+            android:textSize="10sp"
+            android:fontFamily="@font/tilt_warp"
+            android:textColor="@android:color/white"
+            android:backgroundTint="#2E9FA6"
+            android:layout_gravity="end"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:stateListAnimator="@null" />
+    </LinearLayout>
+
+    <!-- Card 3: Taman Rekreasi -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="#FFFFFF"
+        android:layout_marginBottom="16dp"
+        android:elevation="4dp"
+        android:padding="16dp">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/wisata_goa_margotresno"
+            android:contentDescription="Taman Rekreasi"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:id="@+id/tvWisataName3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Taman Rekreasi"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:fontFamily="@font/tilt_warp"
+            android:textColor="#000000"
+            android:layout_marginBottom="4dp" />
+
+        <TextView
+            android:id="@+id/tvWisataLocation3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Kota Nganjuk"
+            android:textSize="12sp"
+            android:fontFamily="@font/tilt_warp"
+            android:textColor="#4E4E4E"
+            android:layout_marginBottom="8dp" />
+
+        <Button
+            android:id="@+id/btnDetail3"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:text="Selengkapnya"
+            android:textSize="10sp"
+            android:fontFamily="@font/tilt_warp"
+            android:textColor="@android:color/white"
+            android:backgroundTint="#2E9FA6"
+            android:layout_gravity="end"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:stateListAnimator="@null" />
+    </LinearLayout>
+
+    <!-- Card 4: Museum -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="#FFFFFF"
+        android:layout_marginBottom="16dp"
+        android:elevation="4dp"
+        android:padding="16dp">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/wisata_sritanjung"
+            android:contentDescription="Museum"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:id="@+id/tvWisataName4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Museum"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:fontFamily="@font/tilt_warp"
+            android:textColor="#000000"
+            android:layout_marginBottom="4dp" />
+
+        <TextView
+            android:id="@+id/tvWisataLocation4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Kota Nganjuk"
+            android:textSize="12sp"
+            android:fontFamily="@font/tilt_warp"
+            android:textColor="#4E4E4E"
+            android:layout_marginBottom="8dp" />
+
+        <Button
+            android:id="@+id/btnDetail4"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:text="Selengkapnya"
+            android:textSize="10sp"
+            android:fontFamily="@font/tilt_warp"
+            android:textColor="@android:color/white"
+            android:backgroundTint="#2E9FA6"
+            android:layout_gravity="end"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:stateListAnimator="@null" />
+    </LinearLayout>
+
+    <!-- Card 5: Pantai -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="#FFFFFF"
+        android:layout_marginBottom="16dp"
+        android:elevation="4dp"
+        android:padding="16dp">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/wisata_tral"
+            android:contentDescription="Pantai"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:id="@+id/tvWisataName5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Pantai"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:fontFamily="@font/tilt_warp"
+            android:textColor="#000000"
+            android:layout_marginBottom="4dp" />
+
+        <TextView
+            android:id="@+id/tvWisataLocation5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Kab Nganjuk"
+            android:textSize="12sp"
+            android:fontFamily="@font/tilt_warp"
+            android:textColor="#4E4E4E"
+            android:layout_marginBottom="8dp" />
+
+        <Button
+            android:id="@+id/btnDetail5"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:text="Selengkapnya"
+            android:textSize="10sp"
+            android:fontFamily="@font/tilt_warp"
+            android:textColor="@android:color/white"
+            android:backgroundTint="#2E9FA6"
+            android:layout_gravity="end"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:stateListAnimator="@null" />
+    </LinearLayout>
+</LinearLayout>
+</androidx.core.widget.NestedScrollView>
+
+    <!-- Footer Navigation -->
+<LinearLayout
+android:id="@+id/footer"
+android:layout_width="match_parent"
+android:layout_height="60dp"
+android:background="#FFFFFF"
+android:orientation="horizontal"
+android:elevation="8dp"
+app:layout_constraintBottom_toBottomOf="parent"
+app:layout_constraintStart_toStartOf="parent"
+app:layout_constraintEnd_toEndOf="parent">
+
+<!-- Home -->
+<LinearLayout
+    android:id="@+id/navHome"
+    android:layout_width="0dp"
+    android:layout_height="match_parent"
+    android:layout_weight="1"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:clickable="true"
+    android:focusable="true"
+    android:background="?attr/selectableItemBackground">
+
+    <ImageView
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:src="@drawable/ic_home"
+        android:contentDescription="Home"
+        android:layout_marginBottom="4dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Home"
+        android:textSize="10sp"
+        android:textStyle="bold"
+        android:fontFamily="@font/tilt_warp"
+        android:textColor="#2E9FA6" />
+</LinearLayout>
+
+<!-- Riwayat -->
+<LinearLayout
+    android:id="@+id/navRiwayat"
+    android:layout_width="0dp"
+    android:layout_height="match_parent"
+    android:layout_weight="1"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:clickable="true"
+    android:focusable="true"
+    android:background="?attr/selectableItemBackground">
+
+    <ImageView
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:src="@drawable/ic_history"
+        android:contentDescription="Riwayat"
+        android:layout_marginBottom="4dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Riwayat"
+        android:textSize="10sp"
+        android:textStyle="bold"
+        android:fontFamily="@font/tilt_warp"
+        android:textColor="#4E4E4E" />
+</LinearLayout>
+
+<!-- Profile -->
+<LinearLayout
+    android:id="@+id/navProfile"
+    android:layout_width="0dp"
+    android:layout_height="match_parent"
+    android:layout_weight="1"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:clickable="true"
+    android:focusable="true"
+    android:background="?attr/selectableItemBackground">
+
+    <ImageView
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:src="@drawable/ic_profile"
+        android:contentDescription="Profile"
+        android:layout_marginBottom="4dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Profile"
+        android:textSize="10sp"
+        android:textStyle="bold"
+        android:fontFamily="@font/tilt_warp"
+        android:textColor="#4E4E4E" />
+</LinearLayout>
+</LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
