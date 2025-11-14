@@ -141,7 +141,7 @@
                 android:text="01 Dewasa, 00 Anak"
                 android:gravity="start|center_vertical"
                 android:padding="12dp"
-                android:background="@drawable/border_kolomkatasandi"
+                android:background="@colo sr/common_google_signin_btn_tint"
                 android:textColor="#9E9E9E"
                 android:textSize="14sp"
                 android:textAllCaps="false"
