@@ -1,4 +1,4 @@
-package com.example.yourapp; // Ganti dengan package Anda
+package com.example.nganjukabirupa;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -13,7 +13,7 @@ import androidx.annotation.Nullable;
 // Import yang penting: Ubah dari DialogFragment menjadi BottomSheetDialogFragment
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
-public class PilihPengunjungBottomSheet extends BottomSheetDialogFragment {
+class PilihPengunjungBottomSheet extends BottomSheetDialogFragment {
 
     private ImageButton btnMinDewasa, btnPlusDewasa, btnMinAnak, btnPlusAnak;
     private TextView tvCountDewasa, tvCountAnak;
@@ -49,7 +49,7 @@ public class PilihPengunjungBottomSheet extends BottomSheetDialogFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         // Layout yang digunakan tetap sama: dialog_pilih_pengunjung.xml
-        return inflater.inflate(R.layout.dialog_pilih_pengunjung, container, false);
+        return inflater.inflate(R.layout.activity_pilihpengunjung, container, false);
     }
 
     @Override
