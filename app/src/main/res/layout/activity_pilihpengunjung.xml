@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -198,9 +199,9 @@
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:src="@drawable/ic_info"
-                android:tint="#1E90FF"
                 android:contentDescription="Informasi"
-                android:layout_marginEnd="8dp" />
+                android:layout_marginEnd="8dp"
+                app:tint="#1E90FF" />
 
             <TextView
                 android:layout_width="wrap_content"

@@ -116,10 +116,9 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:layout_marginStart="8dp"
-                android:background="@drawable/calendar_bg_teal"
+                android:background="@drawable/ic_calender1"
                 android:contentDescription="Pilih tanggal"
-                android:scaleType="center"
-                android:src="@drawable/ic_calender_white" />
+                android:scaleType="center" />
         </LinearLayout>
 
         <TextView
@@ -228,7 +227,7 @@
                     android:textColor="#555555" />
 
                 <TextView
-                    android:id="@+id/tvHargaAnak"
+                    android:id="@+id/tvAsuransi"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="1000"

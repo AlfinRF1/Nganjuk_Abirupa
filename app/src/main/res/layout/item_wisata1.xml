@@ -7,7 +7,7 @@
     app:cardCornerRadius="16dp"
     app:cardElevation="6dp"
     app:cardUseCompatPadding="true"
-    android:background="#FFFFFF">
+    app:cardBackgroundColor="#FFFFFF">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -46,7 +46,7 @@
             android:textSize="14sp"
             android:textColor="#666666"
             android:layout_marginTop="4dp"
-            android:fontFamily="@font/poppins_medium"/>
+            android:fontFamily="@font/poppins_medium" />
 
         <!-- Tombol Selengkapnya di kanan bawah -->
         <Button

@@ -85,7 +85,7 @@ public class RegisterActivity extends AppCompatActivity {
             Gson gson = new GsonBuilder().setLenient().create();
 
             Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl("http://172.16.106.127/NganjukAbirupa/") // Ganti IP sesuai ipconfig
+                    .baseUrl("http://192.168.0.117/NganjukAbirupa/") // Ganti IP sesuai ipconfig
                     .addConverterFactory(GsonConverterFactory.create(gson))
                     .build();
 
