@@ -137,15 +137,27 @@
                     android:layout_height="50dp"
                     android:background="@drawable/border_kolomkatasandi"
                     android:paddingStart="16dp"
-                    android:paddingEnd="16dp"
+                    android:paddingEnd="48dp"
                     android:inputType="textPassword"
                     android:hint="Masukkan Kata Sandi"
                     android:fontFamily="@font/poppins_regular"
                     android:textSize="14sp"
                     android:layout_marginTop="4dp"
                     app:layout_constraintTop_toBottomOf="@id/tv_password_label"
-                    app:layout_constraintStart_toStartOf="parent"
-                    tools:background="@drawable/border_kolomkatasandi"/>
+                    app:layout_constraintStart_toStartOf="parent"/>
+
+                <ImageView
+                    android:id="@+id/iv_toggle_password"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginEnd="16dp"
+                    android:contentDescription="Show or hide password"
+                    android:padding="2dp"
+                    android:src="@drawable/ic_eye"
+                    app:layout_constraintBottom_toBottomOf="@id/et_password"
+                    app:layout_constraintEnd_toEndOf="@id/et_password"
+                    app:layout_constraintTop_toTopOf="@id/et_password" />
+
 
                 <!-- Lupa Kata Sandi? -->
 
