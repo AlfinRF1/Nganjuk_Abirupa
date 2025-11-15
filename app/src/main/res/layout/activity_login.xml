@@ -166,7 +166,7 @@
                     android:id="@+id/btn_login"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:backgroundTint="#32A8A7"
+                    android:backgroundTint="@color/gradientMiddle"
                     android:fontFamily="@font/poppins_bold"
                     android:paddingVertical="12dp"
                     android:text="Login"
