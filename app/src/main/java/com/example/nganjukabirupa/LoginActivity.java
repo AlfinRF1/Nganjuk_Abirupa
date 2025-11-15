@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,6 +47,23 @@ public class LoginActivity extends AppCompatActivity {
 
         etUsername = findViewById(R.id.et_username);
         etPassword = findViewById(R.id.et_password);
+        ImageView ivTogglePassword = findViewById(R.id.iv_toggle_password);
+        final boolean[] isPasswordVisible = {false};
+
+        ivTogglePassword.setOnClickListener(v -> {
+            if (isPasswordVisible[0]) {
+                // Sembunyikan password
+                etPassword.setInputType(android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                ivTogglePassword.setImageResource(R.drawable.ic_eye);
+            } else {
+                // Tampilkan password
+                etPassword.setInputType(android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                ivTogglePassword.setImageResource(R.drawable.ic_eye);
+            }
+            // Geser kursor ke akhir teks
+            etPassword.setSelection(etPassword.getText().length());
+            isPasswordVisible[0] = !isPasswordVisible[0];
+        });
         btnLogin = findViewById(R.id.btn_login);
         googleSignInButton = findViewById(R.id.googleSignInButton);
         tvRegisterLink = findViewById(R.id.tv_register_link);
