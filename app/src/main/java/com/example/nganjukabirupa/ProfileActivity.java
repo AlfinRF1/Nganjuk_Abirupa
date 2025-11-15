@@ -48,24 +48,26 @@ public class ProfileActivity extends AppCompatActivity {
         String nama_customer = prefs.getString(KEY_NAMA_CUSTOMER, null);
         String photo_url = prefs.getString(KEY_PHOTO_URL, null);
 
-        // Tampilkan nama dan email langsung dari SharedPreferences
-        if (nama_customer != null) {
+        // Tampilkan data dari session (jika ada)
+        if (nama_customer != null && !nama_customer.isEmpty()) {
             tvNama.setText(nama_customer);
         }
-        if (email_customer != null) {
+
+        if (email_customer != null && !email_customer.isEmpty()) {
             tvEmail.setText(email_customer);
         }
 
-        // Tampilkan foto profil dari URL
-        if (photo_url != null) {
+        if (photo_url != null && !photo_url.isEmpty()) {
             Glide.with(this)
                     .load(photo_url)
                     .placeholder(R.drawable.default_profile_placeholder)
                     .error(R.drawable.default_profile_placeholder)
                     .into(imgPhoto);
+        } else {
+            imgPhoto.setImageResource(R.drawable.default_profile_placeholder);
         }
 
-        // Ambil data dari backend (opsional, untuk update data terbaru)
+        // Ambil data terbaru dari backend
         if (id_customer != null) {
             ambilDataProfilById(id_customer);
         } else if (email_customer != null) {
@@ -96,8 +98,20 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<ProfileResponse> call, Response<ProfileResponse> response) {
                 if (response.isSuccessful() && response.body() != null && response.body().success) {
-                    tvNama.setText(response.body().profile.namaCustomer);
-                    tvEmail.setText(response.body().profile.emailCustomer);
+                    String nama = response.body().profile.namaCustomer;
+                    String email = response.body().profile.emailCustomer;
+
+                    if (nama != null && !nama.isEmpty()) {
+                        tvNama.setText(nama);
+                    }
+                    if (email != null && !email.isEmpty()) {
+                        tvEmail.setText(email);
+                    }
+
+                    SharedPreferences.Editor editor = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE).edit();
+                    editor.putString(KEY_NAMA_CUSTOMER, nama);
+                    editor.putString(KEY_EMAIL_CUSTOMER, email);
+                    editor.apply();
                 } else {
                     Toast.makeText(ProfileActivity.this, "Gagal ambil profil", Toast.LENGTH_SHORT).show();
                 }
@@ -124,8 +138,20 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<ProfileResponse> call, Response<ProfileResponse> response) {
                 if (response.isSuccessful() && response.body() != null && response.body().success) {
-                    tvNama.setText(response.body().profile.namaCustomer);
-                    tvEmail.setText(response.body().profile.emailCustomer);
+                    String nama = response.body().profile.namaCustomer;
+                    String email = response.body().profile.emailCustomer;
+
+                    if (nama != null && !nama.isEmpty()) {
+                        tvNama.setText(nama);
+                    }
+                    if (email != null && !email.isEmpty()) {
+                        tvEmail.setText(email);
+                    }
+
+                    SharedPreferences.Editor editor = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE).edit();
+                    editor.putString(KEY_NAMA_CUSTOMER, nama);
+                    editor.putString(KEY_EMAIL_CUSTOMER, email);
+                    editor.apply();
                 } else {
                     Toast.makeText(ProfileActivity.this, "Gagal ambil profil via email", Toast.LENGTH_SHORT).show();
                 }
@@ -138,17 +164,15 @@ public class ProfileActivity extends AppCompatActivity {
         });
     }
 
-    // 🔽 Handler untuk Bottom Navigation
+    // Bottom Navigation
 
     public void onHomeClicked(View view) {
-        Intent intent = new Intent(ProfileActivity.this, DashboardActivity.class);
-        startActivity(intent);
+        startActivity(new Intent(this, DashboardActivity.class));
         finish();
     }
 
     public void onRiwayatClicked(View view) {
-        Intent intent = new Intent(ProfileActivity.this, RiwayatActivity.class);
-        startActivity(intent);
+        startActivity(new Intent(this, RiwayatActivity.class));
         finish();
     }
 

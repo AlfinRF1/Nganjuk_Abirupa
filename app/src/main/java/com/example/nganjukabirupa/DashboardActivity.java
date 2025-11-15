@@ -3,13 +3,14 @@ package com.example.nganjukabirupa;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
-import android.widget.SearchView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class DashboardActivity extends AppCompatActivity {
 
-    private SearchView searchView;
+    private LinearLayout searchBar;
+    private TextView searchHintText;
     private View[] cards;
     private String[] namaWisata;
     private String[] lokasiWisata;
@@ -19,13 +20,22 @@ public class DashboardActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
 
-        // Inisialisasi search bar
-        searchView = findViewById(R.id.searchBar);
-        searchView.setQueryHint("Mau Liburan Kemana?");
-        searchView.setIconifiedByDefault(false); // biar selalu terbuka
+        // Inisialisasi search bar (custom layout)
+        searchBar = findViewById(R.id.searchBar);
+        searchHintText = findViewById(R.id.searchHintText);
+
+        // Tambahkan listener klik kalau mau aktifkan pencarian manual
+        searchBar.setOnClickListener(v -> {
+            // Contoh: buka activity pencarian atau tampilkan dialog
+            // startActivity(new Intent(this, SearchActivity.class));
+        });
 
         // Inisialisasi card & data
         cards = new View[] {
+                // Tambahkan ID card view di sini, misal:
+                // findViewById(R.id.cardSedudo),
+                // findViewById(R.id.cardRoroKuning),
+                // ...
         };
 
         namaWisata = new String[] {
@@ -43,23 +53,6 @@ public class DashboardActivity extends AppCompatActivity {
                 "Kota Nganjuk",
                 "Kab Nganjuk"
         };
-
-        // Listener pencarian
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                filterCards(query);
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                filterCards(newText);
-                return true;
-            }
-        });
-
-
 
         // Footer navigation
         findViewById(R.id.navHome).setOnClickListener(v -> { /* udah di home */ });

@@ -3,14 +3,14 @@ package com.example.nganjukabirupa;
 import com.google.gson.annotations.SerializedName;
 
 public class LoginRequest {
-    @SerializedName("email_customer")
-    private String email;
+    @SerializedName("nama_customer")
+    private String nama;
 
     @SerializedName("password_customer")
     private String password;
 
-    public LoginRequest(String email, String password) {
-        this.email = email;
+    public LoginRequest(String nama, String password) {
+        this.nama = nama;
         this.password = password;
     }
 }

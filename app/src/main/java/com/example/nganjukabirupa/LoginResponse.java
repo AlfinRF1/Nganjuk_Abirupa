@@ -5,6 +5,7 @@ public class LoginResponse {
     public String message;
     public String id_customer;
     public String nama_customer;
+    public String email_customer; // ⬅ Tambahan baru
 
     public boolean isSuccess() {
         return success;
@@ -20,5 +21,9 @@ public class LoginResponse {
 
     public String getNama_customer() {
         return nama_customer;
+    }
+
+    public String getEmail_customer() {
+        return email_customer;
     }
 }

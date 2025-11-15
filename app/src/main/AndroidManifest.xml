@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="com.example.nganjukabirupa">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -32,10 +31,6 @@
             android:name=".LoginActivity"
             android:exported="false" />
 
-        <activity
-            android:name=".RegisterActivity"
-            android:exported="false" />
-
         <!-- Main screen -->
         <activity
             android:name=".MainActivity"
@@ -44,16 +39,10 @@
         <activity
             android:name=".DashboardActivity"
             android:exported="false" />
-        <activity
-            android:name=".DetailWisataActivity"
-            android:exported="false" />
-        <activity
-            android:name=".PemesananActivity"
-            android:exported="false" />
+
         <activity android:name=".ProfileActivity"
             android:exported="false" />
-        <activity android:name=".RiwayatActivity"
-            android:exported="false" />
+
     </application>
 
 </manifest>
