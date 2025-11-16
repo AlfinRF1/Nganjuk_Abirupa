@@ -39,13 +39,24 @@
     </LinearLayout>
 
     <!-- Gambar Wisata -->
-    <ImageView
-        android:id="@+id/ivGambarWisata"
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="250dp"
-        android:scaleType="centerCrop"
         android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp" />
+        android:layout_marginBottom="16dp"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="8dp"
+        app:cardPreventCornerOverlap="false"
+        app:cardUseCompatPadding="true">
+
+        <ImageView
+            android:id="@+id/ivGambarWisata"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:src="@drawable/wisata_air_terjun_sedudo"
+            android:contentDescription="Gambar Wisata" />
+    </androidx.cardview.widget.CardView>
 
     <!-- Nama & Lokasi -->
     <TextView

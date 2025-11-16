@@ -176,7 +176,7 @@
                 android:layout_marginTop="24dp"
                 android:layout_marginBottom="8dp"
                 android:gravity="center"
-                android:text="Versi 1.0.0\nCopyright © 2025 Nganjuk Abirupa."
+                android:text="Versi 1.0.0\nCopyright © 2025 Nganjuk Abirupa"
                 android:fontFamily="@font/poppins_regular"
                 android:textColor="#999999"
                 android:textSize="10sp" />
