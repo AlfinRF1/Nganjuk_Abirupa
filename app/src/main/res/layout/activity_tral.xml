@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F2F2F2">
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="55dp" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -25,8 +22,8 @@
                 android:layout_margin="20dp"
                 android:background="@drawable/bg_circle_white"
                 android:src="@drawable/arrow_back"
-                android:tint="#009688"
-                android:scaleType="centerInside" />
+                android:scaleType="centerInside"
+                app:tint="#009688" />
 
             <ImageView
                 android:id="@+id/imgHeader"
@@ -50,6 +47,7 @@
 
                 <!-- Nama Wisata -->
                 <TextView
+                    android:id="@+id/tvNamaWisata"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Taman Rekreasi Anjuk Ladang"
@@ -59,10 +57,11 @@
 
                 <!-- Lokasi -->
                 <TextView
+                    android:id="@+id/tvLokasi"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="Jl. Anjuk Ladang Lapak No.12, Ploso, Kec. Nganjuk, Kabupaten Nganjuk, Jawa Timur 64417"
+                    android:text="Jl. Anjuk Ladang Lapak No.12..."
                     android:textColor="#555" />
 
                 <!-- Deskripsi Title -->
@@ -77,13 +76,14 @@
 
                 <!-- Deskripsi -->
                 <TextView
+                    android:id="@+id/tvDeskripsi"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="Taman Rekreasi Anjuk Ladang adalah tempat wisata keluarga yang menawarkan taman bermain, kolam renang, dan area hijau yang luas. Cocok untuk piknik, olahraga, dan rekreasi anak-anak. Lokasinya strategis di pusat kota Nganjuk, mudah diakses dan ramah pengunjung."
+                    android:text="Deskripsi menyusul..."
                     android:textColor="#555" />
 
-                <!-- Tiket Masuk -->
+                <!-- Tiket Masuk Title -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -93,10 +93,11 @@
                     android:textSize="16sp" />
 
                 <TextView
+                    android:id="@+id/tvHargaTiket"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="Dewasa : 8.000\nAnak-anak : 5.000"
+                    android:text="Dewasa : -\nAnak-anak : -"
                     android:textColor="#555" />
 
                 <!-- Fasilitas -->
@@ -109,10 +110,11 @@
                     android:textSize="16sp" />
 
                 <TextView
+                    android:id="@+id/tvFasilitas"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="Kolam renang, Taman bermain, Area piknik, Warung makan, Toilet, Mushola, Parkir, Gazebo"
+                    android:text="Fasilitas belum tersedia"
                     android:textColor="#555" />
 
             </LinearLayout>

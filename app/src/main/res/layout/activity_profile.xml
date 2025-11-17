@@ -7,9 +7,10 @@
     android:background="#F5F5F5"
     tools:context=".ProfileActivity">
 
+    <!-- Header Gradient -->
     <LinearLayout
         android:id="@+id/header_gradient"
-        android:layout_width="412dp"
+        android:layout_width="0dp"
         android:layout_height="140dp"
         android:background="@drawable/header_rounded"
         android:gravity="center_vertical"
@@ -18,8 +19,8 @@
         android:paddingTop="24dp"
         android:paddingEnd="16dp"
         android:paddingBottom="48dp"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <RelativeLayout
@@ -32,11 +33,8 @@
                 android:layout_height="52dp"
                 android:layout_alignParentStart="true"
                 android:layout_marginStart="-8dp"
-                android:lineSpacingExtra="0dp"
                 android:src="@drawable/logotextputih"
-                android:textColor="#FFFFFF"
-                android:textSize="14sp"
-                android:textStyle="bold" />
+                android:contentDescription="Logo" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -53,9 +51,10 @@
         </RelativeLayout>
     </LinearLayout>
 
+    <!-- Card Profile -->
     <androidx.cardview.widget.CardView
         android:id="@+id/card_profile"
-        android:layout_width="383dp"
+        android:layout_width="0dp"
         android:layout_height="89dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="-40dp"
@@ -63,12 +62,12 @@
         app:cardCornerRadius="12dp"
         app:cardElevation="4dp"
         app:cardUseCompatPadding="true"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/header_gradient">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="80dp"
             android:background="@android:color/white"
             android:gravity="center_vertical"
@@ -113,8 +112,9 @@
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
+    <!-- Scrollable Content -->
     <ScrollView
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="0dp"
         android:scrollbars="vertical"
         android:paddingTop="8dp"
@@ -122,8 +122,8 @@
         android:paddingEnd="16dp"
         app:layout_constraintTop_toBottomOf="@id/card_profile"
         app:layout_constraintBottom_toTopOf="@id/footer_navigation"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -140,7 +140,7 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="302dp"
+                    android:layout_height="wrap_content"
                     android:background="@android:color/white"
                     android:orientation="vertical"
                     android:padding="16dp">
@@ -153,7 +153,6 @@
                         android:textColor="#333333"
                         android:textSize="16sp"
                         android:textStyle="bold" />
-
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
@@ -162,7 +161,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:background="#FFABAD"
+                android:background="@color/common_google_signin_btn_tint"
                 android:gravity="center"
                 android:padding="12dp"
                 android:text="Logout"
@@ -180,13 +179,13 @@
                 android:fontFamily="@font/poppins_regular"
                 android:textColor="#999999"
                 android:textSize="10sp" />
-
         </LinearLayout>
     </ScrollView>
 
+    <!-- Footer Navigation -->
     <LinearLayout
         android:id="@+id/footer_navigation"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="60dp"
         android:background="#FFFFFF"
         android:elevation="8dp"
@@ -194,8 +193,8 @@
         android:orientation="horizontal"
         android:padding="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <LinearLayout
             android:layout_width="0dp"

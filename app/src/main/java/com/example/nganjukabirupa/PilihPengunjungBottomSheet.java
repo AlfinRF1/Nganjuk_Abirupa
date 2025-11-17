@@ -88,7 +88,7 @@ public class PilihPengunjungBottomSheet extends BottomSheetDialogFragment {
 
         tvCountAnak = view.findViewById(R.id.tvCountAnak);
 
-        btnSimpan = view.findViewById(R.id.btnSimpanPengunjung);
+        btnSimpan = view.findViewById(R.id.btnSimpan);
 
 
         updateCountViews();

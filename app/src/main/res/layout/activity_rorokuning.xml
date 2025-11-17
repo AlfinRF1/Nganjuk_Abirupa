@@ -14,12 +14,16 @@
         android:background="@drawable/bg_circle_white"
         android:src="@drawable/arrow_back"
         android:scaleType="centerInside"
-        app:tint="#009688" />
+        app:tint="#009688"
+        android:clickable="true"
+        android:focusable="true"
+        />
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/btnPesan">
+        android:layout_above="@+id/btnPesan"
+        android:layout_marginTop="0dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -53,8 +57,9 @@
                 android:background="@drawable/bg_card"
                 android:elevation="4dp">
 
-                <!-- Judul -->
+                <!-- Nama Wisata -->
                 <TextView
+                    android:id="@+id/tvNamaWisata"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Air Terjun Roro Kuning"
@@ -64,6 +69,7 @@
 
                 <!-- Lokasi -->
                 <TextView
+                    android:id="@+id/tvLokasi"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
@@ -82,13 +88,14 @@
 
                 <!-- Deskripsi -->
                 <TextView
+                    android:id="@+id/tvDeskripsi"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:text="Air terjun Roro Kuning merupakan salah satu destinasi wisata alam di kaki Gunung Wilis. Dikelilingi pepohonan rindang dan udara sejuk, tempat ini cocok untuk wisata keluarga maupun pecinta alam."
                     android:textColor="#555" />
 
-                <!-- Tiket Masuk -->
+                <!-- Tiket Masuk Title -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -97,14 +104,16 @@
                     android:textStyle="bold"
                     android:textSize="16sp" />
 
+                <!-- Tiket Masuk -->
                 <TextView
+                    android:id="@+id/tvHargaTiket"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:text="Dewasa : 8000\nAnak-anak : 6000"
                     android:textColor="#555" />
 
-                <!-- Fasilitas -->
+                <!-- Fasilitas Title -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -113,7 +122,9 @@
                     android:textStyle="bold"
                     android:textSize="16sp" />
 
+                <!-- Fasilitas -->
                 <TextView
+                    android:id="@+id/tvFasilitas"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"

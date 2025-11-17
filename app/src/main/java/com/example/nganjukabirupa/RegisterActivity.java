@@ -51,18 +51,30 @@ public class RegisterActivity extends AppCompatActivity {
             String password = etPassword.getText().toString().trim();
             String confirmPassword = etConfirmPassword.getText().toString().trim();
 
-            // Validasi global: semua field harus diisi
+            // Validasi global
             if (TextUtils.isEmpty(name) || TextUtils.isEmpty(email) || TextUtils.isEmpty(phone)
                     || TextUtils.isEmpty(password) || TextUtils.isEmpty(confirmPassword)) {
                 Toast.makeText(this, "Semua field harus diisi", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            // Validasi per field
+            // Validasi email
             if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
                 etEmail.setError("Format email tidak valid");
                 return;
             }
+
+            // Validasi nomor telepon
+            if (!phone.matches("\\d+")) {
+                etPhone.setError("Nomor hanya boleh angka");
+                return;
+            }
+            if (phone.length() < 11 || phone.length() > 13) {
+                etPhone.setError("Nomor telepon harus 11–13 digit");
+                return;
+            }
+
+            // Validasi password
             if (password.length() < 6) {
                 etPassword.setError("Minimal 6 karakter");
                 return;
@@ -72,11 +84,12 @@ public class RegisterActivity extends AppCompatActivity {
                 return;
             }
 
+            // Kirim request ke backend
             RegisterRequest request = new RegisterRequest(name, email, phone, password);
             Gson gson = new GsonBuilder().setLenient().create();
 
             Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl("http://172.16.103.103/NganjukAbirupa/") // Ganti IP sesuai ipconfig
+                    .baseUrl("https://nganjukabirupa.pbltifnganjuk.com/nganjukabirupa/apimobile/") // Ganti IP sesuai ipconfig
                     .addConverterFactory(GsonConverterFactory.create(gson))
                     .build();
 
@@ -93,7 +106,6 @@ public class RegisterActivity extends AppCompatActivity {
                                 Log.d(TAG, "Response JSON: " + new Gson().toJson(body));
                                 if (body.success) {
                                     Toast.makeText(RegisterActivity.this, "Registrasi berhasil!", Toast.LENGTH_SHORT).show();
-
                                     Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
                                     intent.putExtra("fromRegister", true);
                                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

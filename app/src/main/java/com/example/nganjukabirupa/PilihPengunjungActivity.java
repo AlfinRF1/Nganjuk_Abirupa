@@ -2,11 +2,10 @@ package com.example.nganjukabirupa;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -19,35 +18,32 @@ public class PilihPengunjungActivity extends AppCompatActivity {
     private ImageButton btnPlusDewasa, btnMinusDewasa;
     private ImageButton btnPlusAnak, btnMinusAnak;
     private Button btnSimpan;
-    private Spinner spinnerWisata;
 
-    private WisataModel[] daftarWisata;
+    private String idWisata, namaWisata, lokasi;
+    private int tiketDewasa, tiketAnak, asuransi;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pilihpengunjung);
 
-        // Inisialisasi data wisata
-        daftarWisata = new WisataModel[]{
-                new WisataModel("Sri Tanjung Wisata Tirta", "Loceret, Nganjuk", 10000, 7000, 500),
-                new WisataModel("Taman Rekreasi Anjuk Ladang", "Ploso, Nganjuk", 8000, 5000, 500),
-                new WisataModel("Air Terjun Sedudo", "Sawahan, Nganjuk", 10000, 8000, 1000),
-                new WisataModel("Goa Margo Tresno", "Ngluyu, Nganjuk", 9000, 7000, 1000)
-        };
+        // Ambil data wisata dari intent
+        Intent intent = getIntent();
+        idWisata = intent.getStringExtra("idWisata");
+        namaWisata = intent.getStringExtra("namaWisata");
+        lokasi = intent.getStringExtra("lokasi");
+        tiketDewasa = intent.getIntExtra("tiketDewasa", 0);
+        tiketAnak = intent.getIntExtra("tiketAnak", 0);
+        asuransi = intent.getIntExtra("asuransi", 0);
 
         // Inisialisasi view
-
-        // Setup spinner
-        String[] namaWisataArray = new String[daftarWisata.length];
-        for (int i = 0; i < daftarWisata.length; i++) {
-            namaWisataArray[i] = daftarWisata[i].getNamaWisata();
-        }
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, namaWisataArray);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerWisata.setAdapter(adapter);
+        tvJumlahDewasa = findViewById(R.id.tvCountDewasa);
+        tvJumlahAnak = findViewById(R.id.tvCountAnak);
+        btnPlusDewasa = findViewById(R.id.btnPlusDewasa);
+        btnMinusDewasa = findViewById(R.id.btnMinDewasa);
+        btnPlusAnak = findViewById(R.id.btnPlusAnak);
+        btnMinusAnak = findViewById(R.id.btnMinAnak);
+        btnSimpan = findViewById(R.id.btnSimpan); // pastikan ini juga ada di XML
 
         // Tombol tambah/kurang dewasa
         btnPlusDewasa.setOnClickListener(v -> {
@@ -77,18 +73,21 @@ public class PilihPengunjungActivity extends AppCompatActivity {
 
         // Tombol simpan → kirim data ke PemesananActivity
         btnSimpan.setOnClickListener(v -> {
-            int selectedIndex = spinnerWisata.getSelectedItemPosition();
-            WisataModel wisataDipilih = daftarWisata[selectedIndex];
+            if (jumlahDewasa + jumlahAnak == 0) {
+                Toast.makeText(this, "Jumlah pengunjung belum diisi", Toast.LENGTH_SHORT).show();
+                return;
+            }
 
-            Intent intent = new Intent(PilihPengunjungActivity.this, PemesananActivity.class);
-            intent.putExtra("jumlahDewasa", jumlahDewasa);
-            intent.putExtra("jumlahAnak", jumlahAnak);
-            intent.putExtra("namaWisata", wisataDipilih.getNamaWisata());
-            intent.putExtra("lokasi", wisataDipilih.getLokasi());
-            intent.putExtra("tiketDewasa", wisataDipilih.getTiketDewasa());
-            intent.putExtra("tiketAnak", wisataDipilih.getTiketAnak());
-            intent.putExtra("asuransi", wisataDipilih.getAsuransi());
-            startActivity(intent);
+            Intent nextIntent = new Intent(PilihPengunjungActivity.this, PemesananActivity.class);
+            nextIntent.putExtra("idWisata", idWisata);
+            nextIntent.putExtra("namaWisata", namaWisata);
+            nextIntent.putExtra("lokasi", lokasi);
+            nextIntent.putExtra("tiketDewasa", tiketDewasa);
+            nextIntent.putExtra("tiketAnak", tiketAnak);
+            nextIntent.putExtra("asuransi", asuransi);
+            nextIntent.putExtra("jumlahDewasa", jumlahDewasa);
+            nextIntent.putExtra("jumlahAnak", jumlahAnak);
+            startActivity(nextIntent);
         });
     }
 }

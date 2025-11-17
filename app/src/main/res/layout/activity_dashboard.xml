@@ -75,14 +75,16 @@
                 android:src="@drawable/ic_search"
                 app:tint="#808080" />
 
-            <TextView
-                android:id="@+id/searchHintText"
+            <EditText
+                android:id="@+id/searchInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/poppins_medium"
-                android:text="Mau Liburan Kemana?"
-                android:textColor="#808080"
-                android:textSize="14sp" />
+                android:hint="Mau Liburan Kemana?"
+                android:textColor="#000000"
+                android:textColorHint="#808080"
+                android:textSize="14sp"
+                android:background="@android:color/transparent"
+                android:inputType="text" />
         </LinearLayout>
     </FrameLayout>
 
@@ -107,11 +109,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                android:paddingTop="20dp"
+                android:fontFamily="@font/poppins_bold"
+                android:paddingTop="30dp"
                 android:text="Destinasi Wisata Terkini"
                 android:textColor="#4e4e4e"
-                android:textSize="16sp"
-                android:fontFamily="@font/poppins_bold" />
+                android:textSize="16sp" />
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/cardWisata1"
@@ -125,7 +127,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
-                    android:paddingBottom="16dp">
+                    android:paddingBottom="16dp"
+                    android:descendantFocusability="afterDescendants">
 
                     <ImageView
                         android:layout_width="match_parent"
@@ -172,10 +175,13 @@
                         android:paddingStart="16dp"
                         android:paddingEnd="16dp"
                         app:cornerRadius="8dp"
-
                         android:text="Selengkapnya"
                         android:textColor="#ffffff"
-                        android:textSize="11sp" />
+                        android:textSize="11sp"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
+                        android:clickable="true" />
+
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
@@ -191,7 +197,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:paddingBottom="16dp">
+                    android:paddingBottom="16dp"
+                    android:descendantFocusability="afterDescendants">
 
                     <ImageView
                         android:layout_width="match_parent"
@@ -233,16 +240,17 @@
                         android:layout_height="36dp"
                         android:layout_gravity="end"
                         android:layout_marginEnd="16dp"
+                        android:backgroundTint="@color/gradientMiddle"
                         android:fontFamily="@font/poppins_semibold"
                         android:paddingStart="16dp"
                         android:paddingEnd="16dp"
+                        app:cornerRadius="8dp"
                         android:text="Selengkapnya"
                         android:textColor="#ffffff"
                         android:textSize="11sp"
-                        android:backgroundTint="@color/gradientMiddle"
-                        app:cornerRadius="8dp"
-
-                         />
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
+                        android:clickable="true" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
@@ -258,7 +266,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:paddingBottom="16dp">
+                    android:paddingBottom="16dp"
+                    android:descendantFocusability="afterDescendants">
 
                     <ImageView
                         android:layout_width="match_parent"
@@ -300,14 +309,17 @@
                         android:layout_height="36dp"
                         android:layout_gravity="end"
                         android:layout_marginEnd="16dp"
+                        android:backgroundTint="@color/gradientMiddle"
                         android:fontFamily="@font/poppins_semibold"
                         android:paddingStart="16dp"
                         android:paddingEnd="16dp"
+                        app:cornerRadius="8dp"
                         android:text="Selengkapnya"
                         android:textColor="#ffffff"
                         android:textSize="11sp"
-                        android:backgroundTint="@color/gradientMiddle"
-                        app:cornerRadius="8dp" />
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
+                        android:clickable="true" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
@@ -323,7 +335,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:paddingBottom="16dp">
+                    android:paddingBottom="16dp"
+                    android:descendantFocusability="afterDescendants">
 
                     <ImageView
                         android:layout_width="match_parent"
@@ -365,14 +378,17 @@
                         android:layout_height="36dp"
                         android:layout_gravity="end"
                         android:layout_marginEnd="16dp"
+                        android:backgroundTint="@color/gradientMiddle"
                         android:fontFamily="@font/poppins_semibold"
                         android:paddingStart="16dp"
                         android:paddingEnd="16dp"
+                        app:cornerRadius="8dp"
                         android:text="Selengkapnya"
                         android:textColor="#ffffff"
                         android:textSize="11sp"
-                        android:backgroundTint="@color/gradientMiddle"
-                        app:cornerRadius="8dp" />
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
+                        android:clickable="true" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
@@ -388,7 +404,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:paddingBottom="16dp">
+                    android:paddingBottom="16dp"
+                    android:descendantFocusability="afterDescendants">
 
                     <ImageView
                         android:layout_width="match_parent"
@@ -430,14 +447,17 @@
                         android:layout_height="36dp"
                         android:layout_gravity="end"
                         android:layout_marginEnd="16dp"
+                        android:backgroundTint="@color/gradientMiddle"
                         android:fontFamily="@font/poppins_semibold"
                         android:paddingStart="16dp"
                         android:paddingEnd="16dp"
+                        app:cornerRadius="8dp"
                         android:text="Selengkapnya"
                         android:textColor="#ffffff"
                         android:textSize="11sp"
-                        android:backgroundTint="@color/gradientMiddle"
-                        app:cornerRadius="8dp"/>
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
+                        android:clickable="true" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
         </LinearLayout>
