@@ -159,8 +159,9 @@
             android:paddingHorizontal="16dp"
             android:paddingTop="12dp"
             android:paddingBottom="12dp"
-            android:background="@android:color/widget_edittext_dark">
+            android:background="@android:color/white">
 
+            <!-- Harga Dewasa -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -169,6 +170,7 @@
                 android:layout_marginBottom="4dp">
 
                 <TextView
+                    android:id="@+id/tvLabelDewasa"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -185,6 +187,7 @@
                     android:textColor="#555555" />
             </LinearLayout>
 
+            <!-- Harga Anak -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -193,10 +196,11 @@
                 android:layout_marginTop="4dp">
 
                 <TextView
+                    android:id="@+id/tvLabelAnak"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Anak 0 x 0.000"
+                    android:text="Anak 0 x 7.000"
                     android:textSize="14sp"
                     android:textColor="#555555" />
 
@@ -207,10 +211,9 @@
                     android:text="0.000"
                     android:textSize="14sp"
                     android:textColor="#555555" />
-
-
             </LinearLayout>
 
+            <!-- Asuransi -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -219,10 +222,11 @@
                 android:layout_marginTop="4dp">
 
                 <TextView
+                    android:id="@+id/tvLabelAsuransi"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Asuransi"
+                    android:text="Asuransi 2 x 1.000"
                     android:textSize="14sp"
                     android:textColor="#555555" />
 
@@ -230,12 +234,12 @@
                     android:id="@+id/tvAsuransi"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="1000"
+                    android:text="2.000"
                     android:textSize="14sp"
                     android:textColor="#555555" />
-
-
             </LinearLayout>
+
+
         </LinearLayout>
 
         <View

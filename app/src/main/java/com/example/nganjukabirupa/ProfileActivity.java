@@ -86,7 +86,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void ambilDataProfilById(String id_customer) {
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://192.168.0.117/NganjukAbirupa/")
+                .baseUrl("http://172.16.103.103/NganjukAbirupa/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
@@ -126,7 +126,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void ambilDataProfilByEmail(String email_customer) {
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://192.168.0.117/NganjukAbirupa/")
+                .baseUrl("http://172.16.103.103/NganjukAbirupa/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 

@@ -6,23 +6,25 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-// Import yang penting: Ubah dari DialogFragment menjadi BottomSheetDialogFragment
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
-class PilihPengunjungBottomSheet extends BottomSheetDialogFragment {
+public class PilihPengunjungBottomSheet extends BottomSheetDialogFragment {
 
-    private ImageButton btnMinDewasa, btnPlusDewasa, btnMinAnak, btnPlusAnak;
+    private ImageView btnMinDewasa, btnPlusDewasa, btnMinAnak, btnPlusAnak;
     private TextView tvCountDewasa, tvCountAnak;
     private Button btnSimpan;
+
 
     private int countDewasa = 1;
     private int countAnak = 0;
 
-    // Interface untuk mengirim data kembali ke Activity
     public interface PengunjungDialogListener {
         void onDataPengunjungDisimpan(int dewasa, int anak);
     }
@@ -32,46 +34,70 @@ class PilihPengunjungBottomSheet extends BottomSheetDialogFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         try {
-            // Mengatur listener (Activity utama Anda)
-            listener = (PengunjungDialogListener) getTargetFragment();
-            if (listener == null) {
-                listener = (PengunjungDialogListener) getActivity();
-            }
+            listener = (PengunjungDialogListener) getActivity();
         } catch (ClassCastException e) {
-            throw new ClassCastException("Calling Activity/Fragment must implement PengunjungDialogListener");
+            throw new ClassCastException("Activity harus implement PengunjungDialogListener");
         }
-        // Jika Anda ingin Bottom Sheet memiliki sudut melengkung di atas (default)
-        // Anda tidak perlu memanggil setStyle di sini.
     }
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        // Layout yang digunakan tetap sama: dialog_pilih_pengunjung.xml
+    public View onCreateView(
+            @NonNull LayoutInflater inflater,
+            @Nullable ViewGroup container,
+            @Nullable Bundle savedInstanceState
+    ) {
+        // HARUS gunakan layout khusus bottom sheet
         return inflater.inflate(R.layout.activity_pilihpengunjung, container, false);
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+    public void onStart() {
+        super.onStart();
+
+        View bottomSheet = getDialog().findViewById(
+                com.google.android.material.R.id.design_bottom_sheet
+        );
+
+        if (bottomSheet != null) {
+            BottomSheetBehavior<View> behavior = BottomSheetBehavior.from(bottomSheet);
+
+            bottomSheet.getLayoutParams().height =
+                    (int) (requireContext().getResources().getDisplayMetrics().heightPixels * 0.75);
+
+            behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+        }
+    }
+
+    @Override
+    public void onViewCreated(
+            @NonNull View view,
+            @Nullable Bundle savedInstanceState
+    ) {
         super.onViewCreated(view, savedInstanceState);
 
-        // --- Logika Inisialisasi Views dan Counter tetap sama ---
         btnMinDewasa = view.findViewById(R.id.btnMinDewasa);
         btnPlusDewasa = view.findViewById(R.id.btnPlusDewasa);
+
         tvCountDewasa = view.findViewById(R.id.tvCountDewasa);
+
         btnMinAnak = view.findViewById(R.id.btnMinAnak);
         btnPlusAnak = view.findViewById(R.id.btnPlusAnak);
+
         tvCountAnak = view.findViewById(R.id.tvCountAnak);
+
         btnSimpan = view.findViewById(R.id.btnSimpanPengunjung);
+
 
         updateCountViews();
 
-        // Listener untuk tombol Dewasa (Sama seperti sebelumnya)
         btnPlusDewasa.setOnClickListener(v -> {
             countDewasa++;
             updateCountViews();
         });
+
         btnMinDewasa.setOnClickListener(v -> {
             if (countDewasa > 1) {
                 countDewasa--;
@@ -79,11 +105,11 @@ class PilihPengunjungBottomSheet extends BottomSheetDialogFragment {
             }
         });
 
-        // Listener untuk tombol Anak (Sama seperti sebelumnya)
         btnPlusAnak.setOnClickListener(v -> {
             countAnak++;
             updateCountViews();
         });
+
         btnMinAnak.setOnClickListener(v -> {
             if (countAnak > 0) {
                 countAnak--;
@@ -91,16 +117,16 @@ class PilihPengunjungBottomSheet extends BottomSheetDialogFragment {
             }
         });
 
-        // Listener tombol Simpan
         btnSimpan.setOnClickListener(v -> {
             listener.onDataPengunjungDisimpan(countDewasa, countAnak);
-            dismiss(); // Tutup bottom sheet
+            dismiss();
         });
     }
 
     private void updateCountViews() {
         tvCountDewasa.setText(String.format("%02d", countDewasa));
         tvCountAnak.setText(String.format("%02d", countAnak));
+
         btnMinDewasa.setEnabled(countDewasa > 1);
         btnMinAnak.setEnabled(countAnak > 0);
     }

@@ -3,27 +3,34 @@ package com.example.nganjukabirupa;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
+import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 public class SplashScreenActivity extends AppCompatActivity {
 
-    private static final int SPLASH_DELAY = 2000;
     private static final String PREF_NAME = "user_session";
     private static final String KEY_ID_CUSTOMER = "id_customer";
-
-    private Handler handler;
-    private Runnable runnable;
+    private static final long SPLASH_DURATION = 2000; // 2 detik
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
 
-        handler = new Handler(Looper.getMainLooper());
-        runnable = () -> {
+        ImageView logoImage = findViewById(R.id.logoImage);
+        ImageView brandingImage = findViewById(R.id.brandingImage);
+
+        // Animasi fade-in
+        fadeInView(logoImage, SPLASH_DURATION / 2);
+        fadeInView(brandingImage, SPLASH_DURATION);
+
+        // Navigasi setelah delay tanpa deprecated Handler
+        View rootView = findViewById(android.R.id.content);
+        rootView.postDelayed(() -> {
             SharedPreferences prefs = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
             String id_customer = prefs.getString(KEY_ID_CUSTOMER, null);
 
@@ -35,18 +42,16 @@ public class SplashScreenActivity extends AppCompatActivity {
             }
 
             startActivity(intent);
-            overridePendingTransition(R.anim.slide_up, R.anim.fade_out);
             finish();
-        };
-
-        handler.postDelayed(runnable, SPLASH_DELAY);
+        }, SPLASH_DURATION);
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (handler != null && runnable != null) {
-            handler.removeCallbacks(runnable);
-        }
+    private void fadeInView(View view, long duration) {
+        view.setVisibility(View.INVISIBLE);
+        Animation fadeIn = new AlphaAnimation(0, 1);
+        fadeIn.setDuration(duration);
+        fadeIn.setFillAfter(true);
+        view.startAnimation(fadeIn);
+        view.setVisibility(View.VISIBLE);
     }
 }

@@ -2,7 +2,6 @@ package com.example.nganjukabirupa;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -16,13 +15,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import retrofit2.*;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    private static final String PREF_NAME = "user_session";
-    private static final String KEY_ID_CUSTOMER = "id_customer";
     private static final String TAG = "RegisterDebug";
 
     private EditText etName, etEmail, etPhone, etPassword, etConfirmPassword;
@@ -51,24 +51,16 @@ public class RegisterActivity extends AppCompatActivity {
             String password = etPassword.getText().toString().trim();
             String confirmPassword = etConfirmPassword.getText().toString().trim();
 
-            if (TextUtils.isEmpty(name)) {
-                etName.setError("Harap isi Nama Lengkap");
+            // Validasi global: semua field harus diisi
+            if (TextUtils.isEmpty(name) || TextUtils.isEmpty(email) || TextUtils.isEmpty(phone)
+                    || TextUtils.isEmpty(password) || TextUtils.isEmpty(confirmPassword)) {
+                Toast.makeText(this, "Semua field harus diisi", Toast.LENGTH_SHORT).show();
                 return;
             }
-            if (TextUtils.isEmpty(email)) {
-                etEmail.setError("Harap isi Email");
-                return;
-            }
+
+            // Validasi per field
             if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
                 etEmail.setError("Format email tidak valid");
-                return;
-            }
-            if (TextUtils.isEmpty(phone)) {
-                etPhone.setError("Harap isi No.Telp");
-                return;
-            }
-            if (TextUtils.isEmpty(password)) {
-                etPassword.setError("Harap isi Kata Sandi");
                 return;
             }
             if (password.length() < 6) {
@@ -81,11 +73,10 @@ public class RegisterActivity extends AppCompatActivity {
             }
 
             RegisterRequest request = new RegisterRequest(name, email, phone, password);
-
             Gson gson = new GsonBuilder().setLenient().create();
 
             Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl("http://192.168.0.117/NganjukAbirupa/") // Ganti IP sesuai ipconfig
+                    .baseUrl("http://172.16.103.103/NganjukAbirupa/") // Ganti IP sesuai ipconfig
                     .addConverterFactory(GsonConverterFactory.create(gson))
                     .build();
 
@@ -101,14 +92,12 @@ public class RegisterActivity extends AppCompatActivity {
                             if (body != null) {
                                 Log.d(TAG, "Response JSON: " + new Gson().toJson(body));
                                 if (body.success) {
-                                    String id_customer = body.idCustomer;
-
-                                    SharedPreferences prefs = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-                                    prefs.edit().putString(KEY_ID_CUSTOMER, id_customer).apply();
-
                                     Toast.makeText(RegisterActivity.this, "Registrasi berhasil!", Toast.LENGTH_SHORT).show();
-                                    startActivity(new Intent(RegisterActivity.this, DashboardActivity.class));
-                                    finish();
+
+                                    Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+                                    intent.putExtra("fromRegister", true);
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                    startActivity(intent);
                                 } else {
                                     Toast.makeText(RegisterActivity.this, body.message, Toast.LENGTH_SHORT).show();
                                 }

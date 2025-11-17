@@ -18,7 +18,7 @@
 
         <!-- Splash screen sebagai launcher -->
         <activity
-            android:name=".SplashScreenActivity"
+            android:name=".LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -27,22 +27,19 @@
         </activity>
 
         <!-- Login screen -->
-        <activity
-            android:name=".LoginActivity"
-            android:exported="false" />
-
         <!-- Main screen -->
         <activity
             android:name=".MainActivity"
             android:exported="false" />
-
         <activity
             android:name=".DashboardActivity"
             android:exported="false" />
-
         <activity android:name=".ProfileActivity"
             android:exported="false" />
 
+        <activity
+            android:name=".RegisterActivity"
+            android:exported="false" />
     </application>
 
 </manifest>
