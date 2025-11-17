@@ -1,160 +1,143 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:background="#FFFFFF"
-    android:padding="16dp"
-    android:clipChildren="false"
-    android:clipToPadding="false">
+    android:layout_height="match_parent"
+    android:background="#F2F2F2">
 
-    <!-- Header Modal -->
-    <LinearLayout
+    <!-- Tombol back -->
+    <ImageButton
+        android:id="@+id/btnBack"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_margin="20dp"
+        android:background="@drawable/bg_circle_white"
+        android:src="@drawable/arrow_back"
+        android:scaleType="centerInside"
+        app:tint="#009688" />
+
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp">
+        android:layout_height="match_parent"
+        android:layout_above="@+id/btnPesan">
 
-        <ImageView
-            android:id="@+id/btnBack"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/arrow_back"
-            android:contentDescription="Back"
-            android:layout_marginEnd="16dp" />
 
-        <TextView
-            android:id="@+id/tvJudulWisata"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:fontFamily="@font/tilt_warp"
-            android:textColor="#000000" />
-    </LinearLayout>
-
-    <!-- Gambar Wisata -->
-    <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="250dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
-        app:cardCornerRadius="16dp"
-        app:cardElevation="8dp"
-        app:cardPreventCornerOverlap="false"
-        app:cardUseCompatPadding="true">
-
-        <ImageView
-            android:id="@+id/ivGambarWisata"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="centerCrop"
-            android:src="@drawable/wisata_air_terjun_sedudo"
-            android:contentDescription="Gambar Wisata" />
-    </androidx.cardview.widget.CardView>
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-    <!-- Nama & Lokasi -->
-    <TextView
-        android:id="@+id/tvNamaWisata"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:fontFamily="@font/tilt_warp"
-        android:textColor="#000000"
-        android:layout_marginBottom="4dp" />
+            <!-- CELAH DI ATAS GAMBAR -->
 
-    <TextView
-        android:id="@+id/tvLokasiWisata"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="12sp"
-        android:fontFamily="@font/tilt_warp"
-        android:textColor="#4E4E4E"
-        android:layout_marginBottom="16dp" />
 
-    <!-- Deskripsi -->
-    <TextView
-        android:id="@+id/tvDeskripsiLabel"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Deskripsi"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        android:fontFamily="@font/tilt_warp"
-        android:textColor="#4E4E4E"
-        android:layout_marginBottom="4dp" />
+            <!-- Gambar Header DIPERKECIL -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="69dp" />
+            <!-- CARD DETAIL -->
+            <ImageView
+                android:id="@+id/imgHeader"
+                android:layout_width="match_parent"
+                android:layout_height="170dp"
+                android:layout_marginHorizontal="16dp"
+                android:adjustViewBounds="true"
+                android:scaleType="centerCrop"
+                android:src="@drawable/wisata_air_terjun_sedudo"
+                android:background="@drawable/image_rounded"
+                android:clipToOutline="true" />
 
-    <TextView
-        android:id="@+id/tvDeskripsi"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="14sp"
-        android:fontFamily="@font/tilt_warp"
-        android:textColor="#4E4E4E"
-        android:layout_marginBottom="16dp" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:layout_margin="16dp"
+                android:background="@drawable/bg_card"
+                android:elevation="4dp">
 
-    <!-- Tiket Masuk -->
-    <TextView
-        android:id="@+id/tvTiketLabel"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Tiket Masuk"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        android:fontFamily="@font/tilt_warp"
-        android:textColor="#4E4E4E"
-        android:layout_marginBottom="4dp" />
+                <!-- Judul -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Air terjun Sedudo"
+                    android:textStyle="bold"
+                    android:textSize="18sp"
+                    android:textColor="#000" />
 
-    <TextView
-        android:id="@+id/tvTiket"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="14sp"
-        android:fontFamily="@font/tilt_warp"
-        android:textColor="#4E4E4E"
-        android:layout_marginBottom="16dp" />
+                <!-- Lokasi -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="Desa Ngliman, Kec. Sawahan, Nganjuk"
+                    android:textColor="#555" />
 
-    <!-- Fasilitas -->
-    <TextView
-        android:id="@+id/tvFasilitasLabel"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Fasilitas"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        android:fontFamily="@font/tilt_warp"
-        android:textColor="#4E4E4E"
-        android:layout_marginBottom="4dp" />
+                <!-- Deskripsi Title -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="Deskripsi"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:textColor="#000" />
 
-    <TextView
-        android:id="@+id/tvFasilitas"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="14sp"
-        android:fontFamily="@font/tilt_warp"
-        android:textColor="#4E4E4E"
-        android:layout_marginBottom="16dp" />
+                <!-- Deskripsi -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="Boleh disebut sebagai Ikon Wisata di Gunung Wilis. Tak heran nama Sedudo menjadi identik sekali dengan Nganjuk. Menjulang setinggi ±105m, berada ditengah tebing, dengan udara yang sangat sejuk tentu membuat sobat wisata betah berendam disini."
+                    android:textColor="#555" />
+
+                <!-- Tiket Masuk -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="Tiket Masuk"
+                    android:textStyle="bold"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="Dewasa : 10.000\nAnak-anak <10th : 8.000"
+                    android:textColor="#555" />
+
+                <!-- Fasilitas -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="Fasilitas"
+                    android:textStyle="bold"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="Warung Makan, Parkir, Toilet, Kamar bilas, Kolam buatan, Anjungan, Pendopo, Kios souvenir, dan Mushola"
+                    android:textColor="#555" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
 
     <!-- Tombol Pesan Sekarang -->
     <Button
-        android:id="@+id/btnPesanSekarang"
+        android:id="@+id/btnPesan"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="55dp"
         android:text="Pesan sekarang"
-        android:textSize="20sp"
-        android:fontFamily="@font/tilt_warp"
-        android:textColor="@android:color/white"
-        android:backgroundTint="#2E9FA6"
-        android:layout_marginTop="32dp"
-        android:elevation="4dp"
-        android:stateListAnimator="@null"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp" />
+        android:layout_alignParentBottom="true"
+        android:textAllCaps="false"
+        android:textColor="#FFF"
+        android:textSize="16sp"
+        android:backgroundTint="#0BB5A7"
+        android:layout_margin="16dp" />
 
-</LinearLayout>
+</RelativeLayout>
