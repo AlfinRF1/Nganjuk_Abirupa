@@ -60,17 +60,8 @@
                     android:text="Riwayat Pembelian Tiket"
                     android:fontFamily="@font/poppins_bold"
                     android:textColor="#4e4e4e"
-                    android:textSize="20sp"/>
+                    android:textSize="25sp"/>
 
-                <TextView
-                    android:id="@+id/tv_transaction_datetime"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="10 Okt 2025"
-                    android:fontFamily="@font/poppins_medium"
-                    android:textColor="#818181"
-                    android:textSize="14sp"
-                    android:layout_marginTop="4dp"/>
             </LinearLayout>
 
             <LinearLayout
