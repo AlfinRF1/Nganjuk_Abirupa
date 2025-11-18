@@ -66,7 +66,7 @@
                     android:id="@+id/tv_transaction_datetime"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="10 Okt 2025  09:39:52 WIB"
+                    android:text="10 Okt 2025"
                     android:fontFamily="@font/poppins_medium"
                     android:textColor="#818181"
                     android:textSize="14sp"
