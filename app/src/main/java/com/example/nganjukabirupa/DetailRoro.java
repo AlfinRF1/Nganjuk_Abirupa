@@ -78,7 +78,7 @@ public class DetailRoro extends AppCompatActivity {
         // Tombol Pesan
         btnPesan.setOnClickListener(v -> {
             Intent intent = new Intent(this, PemesananActivity.class);
-            intent.putExtra("id_wisata", "roro");
+            intent.putExtra("id_wisata", 2);
             intent.putExtra("hargaDewasa", hargaDewasa);
             intent.putExtra("hargaAnak", hargaAnak);
             intent.putExtra("jumlahDewasa", 0);

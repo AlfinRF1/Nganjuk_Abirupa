@@ -78,7 +78,7 @@ public class DetailSri extends AppCompatActivity {
         // Tombol Pesan
         btnPesan.setOnClickListener(v -> {
             Intent intent = new Intent(this, PemesananActivity.class);
-            intent.putExtra("id_wisata", "sri");
+            intent.putExtra("id_wisata", 4);
             intent.putExtra("hargaDewasa", hargaDewasa);
             intent.putExtra("hargaAnak", hargaAnak);
             intent.putExtra("jumlahDewasa", 0);

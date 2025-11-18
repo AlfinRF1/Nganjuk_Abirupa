@@ -78,7 +78,7 @@ public class DetailTral extends AppCompatActivity {
         // Tombol Pesan
         btnPesan.setOnClickListener(v -> {
             Intent intent = new Intent(this, PemesananActivity.class);
-            intent.putExtra("id_wisata", "tral");
+            intent.putExtra("id_wisata", 6); // sesuai ID di database
             intent.putExtra("hargaDewasa", hargaDewasa);
             intent.putExtra("hargaAnak", hargaAnak);
             intent.putExtra("jumlahDewasa", 0);

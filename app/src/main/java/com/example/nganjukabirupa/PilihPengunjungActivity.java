@@ -19,19 +19,16 @@ public class PilihPengunjungActivity extends AppCompatActivity {
     private ImageButton btnPlusAnak, btnMinusAnak;
     private Button btnSimpan;
 
-    private String idWisata, namaWisata, lokasi;
-    private int tiketDewasa, tiketAnak, asuransi;
+    private int idWisata, tiketDewasa, tiketAnak, asuransi;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pilihpengunjung);
 
-        // Ambil data wisata dari intent
+        // Ambil data dari intent
         Intent intent = getIntent();
-        idWisata = intent.getStringExtra("idWisata");
-        namaWisata = intent.getStringExtra("namaWisata");
-        lokasi = intent.getStringExtra("lokasi");
+        idWisata = intent.getIntExtra("idWisata", -1);
         tiketDewasa = intent.getIntExtra("tiketDewasa", 0);
         tiketAnak = intent.getIntExtra("tiketAnak", 0);
         asuransi = intent.getIntExtra("asuransi", 0);
@@ -43,7 +40,7 @@ public class PilihPengunjungActivity extends AppCompatActivity {
         btnMinusDewasa = findViewById(R.id.btnMinDewasa);
         btnPlusAnak = findViewById(R.id.btnPlusAnak);
         btnMinusAnak = findViewById(R.id.btnMinAnak);
-        btnSimpan = findViewById(R.id.btnSimpan); // pastikan ini juga ada di XML
+        btnSimpan = findViewById(R.id.btnSimpan);
 
         // Tombol tambah/kurang dewasa
         btnPlusDewasa.setOnClickListener(v -> {
@@ -71,23 +68,18 @@ public class PilihPengunjungActivity extends AppCompatActivity {
             }
         });
 
-        // Tombol simpan → kirim data ke PemesananActivity
+        // Tombol simpan → kirim data balik ke PemesananActivity
         btnSimpan.setOnClickListener(v -> {
             if (jumlahDewasa + jumlahAnak == 0) {
                 Toast.makeText(this, "Jumlah pengunjung belum diisi", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            Intent nextIntent = new Intent(PilihPengunjungActivity.this, PemesananActivity.class);
-            nextIntent.putExtra("idWisata", idWisata);
-            nextIntent.putExtra("namaWisata", namaWisata);
-            nextIntent.putExtra("lokasi", lokasi);
-            nextIntent.putExtra("tiketDewasa", tiketDewasa);
-            nextIntent.putExtra("tiketAnak", tiketAnak);
-            nextIntent.putExtra("asuransi", asuransi);
-            nextIntent.putExtra("jumlahDewasa", jumlahDewasa);
-            nextIntent.putExtra("jumlahAnak", jumlahAnak);
-            startActivity(nextIntent);
+            Intent resultIntent = new Intent();
+            resultIntent.putExtra("jumlahDewasa", jumlahDewasa);
+            resultIntent.putExtra("jumlahAnak", jumlahAnak);
+            setResult(RESULT_OK, resultIntent);
+            finish(); // kembali ke PemesananActivity
         });
     }
 }

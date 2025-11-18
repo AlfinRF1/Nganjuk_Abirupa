@@ -39,6 +39,6 @@ public interface ApiService {
     Call<WisataModel> getDetailWisata(@Query("id") int id);
 
     // ⚠️ Ambil detail wisata raw (ResponseBody) → aman untuk string atau object
-    @GET("detail_wisata.php")
+    @GET("get_detail_wisata.php")
     Call<ResponseBody> getDetailWisataRaw(@Query("id") int id);
 }
