@@ -43,6 +43,8 @@ public interface ApiService {
     // ⚠️ Ambil detail wisata raw (ResponseBody) → aman untuk string atau object
     @GET("get_detail_wisata.php")
     Call<ResponseBody> getDetailWisataRaw(@Query("id") int id);
+    @GET("check_nama.php")
+    Call<CheckNamaResponse> checkNama(@Query("nama_customer") String nama_customer);
 
     @FormUrlEncoded
     @POST("insert_pemesanan.php")
