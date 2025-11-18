@@ -3,6 +3,8 @@ package com.example.nganjukabirupa;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.Field;
+import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.GET;
@@ -41,4 +43,15 @@ public interface ApiService {
     // ⚠️ Ambil detail wisata raw (ResponseBody) → aman untuk string atau object
     @GET("get_detail_wisata.php")
     Call<ResponseBody> getDetailWisataRaw(@Query("id") int id);
+
+    @FormUrlEncoded
+    @POST("insert_pemesanan.php")
+    Call<ResponseBody> insertPemesanan(
+            @Field("nama_customer") String nama,
+            @Field("tlp_costumer") String telepon,
+            @Field("tanggal_pesan") String tanggal,
+            @Field("jml_tiket") int jumlah,
+            @Field("harga_total") int total,
+            @Field("id_wisata") int idWisata
+    );
 }

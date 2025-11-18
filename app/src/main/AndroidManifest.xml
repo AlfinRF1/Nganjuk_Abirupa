@@ -33,8 +33,9 @@
         <activity android:name=".ProfileActivity" android:exported="false" />
         <activity android:name=".RegisterActivity" android:exported="false" />
         <activity android:name=".PemesananActivity" android:exported="false" />
-        <activity android:name=".RiwayatActivity" android:exported="false" />
         <activity android:name=".DetailGoa" android:exported="false" />
+        <activity android:name=".RiwayatActivity" android:exported="false" />
+        <activity android:name=".PilihPengunjungActivity" android:exported="false" />
         <activity android:name=".DetailSedudo" android:exported="false" />
         <activity android:name=".DetailSri" android:exported="false" />
         <activity android:name=".DetailRoro" android:exported="false" />

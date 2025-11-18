@@ -83,7 +83,7 @@
                 android:gravity="center_vertical"
                 android:background="@drawable/rounded_counter_bg">
 
-                <ImageView
+                <ImageButton
                 android:id="@+id/btnMinDewasa"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
@@ -104,7 +104,7 @@
                     android:paddingHorizontal="8dp"
                     android:gravity="center" />
 
-                <ImageView
+                <ImageButton
                     android:id="@+id/btnPlusDewasa"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
@@ -160,7 +160,7 @@
                 android:gravity="center_vertical"
                 android:background="@drawable/rounded_counter_bg">
 
-                <ImageView
+                <ImageButton
                     android:id="@+id/btnMinAnak"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
@@ -181,7 +181,7 @@
                     android:paddingHorizontal="8dp"
                     android:gravity="center" />
 
-                <ImageView
+                <ImageButton
                     android:id="@+id/btnPlusAnak"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
