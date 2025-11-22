@@ -43,7 +43,7 @@
                 android:layout_marginHorizontal="16dp"
                 android:adjustViewBounds="true"
                 android:scaleType="centerCrop"
-                android:src="@drawable/wisata_roro_kuning"
+                android:src="@drawable/default_wisata"
                 android:background="@drawable/image_rounded"
                 android:clipToOutline="true" />
 

@@ -3,12 +3,33 @@ package com.example.nganjukabirupa;
 import com.google.gson.annotations.SerializedName;
 
 public class Profile {
+    @SerializedName("id_customer")
+    private String idCustomer;
+
     @SerializedName("nama_customer")
-    public String namaCustomer;
+    private String namaCustomer;
 
     @SerializedName("email_customer")
-    public String emailCustomer;
+    private String emailCustomer;
 
     @SerializedName("no_tlp")
-    public String noTelp;
+    private String noTelp;
+
+
+    // Getter
+    public String getIdCustomer() {
+        return idCustomer;
+    }
+
+    public String getNamaCustomer() {
+        return namaCustomer;
+    }
+
+    public String getEmailCustomer() {
+        return emailCustomer;
+    }
+
+    public String getNoTelp() {
+        return noTelp;
+    }
 }

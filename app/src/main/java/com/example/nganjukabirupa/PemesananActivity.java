@@ -1,7 +1,9 @@
 package com.example.nganjukabirupa;
 
 import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
@@ -16,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.Calendar;
 
 import okhttp3.ResponseBody;
@@ -101,12 +104,22 @@ public class PemesananActivity extends AppCompatActivity {
             datePickerDialog.show();
         });
 
-        // Tombol bayar
+        // Tombol bayar — ✅ DIPERBAIKI: hanya 1 alur
         btnBayar.setOnClickListener(v -> {
             String nama = etNama.getText().toString().trim();
             String telepon = etTelepon.getText().toString().trim();
             String tanggalDipilih = etTanggal.getText().toString().trim();
 
+            SharedPreferences prefs = getSharedPreferences("user_session", MODE_PRIVATE);
+            String idCustomerStr = prefs.getString("id_customer", "-1");
+            int idCustomer = Integer.parseInt(idCustomerStr);
+
+            if (idCustomer == -1) {
+                Toast.makeText(this, "User belum login", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // Validasi input
             if (nama.isEmpty()) {
                 Toast.makeText(this, "Silakan isi nama lengkap", Toast.LENGTH_SHORT).show();
                 return;
@@ -117,8 +130,8 @@ public class PemesananActivity extends AppCompatActivity {
                 return;
             }
 
-            if (telepon.length() < 11 || telepon.length() > 13) {
-                Toast.makeText(this, "Nomor telepon harus 11–13 digit", Toast.LENGTH_SHORT).show();
+            if (!telepon.matches("^08\\d{9,11}$")) {
+                Toast.makeText(this, "Nomor telepon harus dimulai dengan 08 dan 11–13 digit", Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -132,6 +145,7 @@ public class PemesananActivity extends AppCompatActivity {
                 return;
             }
 
+            // Hitung total
             int totalTiket = (jumlahDewasa * hargaDewasa) + (jumlahAnak * hargaAnak);
             int totalAsuransi = (jumlahDewasa + jumlahAnak) * tarifAsuransi;
             int totalHarga = totalTiket + totalAsuransi;
@@ -144,6 +158,7 @@ public class PemesananActivity extends AppCompatActivity {
             Log.d("Bayar", "Total: " + totalHarga);
             Log.d("Bayar", "ID Wisata: " + idWisata);
 
+            // Kirim ke backend
             ApiService apiService = RetrofitClient.getClient().create(ApiService.class);
             Call<ResponseBody> call = apiService.insertPemesanan(
                     nama,
@@ -154,27 +169,61 @@ public class PemesananActivity extends AppCompatActivity {
                     idWisata
             );
 
+            ProgressDialog progress = new ProgressDialog(this);
+            progress.setMessage("Proses transaksi...");
+            progress.setCancelable(false);
+            progress.show();
+
             call.enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    progress.dismiss();
                     if (response.isSuccessful()) {
                         Toast.makeText(PemesananActivity.this, "Transaksi berhasil disimpan!", Toast.LENGTH_SHORT).show();
 
-                        Intent intent = new Intent(PemesananActivity.this, KodeQRActivity.class);
+                        // Simpan riwayat (opsional)
+                        Call<ResponseBody> riwayatCall = apiService.insertRiwayat(
+                                idCustomer, idWisata, tanggalDipilih, totalTiket
+                        );
+                        riwayatCall.enqueue(new Callback<ResponseBody>() {
+                            @Override
+                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                if (response.isSuccessful()) {
+                                    Log.d("Riwayat", "Simpan riwayat berhasil");
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                Log.e("Riwayat", "Error simpan riwayat: " + t.getMessage());
+                            }
+                        });
+
+                        // Pindah ke QR code activity
+                        Intent intent = new Intent(PemesananActivity.this, QrCodeActivity.class);
                         intent.putExtra("nama", nama);
                         intent.putExtra("telepon", telepon);
                         intent.putExtra("tanggal", tanggalDipilih);
                         intent.putExtra("jumlah", jumlahPengunjung);
-                        intent.putExtra("total", totalHarga);
+                        intent.putExtra("total", String.valueOf(totalHarga));
                         intent.putExtra("idWisata", idWisata);
                         startActivity(intent);
+                        finish(); // agar tidak bisa kembali ke form
                     } else {
+                        try {
+                            String error = response.errorBody() != null ? response.errorBody().string() : "Unknown error";
+                            Log.e("Bayar", "Error: " + error);
+                        } catch (IOException e) {
+                            Log.e("Bayar", "Gagal baca error body", e);
+                        }
                         Toast.makeText(PemesananActivity.this, "Gagal menyimpan transaksi", Toast.LENGTH_SHORT).show();
                     }
                 }
 
                 @Override
                 public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    progress.dismiss();
+                    Log.e("Bayar", "Network error", t);
                     Toast.makeText(PemesananActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
@@ -234,6 +283,7 @@ public class PemesananActivity extends AppCompatActivity {
             hitungTotalHarga();
         }
     }
+
     void hitungTotalHarga() {
         int totalTiket = (jumlahDewasa * hargaDewasa) + (jumlahAnak * hargaAnak);
         int totalAsuransi = (jumlahDewasa + jumlahAnak) * tarifAsuransi;

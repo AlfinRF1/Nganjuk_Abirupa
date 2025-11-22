@@ -33,7 +33,7 @@
                 android:adjustViewBounds="true"
                 android:background="@drawable/image_rounded"
                 android:scaleType="centerCrop"
-                android:src="@drawable/wisata_tral"
+                android:src="@drawable/default_wisata"
                 android:clipToOutline="true"/>
 
             <LinearLayout

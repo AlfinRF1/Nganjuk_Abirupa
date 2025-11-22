@@ -1,5 +1,7 @@
 package com.example.nganjukabirupa;
 
+import java.util.List;
+
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -16,35 +18,31 @@ public interface ApiService {
     @Headers("Content-Type: application/json")
     @POST("register.php")
     Call<RegisterResponse> register(@Body RegisterRequest request);
-
     // 🔐 Login manual
     @Headers("Content-Type: application/json")
     @POST("login.php")
     Call<LoginResponse> login(@Body LoginRequest request);
-
     // 🔐 Login Google
     @Headers("Content-Type: application/json")
     @POST("google_login.php")
     Call<LoginResponse> googleLogin(@Body GoogleLoginRequest request);
-
     // 📄 Ambil profil user
     @Headers("Content-Type: application/json")
     @POST("get_profile.php")
     Call<ProfileResponse> getProfile(@Body ProfileRequest request);
-
     @Headers("Content-Type: application/json")
     @POST("get_profile_by_email.php")
     Call<ProfileResponse> getProfileByEmail(@Body EmailRequest request);
-
     // ⚠️ Ambil detail wisata (Gson-safe)
     @GET("get_detail_wisata.php")
     Call<WisataModel> getDetailWisata(@Query("id") int id);
-
     // ⚠️ Ambil detail wisata raw (ResponseBody) → aman untuk string atau object
     @GET("get_detail_wisata.php")
     Call<ResponseBody> getDetailWisataRaw(@Query("id") int id);
     @GET("check_nama.php")
     Call<CheckNamaResponse> checkNama(@Query("nama_customer") String nama_customer);
+    @GET("get_riwayat.php")
+    Call<List<RiwayatModel>> getRiwayat(@Query("id_customer") int idCustomer);
 
     @FormUrlEncoded
     @POST("insert_pemesanan.php")
@@ -55,5 +53,14 @@ public interface ApiService {
             @Field("jml_tiket") int jumlah,
             @Field("harga_total") int total,
             @Field("id_wisata") int idWisata
+    );
+
+    @FormUrlEncoded
+    @POST("insert_riwayat.php")
+    Call<ResponseBody> insertRiwayat(
+            @Field("id_customer") int idCustomer,
+            @Field("id_wisata") int idWisata,
+            @Field("tanggal") String tanggal,
+            @Field("harga_total") int hargaTotal
     );
 }

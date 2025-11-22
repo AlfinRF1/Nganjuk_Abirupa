@@ -139,7 +139,7 @@
             android:minHeight="48dp"
             android:paddingStart="12dp"
             android:paddingEnd="12dp"
-            android:text="01 Dewasa, 00 Anak"
+            android:text="00 Dewasa, 00 Anak"
             android:textAllCaps="false"
             android:textColor="#9E9E9E"
             android:textSize="14sp" />

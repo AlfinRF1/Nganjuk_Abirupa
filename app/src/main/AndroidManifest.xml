@@ -40,6 +40,8 @@
         <activity android:name=".DetailSri" android:exported="false" />
         <activity android:name=".DetailRoro" android:exported="false" />
         <activity android:name=".DetailTral" android:exported="false" />
+        <activity android:name=".DetailRiwayatActivity" android:exported="false"/>
+        <activity android:name=".QrCodeActivity" android:exported="false" />
     </application>
 
 </manifest>

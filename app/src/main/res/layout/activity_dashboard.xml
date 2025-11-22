@@ -47,8 +47,7 @@
                 android:fontFamily="@font/poppins_bold"
                 android:textColor="#FFFFFF"
                 android:textSize="18sp"
-                android:textStyle="bold"
-                tools:text="Selamat Datang, Nama Kamu!" />
+                android:textStyle="bold"/>
         </LinearLayout>
 
 

@@ -33,103 +33,15 @@
             android:textStyle="bold" />
     </LinearLayout>
 
-    <!-- Scroll View untuk Daftar Transaksi -->
-    <ScrollView
+    <!-- RecyclerView untuk daftar riwayat -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewRiwayat"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:padding="16dp"
-        android:scrollbars="vertical">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <!-- Template Item Transaksi (Hapus atau duplikasi saat runtime) -->
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="4dp"
-                app:cardUseCompatPadding="true">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:padding="12dp"
-                    android:gravity="center_vertical">
-
-                    <ImageView
-                        android:id="@+id/iv_wisata_image"
-                        android:layout_width="64dp"
-                        android:layout_height="64dp"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/default_wisata_placeholder"
-                        android:contentDescription="Gambar Wisata" />
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:id="@+id/tv_tanggal"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="end"
-                            android:layout_marginTop="8dp"
-                            android:text="DD/MM/YYYY"
-                            android:textColor="#999999"
-                            android:textSize="12sp" />
-
-                        <TextView
-                            android:id="@+id/tv_wisata_nama"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Air Terjun Sedudo"
-                            android:textColor="#333333"
-                            android:textSize="16sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/tv_wisata_lokasi"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            android:text="Sawahan, Nganjuk"
-                            android:textColor="#666666"
-                            android:textSize="14sp" />
-
-                        <TextView
-                            android:id="@+id/tv_total_harga"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Total Tiket : Rp. 00000"
-                            android:textColor="#333333"
-                            android:textSize="14sp"
-                            android:textStyle="bold" />
-                    </LinearLayout>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="end"
-                    android:paddingEnd="16dp"
-                    android:paddingBottom="8dp">
-
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-            <!-- Item Transaksi Lainnya (Ditambahkan secara dinamis di kode) -->
-
-        </LinearLayout>
-    </ScrollView>
+        android:clipToPadding="false"
+        android:scrollbars="vertical" />
 
     <!-- Bottom Navigation Bar -->
     <LinearLayout

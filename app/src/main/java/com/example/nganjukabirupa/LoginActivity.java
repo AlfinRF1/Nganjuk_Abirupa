@@ -89,15 +89,15 @@ public class LoginActivity extends AppCompatActivity {
                 .build();
         googleSignInClient = GoogleSignIn.getClient(this, gso);
 
-        // Cek apakah datang dari RegisterActivity
-        boolean fromRegister = getIntent().getBooleanExtra("fromRegister", false);
-
+        // Auto-login kalau session ada
         SharedPreferences prefs = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        boolean fromRegister = getIntent().getBooleanExtra("fromRegister", false);
         if (prefs.contains(KEY_ID_CUSTOMER) && !fromRegister) {
             startActivity(new Intent(LoginActivity.this, DashboardActivity.class));
             finish();
         }
 
+        // Login manual
         btnLogin.setOnClickListener(v -> {
             String nama = etUsername.getText().toString().trim();
             String password = etPassword.getText().toString().trim();
@@ -136,6 +136,7 @@ public class LoginActivity extends AppCompatActivity {
             });
         });
 
+        // Login Google
         googleSignInButton.setOnClickListener(v -> {
             googleSignInClient.signOut().addOnCompleteListener(this, task -> {
                 Intent signInIntent = googleSignInClient.getSignInIntent();
@@ -199,6 +200,9 @@ public class LoginActivity extends AppCompatActivity {
     private void saveSession(String id_customer, String nama, String email, String photoUrl) {
         SharedPreferences prefs = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
+
+        // ✅ Clear dulu biar data lama nggak nyangkut
+        editor.clear();
 
         if (id_customer != null) editor.putString(KEY_ID_CUSTOMER, id_customer);
         if (nama != null) editor.putString(KEY_NAMA_CUSTOMER, nama);
