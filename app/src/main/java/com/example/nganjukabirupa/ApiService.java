@@ -85,11 +85,11 @@ public interface ApiService {
             @Field("nama_customer") String nama,
             @Field("tlp_costumer") String telepon,
             @Field("tanggal_pesan") String tanggal,
-            @Field("jml_tiket") int jumlah,
-            @Field("harga_total") int total,
-            @Field("id_wisata") int idWisata
+            @Field("jml_tiket") String jumlah,
+            @Field("harga_total") String total,
+            @Field("id_wisata") String idWisata,
+            @Field("id_customer") String idCustomer
     );
-
     @FormUrlEncoded
     @POST("insert_riwayat.php")
     Call<ResponseBody> insertRiwayat(

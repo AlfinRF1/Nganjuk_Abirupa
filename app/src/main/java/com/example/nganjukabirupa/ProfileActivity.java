@@ -48,14 +48,11 @@ public class ProfileActivity extends AppCompatActivity {
         String nama_customer = prefs.getString(KEY_NAMA_CUSTOMER, null);
         String photo_url = prefs.getString(KEY_PHOTO_URL, null);
 
-        // ✅ tampilkan data dari session dulu
-        if (nama_customer != null && !nama_customer.isEmpty()) {
-            tvNama.setText(nama_customer);
-        }
-        if (email_customer != null && !email_customer.isEmpty()) {
-            tvEmail.setText(email_customer);
-        }
-        if (photo_url != null && !photo_url.isEmpty()) {
+        // TAMPILKAN DATA DARI SESSION
+        tvNama.setText(nama_customer != null ? nama_customer : "User");
+        tvEmail.setText(email_customer != null ? email_customer : "-");
+
+        if (photo_url != null) {
             Glide.with(this)
                     .load(photo_url)
                     .placeholder(R.drawable.default_profile_placeholder)
@@ -65,18 +62,13 @@ public class ProfileActivity extends AppCompatActivity {
             imgPhoto.setImageResource(R.drawable.default_profile_placeholder);
         }
 
-        // ✅ ambil data terbaru dari backend (opsional)
+        // FETCH PROFIL TERBARU TANPA CLEAR SESSION
         if (id_customer != null) {
             ambilDataProfilById(id_customer);
-        } else if (email_customer != null) {
-            ambilDataProfilByEmail(email_customer);
-        } else {
-            Toast.makeText(this, "Data user tidak ditemukan", Toast.LENGTH_SHORT).show();
         }
 
         btnLogout.setOnClickListener(v -> {
             prefs.edit().clear().apply();
-            Toast.makeText(this, "Logout berhasil", Toast.LENGTH_SHORT).show();
             startActivity(new Intent(ProfileActivity.this, LoginActivity.class));
             finish();
         });
@@ -95,70 +87,27 @@ public class ProfileActivity extends AppCompatActivity {
         call.enqueue(new Callback<ProfileResponse>() {
             @Override
             public void onResponse(Call<ProfileResponse> call, Response<ProfileResponse> response) {
-                if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
-                    String nama = response.body().getProfile().getNamaCustomer();
-                    String email = response.body().getProfile().getEmailCustomer();
-
-                    if (nama != null && !nama.isEmpty()) {
-                        tvNama.setText(nama);
-                    }
-                    if (email != null && !email.isEmpty()) {
-                        tvEmail.setText(email);
-                    }
-
-                    // ✅ update session hanya kalau data valid
-                    SharedPreferences.Editor editor = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE).edit();
-                    editor.clear(); // bersihkan dulu biar data lama nggak nyangkut
-                    if (nama != null) editor.putString(KEY_NAMA_CUSTOMER, nama);
-                    if (email != null) editor.putString(KEY_EMAIL_CUSTOMER, email);
-                    if (response.body().getProfile().getIdCustomer() != null) {
-                        editor.putString(KEY_ID_CUSTOMER, response.body().getProfile().getIdCustomer());
-                    }
-                    // ❌ photo_url tidak diambil dari backend, tetap pakai session Google
-                    editor.apply();
-                } else {
-                    Toast.makeText(ProfileActivity.this, "Gagal ambil profil", Toast.LENGTH_SHORT).show();
+                if (!response.isSuccessful() || response.body() == null || !response.body().isSuccess()) {
+                    return;
                 }
-            }
 
-            @Override
-            public void onFailure(Call<ProfileResponse> call, Throwable t) {
-                Toast.makeText(ProfileActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
+                String nama = response.body().getProfile().getNamaCustomer();
+                String email = response.body().getProfile().getEmailCustomer();
 
-    private void ambilDataProfilByEmail(String email_customer) {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://nganjukabirupa.pbltifnganjuk.com/nganjukabirupa/apimobile/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
+                if (nama != null) tvNama.setText(nama);
+                if (email != null) tvEmail.setText(email);
 
-        ApiService apiService = retrofit.create(ApiService.class);
-        EmailRequest request = new EmailRequest(email_customer);
-        Call<ProfileResponse> call = apiService.getProfileByEmail(request);
+                // UPDATE SESSION TANPA CLEAR
+                SharedPreferences.Editor editor = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE).edit();
+                if (nama != null) editor.putString(KEY_NAMA_CUSTOMER, nama);
+                if (email != null) editor.putString(KEY_EMAIL_CUSTOMER, email);
 
-        call.enqueue(new Callback<ProfileResponse>() {
-            @Override
-            public void onResponse(Call<ProfileResponse> call, Response<ProfileResponse> response) {
-                if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
-                    String nama = response.body().getProfile().getNamaCustomer();
-                    String email = response.body().getProfile().getEmailCustomer();
-
-                    if (nama != null && !nama.isEmpty()) {
-                        tvNama.setText(nama);
-                    }
-                    if (email != null && !email.isEmpty()) {
-                        tvEmail.setText(email);
-                    }
-
-                    SharedPreferences.Editor editor = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE).edit();
-                    if (nama != null) editor.putString(KEY_NAMA_CUSTOMER, nama);
-                    if (email != null) editor.putString(KEY_EMAIL_CUSTOMER, email);
-                    editor.apply();
-                } else {
-                    Toast.makeText(ProfileActivity.this, "Gagal ambil profil via email", Toast.LENGTH_SHORT).show();
+                // pastikan ID customer selalu tersimpan
+                if (response.body().getProfile().getIdCustomer() != null) {
+                    editor.putString(KEY_ID_CUSTOMER, response.body().getProfile().getIdCustomer());
                 }
+
+                editor.apply();
             }
 
             @Override
@@ -175,8 +124,17 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     public void onRiwayatClicked(View view) {
+        SharedPreferences prefs = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
+        String id = prefs.getString(KEY_ID_CUSTOMER, null);
+
+        if (id == null) {
+            Toast.makeText(this, "Session hilang, login ulang", Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
+            return;
+        }
+
         startActivity(new Intent(this, RiwayatActivity.class));
-        finish();
     }
 
     public void onProfileClicked(View view) {

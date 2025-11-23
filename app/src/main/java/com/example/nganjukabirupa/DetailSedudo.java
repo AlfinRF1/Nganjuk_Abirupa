@@ -98,12 +98,13 @@ public class DetailSedudo extends AppCompatActivity {
 
         // Tombol Back
         ImageButton btnBack = findViewById(R.id.btnBack);
+        btnBack = findViewById(R.id.btnBack);
         btnBack.setOnClickListener(v -> {
-            // Balik ke Dashboard
             Intent intent = new Intent(DetailSedudo.this, DashboardActivity.class);
             startActivity(intent);
-            finish(); // biar DetailWisata nggak numpuk di back stack
+            finish();
         });
+
     }
 
     // ✅ Mapping gambar berdasarkan ID wisata

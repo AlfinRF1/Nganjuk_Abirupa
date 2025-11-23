@@ -71,12 +71,6 @@ public class RiwayatActivity extends AppCompatActivity {
                     } else {
                         // Pastikan setiap item punya id_transaksi & total_harga
                         for (RiwayatModel item : riwayatList) {
-                            if (item.getIdTransaksi() == null) {
-                                item.setIdTransaksi("-");
-                            }
-                            if (item.getTotalHarga() == 0) {
-                                item.setTotalHarga(0);
-                            }
                         }
                         adapter = new RiwayatAdapter(riwayatList);
                         recyclerView.setAdapter(adapter);

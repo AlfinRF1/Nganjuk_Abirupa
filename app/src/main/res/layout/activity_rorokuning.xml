@@ -5,20 +5,6 @@
     android:layout_height="match_parent"
     android:background="#F2F2F2">
 
-    <!-- Tombol Back -->
-    <ImageButton
-        android:id="@+id/btnBack"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_margin="20dp"
-        android:background="@drawable/bg_circle_white"
-        android:src="@drawable/arrow_back"
-        android:scaleType="centerInside"
-        app:tint="#009688"
-        android:clickable="true"
-        android:focusable="true"
-        />
-
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -148,5 +134,18 @@
         android:textSize="16sp"
         android:backgroundTint="#0BB5A7"
         android:layout_margin="16dp" />
+
+    <!-- Tombol Back paling atas supaya bisa diklik -->
+    <ImageButton
+        android:id="@+id/btnBack"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_margin="20dp"
+        android:background="@drawable/bg_circle_white"
+        android:src="@drawable/arrow_back"
+        android:scaleType="centerInside"
+        app:tint="#009688"
+        android:clickable="true"
+        android:focusable="true" />
 
 </RelativeLayout>

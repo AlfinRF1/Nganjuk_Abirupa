@@ -93,12 +93,13 @@ public class RiwayatAdapter extends RecyclerView.Adapter<RiwayatAdapter.ViewHold
             DetailRiwayatBottomSheet bottomSheet = DetailRiwayatBottomSheet.newInstance(
                     model.getNamaWisata(),
                     model.getLokasi(),
-                    idTransaksi,
+                    model.getIdTransaksi(),
                     model.getTanggal(),
                     model.getStatus(),
-                    model.getMetodePembayaran(),
+                    model.getMetodePembayaran(), // pasti QRIS
                     totalStr
             );
+
             bottomSheet.show(((AppCompatActivity) context).getSupportFragmentManager(), "detail_riwayat");
         });
     }

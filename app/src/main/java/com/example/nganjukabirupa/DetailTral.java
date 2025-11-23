@@ -68,7 +68,7 @@ public class DetailTral extends AppCompatActivity {
                     hargaDewasa = data.getTiketDewasa();
                     hargaAnak = data.getTiketAnak();
 
-                    // ✅ langsung set resource tanpa Glide
+                    // langsung set resource tanpa Glide
                     int imageResId = getDrawableForWisata(idWisata);
                     imgHeader.setImageResource(imageResId);
 
@@ -96,15 +96,17 @@ public class DetailTral extends AppCompatActivity {
 
         // Tombol Back
         ImageButton btnBack = findViewById(R.id.btnBack);
+        // Tombol Back
+        btnBack = findViewById(R.id.btnBack);
         btnBack.setOnClickListener(v -> {
-            // Balik ke Dashboard
             Intent intent = new Intent(DetailTral.this, DashboardActivity.class);
             startActivity(intent);
-            finish(); // biar DetailWisata nggak numpuk di back stack
+            finish();
         });
+
     }
 
-    // ✅ Mapping gambar berdasarkan ID wisata
+    // Mapping gambar berdasarkan ID wisata
     private int getDrawableForWisata(int idWisata) {
         switch (idWisata) {
             case 1: return R.drawable.wisata_air_terjun_sedudo;
