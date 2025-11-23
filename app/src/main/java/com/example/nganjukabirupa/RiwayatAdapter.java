@@ -1,8 +1,7 @@
 package com.example.nganjukabirupa;
 
 import android.content.Context;
-import android.content.Intent;
-import android.util.Log;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,9 +12,13 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class RiwayatAdapter extends RecyclerView.Adapter<RiwayatAdapter.ViewHolder> {
+
     private final List<RiwayatModel> riwayatList;
 
     public RiwayatAdapter(List<RiwayatModel> riwayatList) {
@@ -39,7 +42,8 @@ public class RiwayatAdapter extends RecyclerView.Adapter<RiwayatAdapter.ViewHold
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_riwayat_card, parent, false);
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.item_riwayat_card, parent, false);
         return new ViewHolder(view);
     }
 
@@ -48,51 +52,71 @@ public class RiwayatAdapter extends RecyclerView.Adapter<RiwayatAdapter.ViewHold
         RiwayatModel model = riwayatList.get(position);
         Context context = holder.itemView.getContext();
 
-        String namaWisata = model.getNamaWisata() != null ? model.getNamaWisata() : "Wisata";
-        int imageResId = getDrawableForWisata(context, namaWisata);
-        holder.ivWisataImage.setImageResource(imageResId);
+        // Nama & lokasi wisata
+        holder.tvNamaWisata.setText(!TextUtils.isEmpty(model.getNamaWisata()) ? model.getNamaWisata() : "-");
+        holder.tvLokasiWisata.setText(!TextUtils.isEmpty(model.getLokasi()) ? model.getLokasi() : "-");
 
-        String tanggal = model.getTanggal() != null ? model.getTanggal().split(" ")[0] : "-";
-        holder.tvTanggal.setText(tanggal);
-        holder.tvNamaWisata.setText(namaWisata);
-        holder.tvLokasiWisata.setText(model.getLokasi() != null ? model.getLokasi() : "-");
-        holder.tvTotalHarga.setText("Total Tiket : Rp. " + model.getTotalHarga());
+        // Total harga langsung dari DB (tiket + asuransi)
+        holder.tvTotalHarga.setText("Total Tiket : Rp. " + String.format("%,d", model.getTotalHarga()));
 
-        Log.d("RiwayatAdapter", "Wisata: " + namaWisata + " → Image: " + imageResId);
+        // Image sesuai nama wisata
+        holder.ivWisataImage.setImageResource(getDrawableForWisata(context, model.getNamaWisata()));
 
-        // ✅ Klik card → buka DetailRiwayatActivity
+        // Format tanggal fleksibel
+        String tanggalStr = "-";
+        if (!TextUtils.isEmpty(model.getTanggal())) {
+            try {
+                String[] patterns = {"yyyy-MM-dd", "yyyy-MM-dd HH:mm:ss"};
+                Date date = null;
+                for (String p : patterns) {
+                    try {
+                        date = new SimpleDateFormat(p, Locale.getDefault()).parse(model.getTanggal());
+                        if (date != null) break;
+                    } catch (Exception ignored) {}
+                }
+                if (date != null) {
+                    tanggalStr = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault()).format(date);
+                } else {
+                    tanggalStr = model.getTanggal();
+                }
+            } catch (Exception e) {
+                tanggalStr = model.getTanggal();
+            }
+        }
+        holder.tvTanggal.setText(tanggalStr);
+
+        // Klik item → buka DetailRiwayatBottomSheet
         holder.itemView.setOnClickListener(v -> {
+            String idTransaksi = model.getIdTransaksi() != null ? model.getIdTransaksi() : "-";
+            String totalStr = "Rp. " + String.format("%,d", model.getTotalHarga());
+
             DetailRiwayatBottomSheet bottomSheet = DetailRiwayatBottomSheet.newInstance(
                     model.getNamaWisata(),
                     model.getLokasi(),
-                    model.getIdTransaksi(),
+                    idTransaksi,
                     model.getTanggal(),
                     model.getStatus(),
-                    "QRIS",
-                    "Rp. " + model.getTotalHarga()
+                    model.getMetodePembayaran(),
+                    totalStr
             );
             bottomSheet.show(((AppCompatActivity) context).getSupportFragmentManager(), "detail_riwayat");
         });
-
     }
 
     @Override
     public int getItemCount() {
-        int count = riwayatList != null ? riwayatList.size() : 0;
-        Log.d("RiwayatAdapter", "Jumlah item: " + count);
-        return count;
+        return riwayatList != null ? riwayatList.size() : 0;
     }
 
+    // Pilih drawable sesuai nama wisata
     private int getDrawableForWisata(Context context, String namaWisata) {
         if (namaWisata == null) return R.drawable.default_wisata;
-
-        String lowerNama = namaWisata.toLowerCase();
-
-        if (lowerNama.contains("sedudo")) return R.drawable.wisata_air_terjun_sedudo;
-        else if (lowerNama.contains("roro kuning")) return R.drawable.wisata_roro_kuning;
-        else if (lowerNama.contains("margo tresno")) return R.drawable.wisata_goa_margotresno;
-        else if (lowerNama.contains("sri tanjung")) return R.drawable.wisata_sritanjung;
-        else if (lowerNama.contains("anjuk ladang") || lowerNama.contains("tral")) return R.drawable.wisata_tral;
-        else return R.drawable.default_wisata;
+        String lower = namaWisata.toLowerCase();
+        if (lower.contains("sedudo")) return R.drawable.wisata_air_terjun_sedudo;
+        if (lower.contains("roro kuning")) return R.drawable.wisata_roro_kuning;
+        if (lower.contains("margo tresno")) return R.drawable.wisata_goa_margotresno;
+        if (lower.contains("sri tanjung")) return R.drawable.wisata_sritanjung;
+        if (lower.contains("anjuk ladang") || lower.contains("tral")) return R.drawable.wisata_tral;
+        return R.drawable.default_wisata;
     }
 }

@@ -30,18 +30,18 @@ public class PemesananActivity extends AppCompatActivity {
 
     private static final int REQUEST_JUMLAH = 100;
 
-    TextView tvTotalHarga, tvLabelDewasa, tvLabelAnak, tvLabelAsuransi;
-    TextView tvHargaDewasa, tvHargaAnak, tvAsuransi;
-    EditText etTanggal, etNama, etTelepon;
-    Button btnJumlah, btnCalendar, btnBayar;
+    private TextView tvTotalHarga, tvLabelDewasa, tvLabelAnak, tvLabelAsuransi;
+    private TextView tvHargaDewasa, tvHargaAnak, tvAsuransi;
+    private EditText etTanggal, etNama, etTelepon;
+    private Button btnJumlah, btnCalendar, btnBayar;
 
-    int jumlahDewasa = 0;
-    int jumlahAnak = 0;
-    int hargaDewasa = 0;
-    int hargaAnak = 0;
-    int tarifAsuransi = 0;
+    private int jumlahDewasa = 0;
+    private int jumlahAnak = 0;
+    private int hargaDewasa = 0;
+    private int hargaAnak = 0;
+    private int tarifAsuransi = 0;
 
-    int idWisata;
+    private int idWisata;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,19 +50,20 @@ public class PemesananActivity extends AppCompatActivity {
 
         // Inisialisasi view
         tvTotalHarga = findViewById(R.id.tvTotal);
-        etTanggal = findViewById(R.id.etTanggal);
-        etNama = findViewById(R.id.etNama);
-        etTelepon = findViewById(R.id.etTelepon);
-        btnJumlah = findViewById(R.id.btnJumlah);
-        btnCalendar = findViewById(R.id.btnCalendar);
-        btnBayar = findViewById(R.id.btnBayar);
-
         tvLabelDewasa = findViewById(R.id.tvLabelDewasa);
         tvLabelAnak = findViewById(R.id.tvLabelAnak);
         tvLabelAsuransi = findViewById(R.id.tvLabelAsuransi);
         tvHargaDewasa = findViewById(R.id.tvHargaDewasa);
         tvHargaAnak = findViewById(R.id.tvHargaAnak);
         tvAsuransi = findViewById(R.id.tvAsuransi);
+
+        etTanggal = findViewById(R.id.etTanggal);
+        etNama = findViewById(R.id.etNama);
+        etTelepon = findViewById(R.id.etTelepon);
+
+        btnJumlah = findViewById(R.id.btnJumlah);
+        btnCalendar = findViewById(R.id.btnCalendar);
+        btnBayar = findViewById(R.id.btnBayar);
 
         ImageButton btnBack = findViewById(R.id.btnBack);
         btnBack.setOnClickListener(v -> onBackPressed());
@@ -75,17 +76,13 @@ public class PemesananActivity extends AppCompatActivity {
             return;
         }
 
-        // Tombol pilih jumlah pengunjung
-        btnJumlah.setOnClickListener(v -> {
-            Intent intent = new Intent(PemesananActivity.this, PilihPengunjungActivity.class);
-            intent.putExtra("idWisata", idWisata);
-            intent.putExtra("tiketDewasa", hargaDewasa);
-            intent.putExtra("tiketAnak", hargaAnak);
-            intent.putExtra("asuransi", tarifAsuransi);
-            startActivityForResult(intent, REQUEST_JUMLAH);
-        });
+        setupCalendarPicker();
+        setupJumlahButton();
+        setupBayarButton();
+        loadHargaWisata();
+    }
 
-        // Tombol pilih tanggal
+    private void setupCalendarPicker() {
         btnCalendar.setOnClickListener(v -> {
             Calendar calendar = Calendar.getInstance();
             int year = calendar.get(Calendar.YEAR);
@@ -94,17 +91,28 @@ public class PemesananActivity extends AppCompatActivity {
 
             DatePickerDialog datePickerDialog = new DatePickerDialog(
                     PemesananActivity.this,
-                    (DatePicker view, int selectedYear, int selectedMonth, int selectedDay) -> {
-                        String tanggal = String.format("%d-%02d-%02d", selectedYear, selectedMonth + 1, selectedDay);
+                    (view, selectedYear, selectedMonth, selectedDay) -> {
+                        String tanggal = String.format("%04d-%02d-%02d", selectedYear, selectedMonth + 1, selectedDay);
                         etTanggal.setText(tanggal);
-                    },
-                    year, month, day
+                        Log.d("Pemesanan", "Tanggal dipilih: " + tanggal);
+                    }, year, month, day
             );
-
             datePickerDialog.show();
         });
+    }
 
-        // Tombol bayar — ✅ DIPERBAIKI: hanya 1 alur
+    private void setupJumlahButton() {
+        btnJumlah.setOnClickListener(v -> {
+            Intent intent = new Intent(PemesananActivity.this, PilihPengunjungActivity.class);
+            intent.putExtra("idWisata", idWisata);
+            intent.putExtra("tiketDewasa", hargaDewasa);
+            intent.putExtra("tiketAnak", hargaAnak);
+            intent.putExtra("asuransi", tarifAsuransi);
+            startActivityForResult(intent, REQUEST_JUMLAH);
+        });
+    }
+
+    private void setupBayarButton() {
         btnBayar.setOnClickListener(v -> {
             String nama = etNama.getText().toString().trim();
             String telepon = etTelepon.getText().toString().trim();
@@ -114,109 +122,76 @@ public class PemesananActivity extends AppCompatActivity {
             String idCustomerStr = prefs.getString("id_customer", "-1");
             int idCustomer = Integer.parseInt(idCustomerStr);
 
-            if (idCustomer == -1) {
-                Toast.makeText(this, "User belum login", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            // Validasi input
-            if (nama.isEmpty()) {
-                Toast.makeText(this, "Silakan isi nama lengkap", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            if (telepon.isEmpty()) {
-                Toast.makeText(this, "Silakan isi nomor telepon", Toast.LENGTH_SHORT).show();
+            // Validasi
+            if (nama.isEmpty() || telepon.isEmpty() || tanggalDipilih.isEmpty() || jumlahDewasa + jumlahAnak == 0) {
+                Toast.makeText(this, "Lengkapi semua data sebelum bayar", Toast.LENGTH_SHORT).show();
                 return;
             }
 
             if (!telepon.matches("^08\\d{9,11}$")) {
-                Toast.makeText(this, "Nomor telepon harus dimulai dengan 08 dan 11–13 digit", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Nomor telepon tidak valid", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            if (tanggalDipilih.isEmpty()) {
-                Toast.makeText(this, "Silakan pilih tanggal kunjungan", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            if (jumlahDewasa + jumlahAnak == 0) {
-                Toast.makeText(this, "Silakan pilih jumlah pengunjung", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            // Hitung total
             int totalTiket = (jumlahDewasa * hargaDewasa) + (jumlahAnak * hargaAnak);
             int totalAsuransi = (jumlahDewasa + jumlahAnak) * tarifAsuransi;
             int totalHarga = totalTiket + totalAsuransi;
             int jumlahPengunjung = jumlahDewasa + jumlahAnak;
 
-            Log.d("Bayar", "Nama: " + nama);
-            Log.d("Bayar", "Telepon: " + telepon);
-            Log.d("Bayar", "Tanggal: " + tanggalDipilih);
-            Log.d("Bayar", "Jumlah: " + jumlahPengunjung);
-            Log.d("Bayar", "Total: " + totalHarga);
-            Log.d("Bayar", "ID Wisata: " + idWisata);
-
-            // Kirim ke backend
-            ApiService apiService = RetrofitClient.getClient().create(ApiService.class);
-            Call<ResponseBody> call = apiService.insertPemesanan(
-                    nama,
-                    telepon,
-                    tanggalDipilih,
-                    jumlahPengunjung,
-                    totalHarga,
-                    idWisata
-            );
+            Log.d("Bayar", "Nama: " + nama + ", Tanggal: " + tanggalDipilih + ", Total: " + totalHarga);
 
             ProgressDialog progress = new ProgressDialog(this);
             progress.setMessage("Proses transaksi...");
             progress.setCancelable(false);
             progress.show();
 
+            ApiService apiService = RetrofitClient.getClient().create(ApiService.class);
+            Call<ResponseBody> call = apiService.insertPemesanan(
+                    nama, telepon, tanggalDipilih, jumlahPengunjung, totalHarga, idWisata
+            );
+
             call.enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                     progress.dismiss();
                     if (response.isSuccessful()) {
-                        Toast.makeText(PemesananActivity.this, "Transaksi berhasil disimpan!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(PemesananActivity.this, "Transaksi berhasil!", Toast.LENGTH_SHORT).show();
 
-                        // Simpan riwayat (opsional)
+                        // Insert riwayat
                         Call<ResponseBody> riwayatCall = apiService.insertRiwayat(
                                 idCustomer, idWisata, tanggalDipilih, totalTiket
                         );
                         riwayatCall.enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                if (response.isSuccessful()) {
-                                    Log.d("Riwayat", "Simpan riwayat berhasil");
-                                }
+                                Log.d("Riwayat", "Riwayat tersimpan");
                             }
 
                             @Override
                             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                Log.e("Riwayat", "Error simpan riwayat: " + t.getMessage());
+                                Log.e("Riwayat", "Error simpan riwayat", t);
                             }
                         });
 
-                        // Pindah ke QR code activity
+                        // Pindah ke QR
                         Intent intent = new Intent(PemesananActivity.this, QrCodeActivity.class);
                         intent.putExtra("nama", nama);
                         intent.putExtra("telepon", telepon);
                         intent.putExtra("tanggal", tanggalDipilih);
                         intent.putExtra("jumlah", jumlahPengunjung);
-                        intent.putExtra("total", String.valueOf(totalHarga));
+                        intent.putExtra("total", totalHarga);
                         intent.putExtra("idWisata", idWisata);
                         startActivity(intent);
-                        finish(); // agar tidak bisa kembali ke form
+                        finish();
+
                     } else {
                         try {
                             String error = response.errorBody() != null ? response.errorBody().string() : "Unknown error";
-                            Log.e("Bayar", "Error: " + error);
+                            Log.e("Bayar", error);
                         } catch (IOException e) {
-                            Log.e("Bayar", "Gagal baca error body", e);
+                            e.printStackTrace();
                         }
-                        Toast.makeText(PemesananActivity.this, "Gagal menyimpan transaksi", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(PemesananActivity.this, "Gagal simpan transaksi", Toast.LENGTH_SHORT).show();
                     }
                 }
 
@@ -228,11 +203,22 @@ public class PemesananActivity extends AppCompatActivity {
                 }
             });
         });
+    }
 
-        // Ambil data harga dari backend
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_JUMLAH && resultCode == RESULT_OK && data != null) {
+            jumlahDewasa = data.getIntExtra("jumlahDewasa", 0);
+            jumlahAnak = data.getIntExtra("jumlahAnak", 0);
+            btnJumlah.setText(String.format("%02d Dewasa, %02d Anak", jumlahDewasa, jumlahAnak));
+            hitungTotalHarga();
+        }
+    }
+
+    private void loadHargaWisata() {
         ApiService apiService = RetrofitClient.getClient().create(ApiService.class);
         Call<ResponseBody> call = apiService.getDetailWisataRaw(idWisata);
-
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -240,19 +226,12 @@ public class PemesananActivity extends AppCompatActivity {
                     try {
                         String rawStr = response.body().string();
                         int jsonStart = rawStr.indexOf("{");
-                        if (jsonStart >= 0) {
-                            rawStr = rawStr.substring(jsonStart);
-                        }
-
+                        if (jsonStart >= 0) rawStr = rawStr.substring(jsonStart);
                         JSONObject jsonObject = new JSONObject(rawStr);
 
                         hargaDewasa = jsonObject.optInt("tiketDewasa", 0);
                         hargaAnak = jsonObject.optInt("tiketAnak", 0);
-
-                        int asuransiServer = jsonObject.optInt("asuransi", -1);
-                        tarifAsuransi = (asuransiServer >= 0)
-                                ? asuransiServer
-                                : ((idWisata == 4 || idWisata == 5) ? 500 : 1000);
+                        tarifAsuransi = jsonObject.optInt("asuransi", idWisata == 4 || idWisata == 5 ? 500 : 1000);
 
                         hitungTotalHarga();
 
@@ -260,8 +239,6 @@ public class PemesananActivity extends AppCompatActivity {
                         e.printStackTrace();
                         Toast.makeText(PemesananActivity.this, "Error parsing data", Toast.LENGTH_SHORT).show();
                     }
-                } else {
-                    Toast.makeText(PemesananActivity.this, "Gagal ambil data tiket", Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -272,19 +249,7 @@ public class PemesananActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_JUMLAH && resultCode == RESULT_OK && data != null) {
-            jumlahDewasa = data.getIntExtra("jumlahDewasa", 0);
-            jumlahAnak = data.getIntExtra("jumlahAnak", 0);
-
-            btnJumlah.setText(String.format("%02d Dewasa, %02d Anak", jumlahDewasa, jumlahAnak));
-            hitungTotalHarga();
-        }
-    }
-
-    void hitungTotalHarga() {
+    private void hitungTotalHarga() {
         int totalTiket = (jumlahDewasa * hargaDewasa) + (jumlahAnak * hargaAnak);
         int totalAsuransi = (jumlahDewasa + jumlahAnak) * tarifAsuransi;
         int totalHarga = totalTiket + totalAsuransi;
@@ -298,9 +263,6 @@ public class PemesananActivity extends AppCompatActivity {
         tvAsuransi.setText("Rp " + String.format("%,d", totalAsuransi));
         tvTotalHarga.setText("Rp " + String.format("%,d", totalHarga));
 
-        Log.d("Pemesanan", "Dewasa: " + jumlahDewasa + ", Anak: " + jumlahAnak);
-        Log.d("Pemesanan", "Harga Tiket: " + totalTiket);
-        Log.d("Pemesanan", "Asuransi: " + totalAsuransi);
         Log.d("Pemesanan", "Total Harga: " + totalHarga);
     }
 }

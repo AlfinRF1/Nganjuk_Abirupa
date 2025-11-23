@@ -97,7 +97,13 @@ public class DetailSedudo extends AppCompatActivity {
         });
 
         // Tombol Back
-        btnBack.setOnClickListener(v -> finish());
+        ImageButton btnBack = findViewById(R.id.btnBack);
+        btnBack.setOnClickListener(v -> {
+            // Balik ke Dashboard
+            Intent intent = new Intent(DetailSedudo.this, DashboardActivity.class);
+            startActivity(intent);
+            finish(); // biar DetailWisata nggak numpuk di back stack
+        });
     }
 
     // ✅ Mapping gambar berdasarkan ID wisata
@@ -111,4 +117,5 @@ public class DetailSedudo extends AppCompatActivity {
             default: return R.drawable.default_wisata;
         }
     }
+
 }

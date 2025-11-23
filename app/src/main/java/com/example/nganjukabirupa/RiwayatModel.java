@@ -3,6 +3,10 @@ package com.example.nganjukabirupa;
 import com.google.gson.annotations.SerializedName;
 
 public class RiwayatModel {
+
+    @SerializedName("id_transaksi")  // Mapping dari JSON
+    private String idTransaksi;
+
     @SerializedName("nama_wisata")
     private String namaWisata;
 
@@ -18,24 +22,34 @@ public class RiwayatModel {
     @SerializedName("status")
     private String status;
 
-    // Tambahan field (opsional, bisa diisi manual)
-    private String idTransaksi;          // ID transaksi
+    @SerializedName("metode_pembayaran")
     private String metodePembayaran = "QRIS"; // default QRIS
+
+    @SerializedName("image_name")
     private String imageName;
+
+    @SerializedName("deskripsi")
     private String deskripsi;
 
-    // Constructor
-    public RiwayatModel(String namaWisata, String lokasi, String tanggal,
-                        int totalHarga, String status, String deskripsi) {
+    // Constructor lengkap
+    public RiwayatModel(String idTransaksi, String namaWisata, String lokasi,
+                        String tanggal, int totalHarga, String status,
+                        String metodePembayaran, String imageName, String deskripsi) {
+        this.idTransaksi = idTransaksi;
         this.namaWisata = namaWisata;
         this.lokasi = lokasi;
         this.tanggal = tanggal;
         this.totalHarga = totalHarga;
         this.status = status;
+        this.metodePembayaran = metodePembayaran != null ? metodePembayaran : "QRIS";
+        this.imageName = imageName;
         this.deskripsi = deskripsi;
     }
 
     // Getter & Setter
+    public String getIdTransaksi() { return idTransaksi; }
+    public void setIdTransaksi(String idTransaksi) { this.idTransaksi = idTransaksi; }
+
     public String getNamaWisata() { return namaWisata; }
     public void setNamaWisata(String namaWisata) { this.namaWisata = namaWisata; }
 
@@ -51,11 +65,10 @@ public class RiwayatModel {
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
 
-    public String getIdTransaksi() { return idTransaksi; }
-    public void setIdTransaksi(String idTransaksi) { this.idTransaksi = idTransaksi; }
-
     public String getMetodePembayaran() { return metodePembayaran; }
-    public void setMetodePembayaran(String metodePembayaran) { this.metodePembayaran = metodePembayaran; }
+    public void setMetodePembayaran(String metodePembayaran) {
+        this.metodePembayaran = metodePembayaran != null ? metodePembayaran : "QRIS";
+    }
 
     public String getImageName() { return imageName; }
     public void setImageName(String imageName) { this.imageName = imageName; }

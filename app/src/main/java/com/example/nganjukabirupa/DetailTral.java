@@ -95,7 +95,13 @@ public class DetailTral extends AppCompatActivity {
         });
 
         // Tombol Back
-        btnBack.setOnClickListener(v -> finish());
+        ImageButton btnBack = findViewById(R.id.btnBack);
+        btnBack.setOnClickListener(v -> {
+            // Balik ke Dashboard
+            Intent intent = new Intent(DetailTral.this, DashboardActivity.class);
+            startActivity(intent);
+            finish(); // biar DetailWisata nggak numpuk di back stack
+        });
     }
 
     // ✅ Mapping gambar berdasarkan ID wisata

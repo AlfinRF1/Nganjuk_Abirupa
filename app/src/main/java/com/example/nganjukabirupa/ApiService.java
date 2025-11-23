@@ -14,33 +14,68 @@ import retrofit2.http.Query;
 
 public interface ApiService {
 
-    // 🔐 Registrasi akun baru
+    // =============================
+    // 🔐 REGISTER (RAW RESPONSE)
+    // Gunakan ini dulu untuk debug output JSON sebelum parsing ke model
+    // =============================
+    @Headers("Content-Type: application/json")
+    @POST("register.php")
+    Call<ResponseBody> registerRaw(@Body RegisterRequest request);
+
+
+    // =============================
+    // 🔐 REGISTER (PARSED RESPONSE)
+    // Pakai ini kalau server sudah pasti format JSON-nya konsisten
+    // =============================
     @Headers("Content-Type: application/json")
     @POST("register.php")
     Call<RegisterResponse> register(@Body RegisterRequest request);
-    // 🔐 Login manual
+
+
+    // =============================
+    // 🔐 LOGIN
+    // =============================
     @Headers("Content-Type: application/json")
     @POST("login.php")
     Call<LoginResponse> login(@Body LoginRequest request);
-    // 🔐 Login Google
+
     @Headers("Content-Type: application/json")
     @POST("google_login.php")
     Call<LoginResponse> googleLogin(@Body GoogleLoginRequest request);
-    // 📄 Ambil profil user
+
+
+    // =============================
+    // 📄 PROFILE
+    // =============================
     @Headers("Content-Type: application/json")
     @POST("get_profile.php")
     Call<ProfileResponse> getProfile(@Body ProfileRequest request);
+
     @Headers("Content-Type: application/json")
     @POST("get_profile_by_email.php")
     Call<ProfileResponse> getProfileByEmail(@Body EmailRequest request);
-    // ⚠️ Ambil detail wisata (Gson-safe)
+
+
+    // =============================
+    // 🌍 DATA WISATA
+    // =============================
     @GET("get_detail_wisata.php")
     Call<WisataModel> getDetailWisata(@Query("id") int id);
-    // ⚠️ Ambil detail wisata raw (ResponseBody) → aman untuk string atau object
+
     @GET("get_detail_wisata.php")
     Call<ResponseBody> getDetailWisataRaw(@Query("id") int id);
+
+
+    // =============================
+    // 🔍 CEK NAMA USER
+    // =============================
     @GET("check_nama.php")
     Call<CheckNamaResponse> checkNama(@Query("nama_customer") String nama_customer);
+
+
+    // =============================
+    // 📜 RIWAYAT & PEMESANAN
+    // =============================
     @GET("get_riwayat.php")
     Call<List<RiwayatModel>> getRiwayat(@Query("id_customer") int idCustomer);
 

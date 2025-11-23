@@ -3,12 +3,26 @@ package com.example.nganjukabirupa;
 import com.google.gson.annotations.SerializedName;
 
 public class RegisterResponse {
+
     @SerializedName("success")
-    public boolean success;
+    private boolean success;
 
     @SerializedName("message")
-    public String message;
+    private String message;
 
     @SerializedName("id_customer")
-    public String idCustomer;
+    private String idCustomer;
+
+    // Getter
+    public boolean isSuccess() {
+        return success;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public String getIdCustomer() {
+        return idCustomer;
+    }
 }

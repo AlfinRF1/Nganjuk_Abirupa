@@ -29,11 +29,12 @@
             android:orientation="vertical">
 
             <!-- Celah atas -->
+
+            <!-- Gambar Header -->
             <View
                 android:layout_width="match_parent"
                 android:layout_height="69dp" />
 
-            <!-- Gambar Header -->
             <ImageView
                 android:id="@+id/imgHeader"
                 android:layout_width="match_parent"

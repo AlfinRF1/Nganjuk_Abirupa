@@ -36,10 +36,11 @@ public class RiwayatActivity extends AppCompatActivity {
         SharedPreferences prefs = getSharedPreferences("user_session", MODE_PRIVATE);
         String idCustomerStr = prefs.getString("id_customer", null);
 
-        Log.d(TAG, "ID customer dari session: " + idCustomerStr);
-
         if (idCustomerStr == null) {
-            Toast.makeText(this, "User belum login", Toast.LENGTH_SHORT).show();
+            // Redirect ke login kalau belum ada session
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            finish();
             return;
         }
 
@@ -47,7 +48,9 @@ public class RiwayatActivity extends AppCompatActivity {
         try {
             idCustomer = Integer.parseInt(idCustomerStr);
         } catch (NumberFormatException e) {
-            Toast.makeText(this, "ID user tidak valid", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            finish();
             return;
         }
 
@@ -59,15 +62,22 @@ public class RiwayatActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<List<RiwayatModel>> call, Response<List<RiwayatModel>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    // ✅ Log raw JSON hasil parsing Retrofit
-                    Log.d("RiwayatActivity", "Raw response: " + new Gson().toJson(response.body()));
-
                     List<RiwayatModel> riwayatList = response.body();
+                    Log.d(TAG, "Raw response: " + new Gson().toJson(riwayatList));
                     Log.d(TAG, "Jumlah data riwayat: " + riwayatList.size());
 
                     if (riwayatList.isEmpty()) {
                         Toast.makeText(RiwayatActivity.this, "Belum ada riwayat transaksi", Toast.LENGTH_SHORT).show();
                     } else {
+                        // Pastikan setiap item punya id_transaksi & total_harga
+                        for (RiwayatModel item : riwayatList) {
+                            if (item.getIdTransaksi() == null) {
+                                item.setIdTransaksi("-");
+                            }
+                            if (item.getTotalHarga() == 0) {
+                                item.setTotalHarga(0);
+                            }
+                        }
                         adapter = new RiwayatAdapter(riwayatList);
                         recyclerView.setAdapter(adapter);
                     }

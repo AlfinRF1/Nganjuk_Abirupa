@@ -8,6 +8,10 @@ import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 public class DetailRiwayatActivity extends AppCompatActivity {
 
     private View cardHistory;
@@ -41,16 +45,38 @@ public class DetailRiwayatActivity extends AppCompatActivity {
         String tanggal = getIntent().getStringExtra("tanggal");
         String status = getIntent().getStringExtra("status");
         String metode = getIntent().getStringExtra("metode_pembayaran");
-        int totalHarga = getIntent().getIntExtra("total_harga", 0);
+        String totalStr = getIntent().getStringExtra("total_harga");
 
         // Tampilkan ke UI
-        tvNamaWisata.setText(namaWisata);
-        tvLokasiWisata.setText(lokasiWisata);
-        tvIdTransaksi.setText(idTransaksi);
-        tvTanggal.setText(tanggal);
-        tvStatus.setText(status);
-        tvMetode.setText(metode);
-        tvTotal.setText("Rp. " + totalHarga + ",00");
+        tvNamaWisata.setText(namaWisata != null ? namaWisata : "-");
+        tvLokasiWisata.setText(lokasiWisata != null ? lokasiWisata : "-");
+        tvIdTransaksi.setText(idTransaksi != null ? idTransaksi : "-");
+        tvStatus.setText(status != null ? status : "-");
+        tvMetode.setText(metode != null ? metode : "QRIS");
+
+        // Format total harga
+        try {
+            int totalHarga = totalStr != null ? Integer.parseInt(totalStr) : 0;
+            tvTotal.setText("Rp. " + String.format("%,d", totalHarga));
+        } catch (NumberFormatException e) {
+            tvTotal.setText(totalStr != null ? totalStr : "Rp. 0");
+        }
+
+        // Format tanggal
+        try {
+            if (tanggal != null && !tanggal.isEmpty()) {
+                String inputFormatStr = tanggal.contains(" ") ? "yyyy-MM-dd HH:mm:ss" : "yyyy-MM-dd";
+                SimpleDateFormat inputFormat = new SimpleDateFormat(inputFormatStr);
+                Date date = inputFormat.parse(tanggal);
+
+                SimpleDateFormat outputFormat = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault());
+                tvTanggal.setText(date != null ? outputFormat.format(date) : tanggal);
+            } else {
+                tvTanggal.setText("-");
+            }
+        } catch (Exception e) {
+            tvTanggal.setText(tanggal != null ? tanggal : "-");
+        }
     }
 
     @SuppressLint("MissingSuperCall")

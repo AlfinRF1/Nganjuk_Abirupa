@@ -20,23 +20,20 @@ public class QrCodeActivity extends AppCompatActivity {
         totalAmountText = findViewById(R.id.total_amount);
         backArrow = findViewById(R.id.back_arrow);
 
-        // Ambil total harga dari intent
-        String total = getIntent().getStringExtra("total");
+        // Ambil total harga sebagai int
+        int totalHarga = getIntent().getIntExtra("total", 0);
 
-        // Tampilkan total harga
-        if (total != null && !total.isEmpty()) {
-            totalAmountText.setText("Total : Rp. " + total);
+        if (totalHarga > 0) {
+            totalAmountText.setText("Total : Rp. " + String.format("%,d", totalHarga));
         } else {
             Toast.makeText(this, "Data total tidak tersedia", Toast.LENGTH_SHORT).show();
         }
 
         // Tombol kembali
-        if (backArrow != null) {
-            backArrow.setOnClickListener(v -> {
-                Intent intent = new Intent(QrCodeActivity.this, RiwayatActivity.class);
-                startActivity(intent);
-                finish();
-            });
-        }
+        backArrow.setOnClickListener(v -> {
+            Intent intent = new Intent(QrCodeActivity.this, RiwayatActivity.class);
+            startActivity(intent);
+            finish();
+        });
     }
 }
