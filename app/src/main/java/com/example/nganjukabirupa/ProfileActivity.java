@@ -1,15 +1,20 @@
 package com.example.nganjukabirupa;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
@@ -26,11 +31,19 @@ public class ProfileActivity extends AppCompatActivity {
     private ImageView imgPhoto;
     private Button btnLogout;
 
+    // Konstanta untuk SharedPreferences
     private static final String PREF_NAME = "user_session";
     private static final String KEY_ID_CUSTOMER = "id_customer";
     private static final String KEY_EMAIL_CUSTOMER = "email_customer";
     private static final String KEY_NAMA_CUSTOMER = "nama_customer";
     private static final String KEY_PHOTO_URL = "photo_url";
+
+    // Konstanta untuk Galeri
+    private final int PICK_IMAGE_REQUEST = 1;
+
+    // Launcher untuk Activity Result yang lebih modern (direkomendasikan)
+    private ActivityResultLauncher<Intent> galleryLauncher;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +75,30 @@ public class ProfileActivity extends AppCompatActivity {
             imgPhoto.setImageResource(R.drawable.default_profile_placeholder);
         }
 
+        // 1. Inisialisasi Activity Result Launcher untuk Galeri
+        galleryLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                        Uri imageUri = result.getData().getData();
+                        if (imageUri != null) {
+                            // Tampilkan foto yang baru dipilih di ImageView
+                            imgPhoto.setImageURI(imageUri);
+
+                            // ❗❗ LOGIKA UPLOAD KE SERVER DITAMBAHKAN DI SINI ❗❗
+                            // Anda perlu membuat metode terpisah untuk mengupload 'imageUri' ke API Anda
+                            // Contoh: uploadImageToServer(imageUri, id_customer);
+                            Toast.makeText(this, "Foto dipilih. Siap untuk diupload!", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                }
+        );
+
+        // 2. Listener Klik pada Foto Profil
+        imgPhoto.setOnClickListener(v -> {
+            openGallery();
+        });
+
         // FETCH PROFIL TERBARU TANPA CLEAR SESSION
         if (id_customer != null) {
             ambilDataProfilById(id_customer);
@@ -73,6 +110,14 @@ public class ProfileActivity extends AppCompatActivity {
             finish();
         });
     }
+
+    // Metode untuk membuka Galeri
+    private void openGallery() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        galleryLauncher.launch(intent);
+    }
+
+    // --- Bagian Retrofit dan Bottom Navigation (Tidak Berubah Signifikan) ---
 
     private void ambilDataProfilById(String id_customer) {
         Retrofit retrofit = new Retrofit.Builder()
@@ -93,6 +138,7 @@ public class ProfileActivity extends AppCompatActivity {
 
                 String nama = response.body().getProfile().getNamaCustomer();
                 String email = response.body().getProfile().getEmailCustomer();
+                // Ambil juga URL foto baru jika ada dari response
 
                 if (nama != null) tvNama.setText(nama);
                 if (email != null) tvEmail.setText(email);
