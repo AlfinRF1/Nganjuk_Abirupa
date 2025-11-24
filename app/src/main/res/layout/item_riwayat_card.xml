@@ -64,7 +64,7 @@
                 android:id="@+id/tv_total_harga"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Total Tiket : Rp. 00000"
+                android:text="Total : Rp. 00000"
                 android:textColor="#333333"
                 android:textSize="14sp"
                 android:textStyle="bold"
