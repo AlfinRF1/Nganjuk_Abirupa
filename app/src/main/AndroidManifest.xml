@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Izin akses internet -->
+    <!-- Izin akses internet dan status jaringan -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
@@ -27,7 +27,7 @@
             </intent-filter>
         </activity>
 
-        <!-- Aktivitas lainnya -->
+        <!-- Aktivitas internal -->
         <activity android:name=".MainActivity" android:exported="false" />
         <activity android:name=".DashboardActivity" android:exported="false" />
         <activity android:name=".ProfileActivity" android:exported="false" />
@@ -40,8 +40,15 @@
         <activity android:name=".DetailSri" android:exported="false" />
         <activity android:name=".DetailRoro" android:exported="false" />
         <activity android:name=".DetailTral" android:exported="false" />
-        <activity android:name=".DetailRiwayatActivity" android:exported="false"/>
+        <activity android:name=".DetailRiwayatActivity" android:exported="false" />
         <activity android:name=".QrCodeActivity" android:exported="false" />
+
+        <!-- UCrop cropping activity -->
+        <activity
+            android:name="com.yalantis.ucrop.UCropActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:exported="false" />
     </application>
 
 </manifest>

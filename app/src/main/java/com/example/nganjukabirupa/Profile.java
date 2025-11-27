@@ -15,6 +15,8 @@ public class Profile {
     @SerializedName("no_tlp")
     private String noTelp;
 
+    @SerializedName("foto")   // ← WAJIB ADA
+    private String foto;
 
     // Getter
     public String getIdCustomer() {
@@ -31,5 +33,9 @@ public class Profile {
 
     public String getNoTelp() {
         return noTelp;
+    }
+
+    public String getFoto() {
+        return foto;   // ← getter foto
     }
 }

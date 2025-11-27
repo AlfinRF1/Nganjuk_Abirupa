@@ -35,7 +35,7 @@
                     android:layout_centerHorizontal="true"
                     android:adjustViewBounds="true"
                     android:src="@drawable/logo_nganjuk_abirupa"
-                    android:tint="#000" />
+                    app:tint="#000" />
             </RelativeLayout>
 
             <!-- TITLE SECTION -->

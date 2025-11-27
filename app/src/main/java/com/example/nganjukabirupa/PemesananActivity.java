@@ -17,7 +17,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.Calendar;
 
 import okhttp3.ResponseBody;
@@ -32,7 +31,7 @@ public class PemesananActivity extends AppCompatActivity {
     private TextView tvTotalHarga, tvLabelDewasa, tvLabelAnak, tvLabelAsuransi;
     private TextView tvHargaDewasa, tvHargaAnak, tvAsuransi;
     private EditText etTanggal, etNama, etTelepon;
-    private Button btnJumlah, btnCalendar, btnBayar;
+    private Button btnJumlah, btnBayar;
 
     private int jumlahDewasa = 0;
     private int jumlahAnak = 0;
@@ -61,7 +60,7 @@ public class PemesananActivity extends AppCompatActivity {
         etTelepon = findViewById(R.id.etTelepon);
 
         btnJumlah = findViewById(R.id.btnJumlah);
-        btnCalendar = findViewById(R.id.btnCalendar);
+        ImageButton btnCalendar = findViewById(R.id.btnCalendar);
         btnBayar = findViewById(R.id.btnBayar);
 
         // BACK BUTTON
@@ -76,13 +75,13 @@ public class PemesananActivity extends AppCompatActivity {
             return;
         }
 
-        setupCalendarPicker();
+        setupCalendarPicker(btnCalendar);
         setupJumlahButton();
         setupBayarButton();
         loadHargaWisata();
     }
 
-    private void setupCalendarPicker() {
+    private void setupCalendarPicker(ImageButton btnCalendar) {
         btnCalendar.setOnClickListener(v -> {
             Calendar calendar = Calendar.getInstance();
             int year = calendar.get(Calendar.YEAR);
@@ -137,60 +136,75 @@ public class PemesananActivity extends AppCompatActivity {
             progress.show();
 
             ApiService apiService = RetrofitClient.getClient().create(ApiService.class);
-            Call<ResponseBody> call = apiService.insertPemesanan(
-                    nama,
-                    telepon,
-                    tanggalDipilih,
-                    String.valueOf(jumlahPengunjung),
-                    String.valueOf(totalHarga),
-                    String.valueOf(idWisata),
-                    String.valueOf(idCustomer)
-            );
 
-            Log.d("REQ_DEBUG",
-                    "nama=" + nama +
-                            ", telepon=" + telepon +
-                            ", tanggal=" + tanggalDipilih +
-                            ", jumlah=" + jumlahPengunjung +
-                            ", total=" + totalHarga +
-                            ", id_wisata=" + idWisata +
-                            ", id_customer=" + idCustomer
-            );
+            // ✅ Khusus Roro Kuning (misalnya idWisata == 2)
+            if (idWisata == 2) {
+                Call<ResponseBody> call = apiService.insertRiwayat(
+                        idCustomer,
+                        idWisata,
+                        tanggalDipilih,
+                        totalHarga
+                );
 
-            call.enqueue(new Callback<ResponseBody>() {
-                @Override
-                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                    progress.dismiss();
-
-                    if (response.isSuccessful()) {
-
-                        Intent intent = new Intent(PemesananActivity.this, QrCodeActivity.class);
-                        intent.putExtra("nama", nama);
-                        intent.putExtra("telepon", telepon);
-                        intent.putExtra("tanggal", tanggalDipilih);
-                        intent.putExtra("jumlah", jumlahPengunjung);
-                        intent.putExtra("total", totalHarga);
-                        intent.putExtra("idWisata", idWisata);
-                        startActivity(intent);
-                        finish();
-
-                    } else {
-                        try {
-                            Log.e("Bayar", response.errorBody() != null ? response.errorBody().string() : "Unknown error");
-                        } catch (IOException e) {
-                            e.printStackTrace();
+                call.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        progress.dismiss();
+                        if (response.isSuccessful()) {
+                            Toast.makeText(PemesananActivity.this, "Transaksi Roro Kuning selesai", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(PemesananActivity.this, RiwayatActivity.class);
+                            startActivity(intent);
+                            finish();
+                        } else {
+                            Toast.makeText(PemesananActivity.this, "Gagal simpan riwayat", Toast.LENGTH_SHORT).show();
                         }
-                        Toast.makeText(PemesananActivity.this, "Gagal simpan transaksi", Toast.LENGTH_SHORT).show();
                     }
-                }
 
-                @Override
-                public void onFailure(Call<ResponseBody> call, Throwable t) {
-                    progress.dismiss();
-                    Log.e("Bayar", "Network error", t);
-                    Toast.makeText(PemesananActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-            });
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        progress.dismiss();
+                        Toast.makeText(PemesananActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+            } else {
+                // Default flow → insert_pemesanan + QR
+                Call<ResponseBody> call = apiService.insertPemesanan(
+                        nama,
+                        telepon,
+                        tanggalDipilih,
+                        String.valueOf(jumlahPengunjung),
+                        String.valueOf(totalHarga),
+                        String.valueOf(idWisata),
+                        String.valueOf(idCustomer)
+                );
+
+                call.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        progress.dismiss();
+                        if (response.isSuccessful()) {
+                            Intent intent = new Intent(PemesananActivity.this, QrCodeActivity.class);
+                            intent.putExtra("nama", nama);
+                            intent.putExtra("telepon", telepon);
+                            intent.putExtra("tanggal", tanggalDipilih);
+                            intent.putExtra("jumlah", jumlahPengunjung);
+                            intent.putExtra("total", totalHarga);
+                            intent.putExtra("idWisata", idWisata);
+                            startActivity(intent);
+                            finish();
+                        } else {
+                            Toast.makeText(PemesananActivity.this, "Gagal simpan transaksi", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        progress.dismiss();
+                        Toast.makeText(PemesananActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
         });
     }
 
@@ -226,7 +240,10 @@ public class PemesananActivity extends AppCompatActivity {
 
                     } catch (Exception e) {
                         e.printStackTrace();
+                        Toast.makeText(PemesananActivity.this, "Error parsing response", Toast.LENGTH_SHORT).show();
                     }
+                } else {
+                    Toast.makeText(PemesananActivity.this, "Gagal mengambil data harga", Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -246,7 +263,7 @@ public class PemesananActivity extends AppCompatActivity {
         tvLabelAnak.setText(jumlahAnak + " x Rp " + hargaAnak);
         tvLabelAsuransi.setText((jumlahDewasa + jumlahAnak) + " x Rp " + tarifAsuransi);
 
-        tvHargaDewasa.setText("Rp " + totalTiket);
+        tvHargaDewasa.setText("Rp " + (jumlahDewasa * hargaDewasa));
         tvHargaAnak.setText("Rp " + (jumlahAnak * hargaAnak));
         tvAsuransi.setText("Rp " + totalAsuransi);
         tvTotalHarga.setText("Rp " + totalHarga);

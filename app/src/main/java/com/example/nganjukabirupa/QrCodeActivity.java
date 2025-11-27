@@ -10,7 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class QrCodeActivity extends AppCompatActivity {
     private TextView totalAmountText;
-    private ImageView backArrow;
+    private ImageView backArrow, imgBarcode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,9 +19,11 @@ public class QrCodeActivity extends AppCompatActivity {
 
         totalAmountText = findViewById(R.id.total_amount);
         backArrow = findViewById(R.id.back_arrow);
+        imgBarcode = findViewById(R.id.qr_code_image); // pastikan ada di layout
 
-        // Ambil total harga sebagai int
+        // Ambil data dari Intent
         int totalHarga = getIntent().getIntExtra("total", 0);
+        int idWisata = getIntent().getIntExtra("idWisata", -1);
 
         if (totalHarga > 0) {
             totalAmountText.setText("Total : Rp. " + String.format("%,d", totalHarga));
@@ -29,11 +31,26 @@ public class QrCodeActivity extends AppCompatActivity {
             Toast.makeText(this, "Data total tidak tersedia", Toast.LENGTH_SHORT).show();
         }
 
+        // ✅ set barcode sesuai idWisata
+        int barcodeRes = getBarcodeDrawable(idWisata);
+        imgBarcode.setImageResource(barcodeRes);
+
         // Tombol kembali
         backArrow.setOnClickListener(v -> {
             Intent intent = new Intent(QrCodeActivity.this, RiwayatActivity.class);
             startActivity(intent);
             finish();
         });
+    }
+
+    // ✅ mapping idWisata ke file drawable
+    private int getBarcodeDrawable(int idWisata) {
+        switch (idWisata) {
+            case 1: return R.drawable.sedudo;      // sedudo.jpg
+            case 2: return R.drawable.tral;        // tral.jpeg
+            case 3: return R.drawable.goa;         // goa.jpeg
+            case 4: return R.drawable.sritanjung;  // sritanjung.jpeg
+            default: return R.drawable.barcode_default;
+        }
     }
 }

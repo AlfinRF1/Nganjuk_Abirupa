@@ -53,36 +53,40 @@
     <androidx.cardview.widget.CardView
         android:id="@+id/card_profile"
         android:layout_width="0dp"
-        android:layout_height="89dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="-40dp"
         android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
         app:cardCornerRadius="12dp"
         app:cardElevation="4dp"
         app:cardUseCompatPadding="true"
+        app:cardBackgroundColor="@android:color/white"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/header_gradient">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="71dp"
-            android:background="@android:color/white"
-            android:gravity="center_vertical"
+            android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:gravity="center_vertical"
             android:padding="16dp">
 
-            <ImageView
+            <!-- Foto Profil Bulat -->
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/iv_profile_photo"
-                android:layout_width="45dp"
-                android:layout_height="45dp"
-                android:background="@drawable/propillogo"
-                android:clickable="true"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:src="@drawable/default_profile_placeholder"
+                android:scaleType="centerCrop"
+                android:adjustViewBounds="true"
+                app:shapeAppearanceOverlay="@style/CircleImageView"
                 android:contentDescription="Foto Profil"
-                android:focusable="true"
-                android:scaleType="centerInside"
-                android:src="@drawable/default_profile_placeholder" />
+                android:clickable="true"
+                android:focusable="true" />
 
+            <!-- Nama + Email -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -97,16 +101,19 @@
                     android:fontFamily="@font/poppins_semibold"
                     android:textColor="#4e4e4e"
                     android:textSize="14sp"
+                    android:ellipsize="end"
+                    android:singleLine="true"
                     tools:text="Nama Kamu" />
 
                 <TextView
                     android:id="@+id/tv_user_email"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-
                     android:fontFamily="@font/poppins_medium"
                     android:textColor="#4e4e4e"
                     android:textSize="12sp"
+                    android:ellipsize="end"
+                    android:singleLine="true"
                     tools:text="example@gmail.com" />
             </LinearLayout>
         </LinearLayout>

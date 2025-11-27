@@ -2,39 +2,33 @@ package com.example.nganjukabirupa;
 
 import java.util.List;
 
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
-import retrofit2.http.Headers;
-import retrofit2.http.POST;
 import retrofit2.http.GET;
+import retrofit2.http.Headers;
+import retrofit2.http.Multipart;
+import retrofit2.http.POST;
+import retrofit2.http.Part;
 import retrofit2.http.Query;
 
 public interface ApiService {
 
-    // =============================
-    // 🔐 REGISTER (RAW RESPONSE)
-    // Gunakan ini dulu untuk debug output JSON sebelum parsing ke model
-    // =============================
+    // REGISTER
     @Headers("Content-Type: application/json")
     @POST("register.php")
     Call<ResponseBody> registerRaw(@Body RegisterRequest request);
 
-
-    // =============================
-    // 🔐 REGISTER (PARSED RESPONSE)
-    // Pakai ini kalau server sudah pasti format JSON-nya konsisten
-    // =============================
     @Headers("Content-Type: application/json")
     @POST("register.php")
     Call<RegisterResponse> register(@Body RegisterRequest request);
 
 
-    // =============================
-    // 🔐 LOGIN
-    // =============================
+    // LOGIN
     @Headers("Content-Type: application/json")
     @POST("login.php")
     Call<LoginResponse> login(@Body LoginRequest request);
@@ -44,9 +38,7 @@ public interface ApiService {
     Call<LoginResponse> googleLogin(@Body GoogleLoginRequest request);
 
 
-    // =============================
-    // 📄 PROFILE
-    // =============================
+    // PROFILE
     @Headers("Content-Type: application/json")
     @POST("get_profile.php")
     Call<ProfileResponse> getProfile(@Body ProfileRequest request);
@@ -56,9 +48,7 @@ public interface ApiService {
     Call<ProfileResponse> getProfileByEmail(@Body EmailRequest request);
 
 
-    // =============================
-    // 🌍 DATA WISATA
-    // =============================
+    // DATA WISATA
     @GET("get_detail_wisata.php")
     Call<WisataModel> getDetailWisata(@Query("id") int id);
 
@@ -66,19 +56,14 @@ public interface ApiService {
     Call<ResponseBody> getDetailWisataRaw(@Query("id") int id);
 
 
-    // =============================
-    // 🔍 CEK NAMA USER
-    // =============================
+    // CHECK NAMA USER
     @GET("check_nama.php")
     Call<CheckNamaResponse> checkNama(@Query("nama_customer") String nama_customer);
 
-
-    // =============================
-    // 📜 RIWAYAT & PEMESANAN
-    // =============================
     @GET("get_riwayat.php")
     Call<List<RiwayatModel>> getRiwayat(@Query("id_customer") int idCustomer);
 
+    // PEMESANAN & RIWAYAT
     @FormUrlEncoded
     @POST("insert_pemesanan.php")
     Call<ResponseBody> insertPemesanan(
@@ -90,6 +75,7 @@ public interface ApiService {
             @Field("id_wisata") String idWisata,
             @Field("id_customer") String idCustomer
     );
+
     @FormUrlEncoded
     @POST("insert_riwayat.php")
     Call<ResponseBody> insertRiwayat(
@@ -98,4 +84,18 @@ public interface ApiService {
             @Field("tanggal") String tanggal,
             @Field("harga_total") int hargaTotal
     );
+
+
+    // FOTO
+    @Multipart
+    @POST("update_foto.php")
+    Call<ResponseBody> updateFoto(
+            @Part("id_customer") RequestBody idCustomer,
+            @Part MultipartBody.Part foto
+    );
+
+        @FormUrlEncoded
+        @POST("delete_foto.php")
+        Call<ResponseBody> deleteFoto(@Field("id_customer") int idCustomer);
+
 }

@@ -65,7 +65,7 @@
                 android:layout_width="250dp"
                 android:layout_height="250dp"
                 android:layout_gravity="center_horizontal"
-                android:src="@drawable/contohbarcode"
+                android:src="@drawable/barcode_default"
                 android:contentDescription="QR Code Pembayaran"
                 android:scaleType="fitCenter"
                 android:layout_marginStart="32dp"

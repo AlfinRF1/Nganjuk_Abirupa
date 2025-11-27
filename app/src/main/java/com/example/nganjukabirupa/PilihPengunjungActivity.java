@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,7 +25,7 @@ public class PilihPengunjungActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_pilihpengunjung);
+        setContentView(R.layout.bottomsheet_pilihpengunjung);
 
         // Ambil data dari intent
         Intent intent = getIntent();
@@ -33,53 +34,65 @@ public class PilihPengunjungActivity extends AppCompatActivity {
         tiketAnak = intent.getIntExtra("tiketAnak", 0);
         asuransi = intent.getIntExtra("asuransi", 0);
 
+        if (idWisata == -1) {
+            Toast.makeText(this, "Data wisata tidak valid", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+
         // Inisialisasi view
         tvJumlahDewasa = findViewById(R.id.tvCountDewasa);
         tvJumlahAnak = findViewById(R.id.tvCountAnak);
+
         btnPlusDewasa = findViewById(R.id.btnPlusDewasa);
         btnMinusDewasa = findViewById(R.id.btnMinDewasa);
         btnPlusAnak = findViewById(R.id.btnPlusAnak);
         btnMinusAnak = findViewById(R.id.btnMinAnak);
         btnSimpan = findViewById(R.id.btnSimpan);
 
-        // Tombol tambah/kurang dewasa
-        btnPlusDewasa.setOnClickListener(v -> {
-            jumlahDewasa++;
-            tvJumlahDewasa.setText(String.valueOf(jumlahDewasa));
-        });
+        // Tombol back (ImageView arrow_back)
+        ImageView ivBackDialog = findViewById(R.id.ivBackDialog);
+        if (ivBackDialog != null) {
+            ivBackDialog.setOnClickListener(v -> finish());
+        }
 
-        btnMinusDewasa.setOnClickListener(v -> {
-            if (jumlahDewasa > 0) {
-                jumlahDewasa--;
-                tvJumlahDewasa.setText(String.valueOf(jumlahDewasa));
-            }
-        });
+        // Tombol tambah / kurang dewasa
+        btnPlusDewasa.setOnClickListener(v -> updateDewasa(jumlahDewasa + 1));
+        btnMinusDewasa.setOnClickListener(v -> updateDewasa(jumlahDewasa - 1));
 
-        // Tombol tambah/kurang anak
-        btnPlusAnak.setOnClickListener(v -> {
-            jumlahAnak++;
-            tvJumlahAnak.setText(String.valueOf(jumlahAnak));
-        });
+        // Tombol tambah / kurang anak
+        btnPlusAnak.setOnClickListener(v -> updateAnak(jumlahAnak + 1));
+        btnMinusAnak.setOnClickListener(v -> updateAnak(jumlahAnak - 1));
 
-        btnMinusAnak.setOnClickListener(v -> {
-            if (jumlahAnak > 0) {
-                jumlahAnak--;
-                tvJumlahAnak.setText(String.valueOf(jumlahAnak));
-            }
-        });
+        // Tombol simpan
+        btnSimpan.setOnClickListener(v -> simpanData());
+    }
 
-        // Tombol simpan → kirim data balik ke PemesananActivity
-        btnSimpan.setOnClickListener(v -> {
-            if (jumlahDewasa + jumlahAnak == 0) {
-                Toast.makeText(this, "Jumlah pengunjung belum diisi", Toast.LENGTH_SHORT).show();
-                return;
-            }
+    private void updateDewasa(int newValue) {
+        if (newValue < 0) return;
+        jumlahDewasa = newValue;
+        tvJumlahDewasa.setText(String.valueOf(jumlahDewasa));
+    }
 
-            Intent resultIntent = new Intent();
-            resultIntent.putExtra("jumlahDewasa", jumlahDewasa);
-            resultIntent.putExtra("jumlahAnak", jumlahAnak);
-            setResult(RESULT_OK, resultIntent);
-            finish(); // kembali ke PemesananActivity
-        });
+    private void updateAnak(int newValue) {
+        if (newValue < 0) return;
+        jumlahAnak = newValue;
+        tvJumlahAnak.setText(String.valueOf(jumlahAnak));
+    }
+
+    private void simpanData() {
+        int total = jumlahDewasa + jumlahAnak;
+
+        if (total == 0) {
+            Toast.makeText(this, "Jumlah pengunjung belum diisi", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Intent resultIntent = new Intent();
+        resultIntent.putExtra("jumlahDewasa", jumlahDewasa);
+        resultIntent.putExtra("jumlahAnak", jumlahAnak);
+
+        setResult(RESULT_OK, resultIntent);
+        finish();
     }
 }
