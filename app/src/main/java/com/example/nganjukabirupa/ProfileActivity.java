@@ -12,8 +12,8 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -21,15 +21,12 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.yalantis.ucrop.UCrop;
 
 import org.json.JSONObject;
 
 import java.io.File;
 
-import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
@@ -41,9 +38,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ProfileActivity extends AppCompatActivity {
 
-    private TextView tvNama, tvEmail;
+    private EditText etNama, etEmail;   // ganti TextView jadi EditText biar bisa CRUD
     private ImageView imgPhoto;
-    private Button btnLogout;
+    private Button btnLogout, btnUpdate;
 
     private static final String PREF_NAME = "user_session";
     private static final String KEY_ID_CUSTOMER = "id_customer";
@@ -59,10 +56,11 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        tvNama = findViewById(R.id.tv_user_name);
-        tvEmail = findViewById(R.id.tv_user_email);
+        etNama   = findViewById(R.id.tv_user_name);   // sesuai XML
+        etEmail  = findViewById(R.id.tv_user_email);  // sesuai XML
         imgPhoto = findViewById(R.id.iv_profile_photo);
         btnLogout = findViewById(R.id.btn_logout);
+        btnUpdate = findViewById(R.id.btn_update);    // tambahin tombol update di XML
 
         SharedPreferences prefs = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         id_customer = prefs.getString(KEY_ID_CUSTOMER, null);
@@ -70,8 +68,8 @@ public class ProfileActivity extends AppCompatActivity {
         String nama_customer = prefs.getString(KEY_NAMA_CUSTOMER, null);
         String photo_url = prefs.getString(KEY_PHOTO_URL, null);
 
-        tvNama.setText(nama_customer != null ? nama_customer : "User");
-        tvEmail.setText(email_customer != null ? email_customer : "-");
+        etNama.setText(nama_customer != null ? nama_customer : "User");
+        etEmail.setText(email_customer != null ? email_customer : "-");
 
         if (photo_url != null && !photo_url.isEmpty()) {
             Glide.with(this)
@@ -101,11 +99,7 @@ public class ProfileActivity extends AppCompatActivity {
         );
 
         imgPhoto.setOnClickListener(v -> showFotoOptionsDialog());
-
-        imgPhoto.setOnLongClickListener(v -> {
-            showPreviewDialog();
-            return true;
-        });
+        imgPhoto.setOnLongClickListener(v -> { showPreviewDialog(); return true; });
 
         if (id_customer != null) {
             ambilDataProfilById(id_customer);
@@ -115,6 +109,39 @@ public class ProfileActivity extends AppCompatActivity {
             prefs.edit().clear().apply();
             startActivity(new Intent(ProfileActivity.this, LoginActivity.class));
             finish();
+        });
+
+        // Tombol update username & email
+        btnUpdate.setOnClickListener(v -> updateProfile());
+    }
+
+    private void updateProfile() {
+        String newNama  = etNama.getText().toString().trim();
+        String newEmail = etEmail.getText().toString().trim();
+
+        ApiService api = ApiClient.getClient().create(ApiService.class);
+        Call<UpdateProfileResponse> call = api.updateProfile(id_customer, newNama, newEmail);
+
+        call.enqueue(new Callback<UpdateProfileResponse>() {
+            @Override
+            public void onResponse(Call<UpdateProfileResponse> call, Response<UpdateProfileResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    UpdateProfileResponse res = response.body();
+                    if ("success".equals(res.getStatus())) {
+                        Toast.makeText(ProfileActivity.this, res.getMessage(), Toast.LENGTH_SHORT).show();
+                        ambilDataProfilById(id_customer);
+                    } else {
+                        Toast.makeText(ProfileActivity.this, "Gagal: " + res.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(ProfileActivity.this, "Server error: " + response.code(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UpdateProfileResponse> call, Throwable t) {
+                Toast.makeText(ProfileActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
         });
     }
 
@@ -145,8 +172,8 @@ public class ProfileActivity extends AppCompatActivity {
                     int columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
                     filePath = cursor.getString(columnIndex);
                 }
-            } catch (Exception e) { e.printStackTrace();
-            } finally { if (cursor != null) cursor.close(); }
+            } catch (Exception e) { e.printStackTrace(); }
+            finally { if (cursor != null) cursor.close(); }
         } else if ("file".equalsIgnoreCase(uri.getScheme())) {
             filePath = uri.getPath();
         }
@@ -162,12 +189,10 @@ public class ProfileActivity extends AppCompatActivity {
 
         File file = new File(filePath);
 
-        // 1. RequestBody untuk id_customer
         RequestBody idBody = RequestBody.create(
                 okhttp3.MediaType.parse("text/plain"), idCustomer
         );
 
-        // 2. RequestBody untuk foto
         RequestBody requestFile = RequestBody.create(
                 okhttp3.MediaType.parse("image/*"), file
         );
@@ -175,7 +200,6 @@ public class ProfileActivity extends AppCompatActivity {
                 "foto", file.getName(), requestFile
         );
 
-        // 3. Retrofit call
         ApiService api = ApiClient.getClient().create(ApiService.class);
         Call<ResponseBody> call = api.updateFoto(idBody, fotoPart);
 
@@ -214,9 +238,7 @@ public class ProfileActivity extends AppCompatActivity {
                         } else {
                             Toast.makeText(ProfileActivity.this, "Gagal hapus: " + json.optString("message"), Toast.LENGTH_SHORT).show();
                         }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                    } catch (Exception e) { e.printStackTrace(); }
                 } else {
                     Toast.makeText(ProfileActivity.this, "Server error: " + response.code(), Toast.LENGTH_SHORT).show();
                 }
@@ -230,11 +252,9 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void ambilDataProfilById(String idCustomer) {
-        Gson gson = new GsonBuilder().setLenient().create();
-
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(ApiClient.BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create(gson))
+                .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
         ApiService api = retrofit.create(ApiService.class);
@@ -248,14 +268,14 @@ public class ProfileActivity extends AppCompatActivity {
                     if (profile != null) {
                         String nama = profile.getNamaCustomer() != null ? profile.getNamaCustomer() : "";
                         String email = profile.getEmailCustomer() != null ? profile.getEmailCustomer() : "";
-                        tvNama.setText(nama);
-                        tvEmail.setText(email);
+
+                        etNama.setText(nama);
+                        etEmail.setText(email);
 
                         String fotoPath = profile.getFoto();
                         String fotoUrl = (fotoPath == null || fotoPath.isEmpty()) ? "" :
                                 (fotoPath.startsWith("http") ? fotoPath : ApiClient.BASE_URL + fotoPath);
 
-                        // ✅ cek lifecycle sebelum Glide
                         if (!isFinishing() && !isDestroyed()) {
                             Glide.with(ProfileActivity.this)
                                     .load(fotoUrl)
@@ -272,18 +292,13 @@ public class ProfileActivity extends AppCompatActivity {
                                 .apply();
                     }
                 } else {
-                    try { Log.e("PROFILE_ERROR", response.errorBody().string()); } catch (Exception e){ e.printStackTrace();}
-                    if (!isFinishing() && !isDestroyed()) {
-                        Toast.makeText(ProfileActivity.this, "Response tidak valid", Toast.LENGTH_SHORT).show();
-                    }
+                    Toast.makeText(ProfileActivity.this, "Response tidak valid", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<ProfileResponse> call, Throwable t) {
-                if (!isFinishing() && !isDestroyed()) {
-                    Toast.makeText(ProfileActivity.this, "Gagal ambil profil: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-                }
+                Toast.makeText(ProfileActivity.this, "Gagal ambil profil: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -338,6 +353,6 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     public void onProfileClicked(View view) {
-        // already in profile
+        // sudah di profile
     }
 }

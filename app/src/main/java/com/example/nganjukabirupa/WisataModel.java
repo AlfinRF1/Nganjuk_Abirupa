@@ -1,28 +1,51 @@
 package com.example.nganjukabirupa;
 
+import com.google.gson.annotations.SerializedName;
+
 public class WisataModel {
+
+    @SerializedName("id_wisata")
+    private int idWisata;
+
+    @SerializedName("nama_wisata")
     private String namaWisata;
+
+    @SerializedName("lokasi")
     private String lokasi;
-    private int tiketDewasa;
-    private int tiketAnak;
+
+    @SerializedName("tiket_dewasa")
+    private int tiketDewasa; // ✅ langsung int
+
+    @SerializedName("tiket_anak")
+    private int tiketAnak;   // ✅ langsung int
+
+    @SerializedName("biaya_asuransi")
+    private int asuransi;    // ✅ ambil dari API
+
+    @SerializedName("fasilitas")
     private String fasilitas;
+
+    @SerializedName("deskripsi")
     private String deskripsi;
-    private int asuransi = 0; // default 0 kalau gak dikirim dari backend
+
+    @SerializedName("nama_admin")
+    private String namaAdmin;
+
+    @SerializedName("gambar")
+    private String gambar;
 
     // Default constructor (wajib untuk Retrofit/Gson)
     public WisataModel() {}
 
-    // Constructor manual (opsional)
-    public WisataModel(String namaWisata, String lokasi, int tiketDewasa, int tiketAnak, String fasilitas, String deskripsi) {
-        this.namaWisata = namaWisata;
-        this.lokasi = lokasi;
-        this.tiketDewasa = tiketDewasa;
-        this.tiketAnak = tiketAnak;
-        this.fasilitas = fasilitas;
-        this.deskripsi = deskripsi;
+    // Getter & Setter
+    public int getIdWisata() {
+        return idWisata;
     }
 
-    // Getter & Setter
+    public void setIdWisata(int idWisata) {
+        this.idWisata = idWisata;
+    }
+
     public String getNamaWisata() {
         return namaWisata;
     }
@@ -50,12 +73,17 @@ public class WisataModel {
     public int getTiketAnak() {
         return tiketAnak;
     }
+
+    public void setTiketAnak(int tiketAnak) {
+        this.tiketAnak = tiketAnak;
+    }
+
     public int getAsuransi() {
         return asuransi;
     }
 
-    public void setTiketAnak(int tiketAnak) {
-        this.tiketAnak = tiketAnak;
+    public void setAsuransi(int asuransi) {
+        this.asuransi = asuransi;
     }
 
     public String getFasilitas() {
@@ -72,5 +100,21 @@ public class WisataModel {
 
     public void setDeskripsi(String deskripsi) {
         this.deskripsi = deskripsi;
+    }
+
+    public String getNamaAdmin() {
+        return namaAdmin;
+    }
+
+    public void setNamaAdmin(String namaAdmin) {
+        this.namaAdmin = namaAdmin;
+    }
+
+    public String getGambar() {
+        return gambar;
+    }
+
+    public void setGambar(String gambar) {
+        this.gambar = gambar;
     }
 }

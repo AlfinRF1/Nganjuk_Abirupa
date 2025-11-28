@@ -94,27 +94,39 @@
                 android:layout_weight="1"
                 android:orientation="vertical">
 
-                <TextView
+                <!-- Username editable -->
+                <EditText
                     android:id="@+id/tv_user_name"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/poppins_semibold"
                     android:textColor="#4e4e4e"
                     android:textSize="14sp"
                     android:ellipsize="end"
                     android:singleLine="true"
-                    tools:text="Nama Kamu" />
+                    android:hint="Nama Kamu"
+                    android:inputType="textPersonName"/>
 
-                <TextView
+                <!-- Email editable -->
+                <EditText
                     android:id="@+id/tv_user_email"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/poppins_medium"
                     android:textColor="#4e4e4e"
                     android:textSize="12sp"
                     android:ellipsize="end"
                     android:singleLine="true"
-                    tools:text="example@gmail.com" />
+                    android:hint="example@gmail.com"
+                    android:inputType="textEmailAddress"/>
+                <Button
+                    android:id="@+id/btn_update"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Simpan Perubahan"
+                    android:background="@drawable/btn_update_bg"
+                    android:textColor="@android:color/white"
+                    android:layout_marginTop="16dp"/>
             </LinearLayout>
         </LinearLayout>
     </androidx.cardview.widget.CardView>

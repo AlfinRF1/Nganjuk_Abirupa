@@ -46,10 +46,10 @@ public class QrCodeActivity extends AppCompatActivity {
     // ✅ mapping idWisata ke file drawable
     private int getBarcodeDrawable(int idWisata) {
         switch (idWisata) {
-            case 1: return R.drawable.sedudo;      // sedudo.jpg
-            case 2: return R.drawable.tral;        // tral.jpeg
-            case 3: return R.drawable.goa;         // goa.jpeg
-            case 4: return R.drawable.sritanjung;  // sritanjung.jpeg
+            case 12: return R.drawable.sedudo;      // sedudo.jpg
+            case 13: return R.drawable.tral;        // tral.jpeg
+            case 14: return R.drawable.goa;         // goa.jpeg
+            case 15: return R.drawable.sritanjung;  // sritanjung.jpeg
             default: return R.drawable.barcode_default;
         }
     }

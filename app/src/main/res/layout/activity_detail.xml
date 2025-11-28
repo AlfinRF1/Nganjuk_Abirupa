@@ -5,10 +5,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F0F3F8"
-    tools:context=".DetailWisata">
+    android:background="#F0F3F8">
 
-    <!-- Scrollable Content -->
+    <!-- Scrollable content -->
     <androidx.core.widget.NestedScrollView
         android:id="@+id/nestedScrollView"
         android:layout_width="match_parent"
@@ -24,12 +23,12 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- Celah untuk Image Header dan Back Button (72dp) -->
+            <!-- Spacer untuk header -->
             <View
                 android:layout_width="match_parent"
                 android:layout_height="72dp" />
 
-            <!-- Gambar Wisata (Di dalam CardView) -->
+            <!-- Header image -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="190dp"
@@ -45,11 +44,10 @@
                     android:adjustViewBounds="true"
                     android:scaleType="centerCrop"
                     android:src="@drawable/default_wisata"
-                    android:contentDescription="Foto Sri Tanjung Wisata Tirta" />
+                    android:contentDescription="Foto Wisata" />
             </androidx.cardview.widget.CardView>
 
-
-            <!-- CARD DETAIL -->
+            <!-- Card detail -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -65,7 +63,7 @@
                     android:id="@+id/tvNamaWisata"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Sri Tanjung Wisata Tirta"
+                    android:text="Nama Wisata"
                     android:fontFamily="@font/poppins_bold"
                     android:textSize="18sp"
                     android:textColor="#4e4e4e" />
@@ -76,12 +74,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="Jl. Dieng, Kramat, Tanjungrejo, Kec. Loceret, Kabupaten Nganjuk, Jawa Timur 64471"
+                    android:text="Lokasi Wisata"
                     android:fontFamily="@font/poppins_semibold"
                     android:textColor="#818181"
                     android:textSize="12sp" />
 
-                <!-- Deskripsi Title -->
+                <!-- Deskripsi -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -91,18 +89,17 @@
                     android:textSize="16sp"
                     android:textColor="#4e4e4e" />
 
-                <!-- Deskripsi -->
                 <TextView
                     android:id="@+id/tvDeskripsi"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="Sri Tanjung Wisata Tirta adalah destinasi wisata air yang cocok untuk keluarga. Menyediakan kolam renang anak dan dewasa, taman bermain. Tempat ini menjadi favorit warga lokal untuk rekreasi akhir pekan."
+                    android:text="Deskripsi wisata akan ditampilkan di sini."
                     android:fontFamily="@font/poppins_medium"
                     android:textColor="#4e4e4e"
                     android:textSize="14sp" />
 
-                <!-- Tiket Masuk Title -->
+                <!-- Harga Tiket -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -112,18 +109,17 @@
                     android:textSize="16sp"
                     android:textColor="#4e4e4e" />
 
-                <!-- Tiket Masuk -->
                 <TextView
                     android:id="@+id/tvHargaTiket"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="Dewasa : 10.000\nAnak-anak : 7.000"
+                    android:text="Dewasa : Rp 0\nAnak-anak : Rp 0"
                     android:fontFamily="@font/poppins_medium"
                     android:textColor="#4e4e4e"
                     android:textSize="14sp" />
 
-                <!-- Fasilitas Title -->
+                <!-- Fasilitas -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -133,13 +129,12 @@
                     android:textSize="16sp"
                     android:textColor="#4e4e4e" />
 
-                <!-- Fasilitas -->
                 <TextView
                     android:id="@+id/tvFasilitas"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="Kolam renang dewasa, Kolam anak, Taman bermain, Warung makan, Toilet, Mushola, Parkir luas, Gazebo"
+                    android:text="Fasilitas wisata akan ditampilkan di sini."
                     android:fontFamily="@font/poppins_medium"
                     android:textColor="#4e4e4e"
                     android:textSize="14sp" />
@@ -149,7 +144,7 @@
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <!-- Tombol Pesan (Fixed di bawah) -->
+    <!-- Tombol Pesan -->
     <Button
         android:id="@+id/btnPesan"
         android:layout_width="0dp"
@@ -167,7 +162,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Tombol Kembali (Back) di atas semua layout -->
+    <!-- Tombol Back -->
     <ImageButton
         android:id="@+id/btnBack"
         android:layout_width="40dp"

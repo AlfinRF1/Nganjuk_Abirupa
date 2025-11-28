@@ -32,18 +32,19 @@ public class DetailGoa extends AppCompatActivity {
         setContentView(R.layout.activity_goamargotresno);
 
         // Inisialisasi view
-        imgHeader = findViewById(R.id.imgHeader);
+        imgHeader    = findViewById(R.id.imgHeader);
         tvNamaWisata = findViewById(R.id.tvNamaWisata);
-        tvLokasi = findViewById(R.id.tvLokasi);
-        tvDeskripsi = findViewById(R.id.tvDeskripsi);
+        tvLokasi     = findViewById(R.id.tvLokasi);
+        tvDeskripsi  = findViewById(R.id.tvDeskripsi);
         tvHargaTiket = findViewById(R.id.tvHargaTiket);
-        tvFasilitas = findViewById(R.id.tvFasilitas);
-        btnPesan = findViewById(R.id.btnPesan);
-        btnBack = findViewById(R.id.btnBack);
+        tvFasilitas  = findViewById(R.id.tvFasilitas);
+        btnPesan     = findViewById(R.id.btnPesan);
+        btnBack      = findViewById(R.id.btnBack);
 
         // Ambil id_wisata dari Intent
         idWisata = getIntent().getIntExtra("id_wisata", -1);
-        Log.d("DetailGoa", "Terima id_wisata: " + idWisata);
+        String namaExtra = getIntent().getStringExtra("nama_wisata"); // fallback
+        Log.d("DetailGoa", "Terima id_wisata: " + idWisata + ", extra nama=" + namaExtra);
 
         if (idWisata == -1) {
             Toast.makeText(this, "ID wisata tidak valid", Toast.LENGTH_SHORT).show();
@@ -61,22 +62,39 @@ public class DetailGoa extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null) {
                     WisataModel data = response.body();
 
-                    tvNamaWisata.setText(data.getNamaWisata());
-                    tvLokasi.setText(data.getLokasi());
+                    // ✅ fallback nama wisata
+                    String nama = data.getNamaWisata();
+                    if (nama == null || nama.isEmpty()) {
+                        nama = namaExtra;
+                    }
+
+                    tvNamaWisata.setText(nama != null ? nama : "Nama wisata belum tersedia");
+                    tvLokasi.setText(data.getLokasi() != null ? data.getLokasi() : "Lokasi belum tersedia");
                     tvDeskripsi.setText(data.getDeskripsi() != null ? data.getDeskripsi() : "Deskripsi belum tersedia");
                     tvFasilitas.setText(data.getFasilitas() != null ? data.getFasilitas() : "Fasilitas belum tersedia");
-                    tvHargaTiket.setText("Dewasa: Rp " + data.getTiketDewasa() + "\nAnak-anak: Rp " + data.getTiketAnak());
 
+                    // ✅ langsung ambil int dari model
                     hargaDewasa = data.getTiketDewasa();
-                    hargaAnak = data.getTiketAnak();
+                    hargaAnak   = data.getTiketAnak();
+
+                    // ✅ fallback ke extras kalau API kosong
+                    if (hargaDewasa == 0) {
+                        hargaDewasa = getIntent().getIntExtra("hargaDewasa", 0);
+                    }
+                    if (hargaAnak == 0) {
+                        hargaAnak = getIntent().getIntExtra("hargaAnak", 0);
+                    }
+
+                    tvHargaTiket.setText("Dewasa: Rp " + hargaDewasa + "\nAnak-anak: Rp " + hargaAnak);
 
                     // ✅ Pakai setImageResource langsung
                     int imageResId = getDrawableForWisata(idWisata);
-                    Log.d("DetailGoa", "Set image resource id: " + imageResId);
                     imgHeader.setImageResource(imageResId);
 
+                    Log.d("DetailGoa", "HargaDewasa=" + hargaDewasa + ", HargaAnak=" + hargaAnak);
+
                 } else {
-                    Toast.makeText(DetailGoa.this, "Gagal ambil data", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(DetailGoa.this, "Data tidak ditemukan", Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -98,23 +116,21 @@ public class DetailGoa extends AppCompatActivity {
         });
 
         // Tombol Back
-        ImageButton btnBack = findViewById(R.id.btnBack);
         btnBack.setOnClickListener(v -> {
-            // Balik ke Dashboard
             Intent intent = new Intent(DetailGoa.this, DashboardActivity.class);
             startActivity(intent);
-            finish(); // biar DetailWisata nggak numpuk di back stack
+            finish();
         });
     }
 
     // ✅ Mapping gambar berdasarkan ID wisata
     private int getDrawableForWisata(int idWisata) {
         switch (idWisata) {
-            case 1: return R.drawable.wisata_air_terjun_sedudo;
-            case 2: return R.drawable.wisata_roro_kuning;
-            case 3: return R.drawable.wisata_goa_margotresno;   // Goa → benar
-            case 4: return R.drawable.wisata_sritanjung;        // Sri → benar
-            case 5: return R.drawable.wisata_tral;              // Tral → benar
+            case 12: return R.drawable.wisata_air_terjun_sedudo;
+            case 13: return R.drawable.wisata_roro_kuning;
+            case 14: return R.drawable.wisata_goa_margotresno;
+            case 15: return R.drawable.wisata_sritanjung;
+            case 16: return R.drawable.wisata_tral;
             default: return R.drawable.default_wisata;
         }
     }

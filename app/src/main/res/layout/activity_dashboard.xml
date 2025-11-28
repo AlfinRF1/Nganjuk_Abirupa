@@ -9,15 +9,16 @@
     android:clipChildren="false"
     android:clipToPadding="false">
 
+    <!-- HEADER -->
     <FrameLayout
         android:id="@+id/header"
         android:layout_width="0dp"
         android:layout_height="139dp"
         android:background="@drawable/header_rounded"
         android:elevation="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintEnd_toEndOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -49,7 +50,6 @@
                 android:textSize="18sp"
                 android:textStyle="bold"/>
         </LinearLayout>
-
 
         <LinearLayout
             android:id="@+id/searchBar"
@@ -87,394 +87,61 @@
         </LinearLayout>
     </FrameLayout>
 
-    <androidx.core.widget.NestedScrollView
-        android:layout_width="match_parent"
+    <!-- SHIMMER SKELETON -->
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/shimmerLayout"
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        android:fillViewport="true"
+        app:shimmer_auto_start="true"
+        app:shimmer_duration="1500"
         app:layout_constraintTop_toBottomOf="@id/header"
+        app:layout_constraintBottom_toTopOf="@id/footer"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/footer">
+        app:layout_constraintEnd_toEndOf="parent">
 
         <LinearLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingHorizontal="16dp"
-            android:paddingBottom="16dp">
+            android:padding="25dp">
 
-            <TextView
-                android:id="@+id/tvSectionTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:fontFamily="@font/poppins_bold"
-                android:paddingTop="30dp"
-                android:text="Destinasi Wisata Terkini"
-                android:textColor="#4e4e4e"
-                android:textSize="16sp" />
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cardWisata1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="4dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:paddingBottom="16dp"
-                    android:descendantFocusability="afterDescendants">
-
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="180dp"
-                        android:layout_marginBottom="8dp"
-                        android:background="#ffffff"
-                        android:contentDescription="Air Terjun Sedudo"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/wisata_air_terjun_sedudo" />
-
-                    <TextView
-                        android:id="@+id/tvWisataName1"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginEnd="16dp"
-                        android:layout_marginBottom="2dp"
-                        android:fontFamily="@font/poppins_bold"
-                        android:text="Air Terjun Sedudo"
-                        android:textColor="#4e4e4e"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/tvWisataLocation1"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginEnd="16dp"
-                        android:layout_marginBottom="8dp"
-                        android:fontFamily="@font/poppins_semibold"
-                        android:text="Desa Ngliman, Kec Sawahan, Kab Nganjuk"
-                        android:textColor="#818181"
-                        android:textSize="10sp" />
-
-                    <Button
-                        android:id="@+id/btnDetail1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="36dp"
-                        android:layout_gravity="end"
-                        android:layout_marginEnd="16dp"
-                        android:backgroundTint="@color/gradientMiddle"
-                        android:fontFamily="@font/poppins_semibold"
-                        android:paddingStart="16dp"
-                        android:paddingEnd="16dp"
-                        app:cornerRadius="8dp"
-                        android:text="Selengkapnya"
-                        android:textColor="#ffffff"
-                        android:textSize="11sp"
-                        android:focusable="false"
-                        android:focusableInTouchMode="false"
-                        android:clickable="true" />
-
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cardWisata2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="4dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:paddingBottom="16dp"
-                    android:descendantFocusability="afterDescendants">
-
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="180dp"
-                        android:layout_marginBottom="8dp"
-                        android:background="#ffffff"
-                        android:contentDescription="Roro Kuning dan Situs Jendral Sudirman"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/wisata_roro_kuning" />
-
-                    <TextView
-                        android:id="@+id/tvWisataName2"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginEnd="16dp"
-                        android:layout_marginBottom="2dp"
-                        android:fontFamily="@font/poppins_bold"
-                        android:text="Roro Kuning dan Situs Jendral Sudirman"
-                        android:textColor="#4e4e4e"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/tvWisataLocation2"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginEnd="16dp"
-                        android:layout_marginBottom="8dp"
-                        android:fontFamily="@font/poppins_semibold"
-                        android:text="Desa Bajulan, Kec Loceret, Kab Nganjuk"
-                        android:textColor="#818181"
-                        android:textSize="10sp" />
-
-                    <Button
-                        android:id="@+id/btnDetail2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="36dp"
-                        android:layout_gravity="end"
-                        android:layout_marginEnd="16dp"
-                        android:backgroundTint="@color/gradientMiddle"
-                        android:fontFamily="@font/poppins_semibold"
-                        android:paddingStart="16dp"
-                        android:paddingEnd="16dp"
-                        app:cornerRadius="8dp"
-                        android:text="Selengkapnya"
-                        android:textColor="#ffffff"
-                        android:textSize="11sp"
-                        android:focusable="false"
-                        android:focusableInTouchMode="false"
-                        android:clickable="true" />
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cardWisata3"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="4dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:paddingBottom="16dp"
-                    android:descendantFocusability="afterDescendants">
-
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="180dp"
-                        android:layout_marginBottom="8dp"
-                        android:background="#ffffff"
-                        android:contentDescription="Goa Margotresno"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/wisata_goa_margotresno" />
-
-                    <TextView
-                        android:id="@+id/tvWisataName3"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginEnd="16dp"
-                        android:layout_marginBottom="2dp"
-                        android:fontFamily="@font/poppins_bold"
-                        android:text="Goa Margotresno"
-                        android:textColor="#4e4e4e"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/tvWisataLocation3"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginEnd="16dp"
-                        android:layout_marginBottom="8dp"
-                        android:fontFamily="@font/poppins_semibold"
-                        android:text="Desa Sugihwaras, Kec Ngluyu, Kab Nganjuk"
-                        android:textColor="#818181"
-                        android:textSize="10sp" />
-
-                    <Button
-                        android:id="@+id/btnDetail3"
-                        android:layout_width="wrap_content"
-                        android:layout_height="36dp"
-                        android:layout_gravity="end"
-                        android:layout_marginEnd="16dp"
-                        android:backgroundTint="@color/gradientMiddle"
-                        android:fontFamily="@font/poppins_semibold"
-                        android:paddingStart="16dp"
-                        android:paddingEnd="16dp"
-                        app:cornerRadius="8dp"
-                        android:text="Selengkapnya"
-                        android:textColor="#ffffff"
-                        android:textSize="11sp"
-                        android:focusable="false"
-                        android:focusableInTouchMode="false"
-                        android:clickable="true" />
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cardWisata4"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="4dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:paddingBottom="16dp"
-                    android:descendantFocusability="afterDescendants">
-
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="180dp"
-                        android:layout_marginBottom="8dp"
-                        android:background="#ffffff"
-                        android:contentDescription="Kolam Renang Sri Tanjung"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/wisata_sritanjung" />
-
-                    <TextView
-                        android:id="@+id/tvWisataName4"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginEnd="16dp"
-                        android:layout_marginBottom="2dp"
-                        android:fontFamily="@font/poppins_bold"
-                        android:text="Kolam Renang Sri Tanjung"
-                        android:textColor="#4e4e4e"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/tvWisataLocation4"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginEnd="16dp"
-                        android:layout_marginBottom="8dp"
-                        android:fontFamily="@font/poppins_semibold"
-                        android:text="Jl. Dieng, Tanjungrejo, Kec Loceret, Kab Nganjuk"
-                        android:textColor="#818181"
-                        android:textSize="10sp" />
-
-                    <Button
-                        android:id="@+id/btnDetail4"
-                        android:layout_width="wrap_content"
-                        android:layout_height="36dp"
-                        android:layout_gravity="end"
-                        android:layout_marginEnd="16dp"
-                        android:backgroundTint="@color/gradientMiddle"
-                        android:fontFamily="@font/poppins_semibold"
-                        android:paddingStart="16dp"
-                        android:paddingEnd="16dp"
-                        app:cornerRadius="8dp"
-                        android:text="Selengkapnya"
-                        android:textColor="#ffffff"
-                        android:textSize="11sp"
-                        android:focusable="false"
-                        android:focusableInTouchMode="false"
-                        android:clickable="true" />
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cardWisata5"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="4dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:paddingBottom="16dp"
-                    android:descendantFocusability="afterDescendants">
-
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="180dp"
-                        android:layout_marginBottom="8dp"
-                        android:background="#ffffff"
-                        android:contentDescription="Taman Rekreasi Anjuk Ladang"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/wisata_tral" />
-
-                    <TextView
-                        android:id="@+id/tvWisataName5"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginEnd="16dp"
-                        android:layout_marginBottom="2dp"
-                        android:fontFamily="@font/poppins_bold"
-                        android:text="Taman Rekreasi Anjuk Ladang"
-                        android:textColor="#4e4e4e"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/tvWisataLocation5"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginEnd="16dp"
-                        android:layout_marginBottom="8dp"
-                        android:fontFamily="@font/poppins_semibold"
-                        android:text="Jl.Anjuk Ladang, Kel Ploso, Kota Nganjuk"
-                        android:textColor="#818181"
-                        android:textSize="10sp" />
-
-                    <Button
-                        android:id="@+id/btnDetail5"
-                        android:layout_width="wrap_content"
-                        android:layout_height="36dp"
-                        android:layout_gravity="end"
-                        android:layout_marginEnd="16dp"
-                        android:backgroundTint="@color/gradientMiddle"
-                        android:fontFamily="@font/poppins_semibold"
-                        android:paddingStart="16dp"
-                        android:paddingEnd="16dp"
-                        app:cornerRadius="8dp"
-                        android:text="Selengkapnya"
-                        android:textColor="#ffffff"
-                        android:textSize="11sp"
-                        android:focusable="false"
-                        android:focusableInTouchMode="false"
-                        android:clickable="true" />
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
+            <!-- Skeleton cards -->
+            <include layout="@layout/item_wisata_skeleton"/>
+            <include layout="@layout/item_wisata_skeleton"/>
+            <include layout="@layout/item_wisata_skeleton"/>
         </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
+    </com.facebook.shimmer.ShimmerFrameLayout>
 
+    <!-- RECYCLER VIEW (hidden dulu, muncul setelah data masuk) -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerWisata"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="25dp"
+        android:padding="8dp"
+        android:visibility="gone"
+        tools:listitem="@layout/item_wisata"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintTop_toBottomOf="@id/header"
+        app:layout_constraintBottom_toTopOf="@id/footer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <!-- FOOTER -->
     <LinearLayout
         android:id="@+id/footer"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="60dp"
         android:background="#FFFFFF"
         android:orientation="horizontal"
         android:elevation="8dp"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:paddingTop="4dp"
-        android:paddingBottom="4dp">
+        app:layout_constraintEnd_toEndOf="parent">
 
+        <!-- Nav Home -->
         <LinearLayout
             android:id="@+id/navHome"
             android:layout_width="0dp"
@@ -503,6 +170,7 @@
                 android:textColor="#2E9FA6" />
         </LinearLayout>
 
+        <!-- Nav Riwayat -->
         <LinearLayout
             android:id="@+id/navRiwayat"
             android:layout_width="0dp"
@@ -524,14 +192,13 @@
 
             <TextView
                 android:layout_width="wrap_content"
-
                 android:layout_height="wrap_content"
                 android:text="Riwayat"
                 android:textSize="10sp"
-                android:textStyle="normal"
                 android:textColor="#808080" />
         </LinearLayout>
 
+        <!-- Nav Profile -->
         <LinearLayout
             android:id="@+id/navProfile"
             android:layout_width="0dp"
@@ -556,7 +223,6 @@
                 android:layout_height="wrap_content"
                 android:text="Profile"
                 android:textSize="10sp"
-                android:textStyle="normal"
                 android:textColor="#808080" />
         </LinearLayout>
     </LinearLayout>

@@ -63,6 +63,9 @@ public interface ApiService {
     @GET("get_riwayat.php")
     Call<List<RiwayatModel>> getRiwayat(@Query("id_customer") int idCustomer);
 
+    @GET("get_all_wisata.php")
+    Call<WisataResponse> getAllWisata();
+
     // PEMESANAN & RIWAYAT
     @FormUrlEncoded
     @POST("insert_pemesanan.php")
@@ -82,9 +85,11 @@ public interface ApiService {
             @Field("id_customer") int idCustomer,
             @Field("id_wisata") int idWisata,
             @Field("tanggal") String tanggal,
-            @Field("harga_total") int hargaTotal
+            @Field("harga_total") int hargaTotal,
+            @Field("nama_customer") String nama,
+            @Field("tlp_customer") String telepon,
+            @Field("jml_tiket") int jumlahTiket
     );
-
 
     // FOTO
     @Multipart
@@ -94,8 +99,15 @@ public interface ApiService {
             @Part MultipartBody.Part foto
     );
 
-        @FormUrlEncoded
-        @POST("delete_foto.php")
-        Call<ResponseBody> deleteFoto(@Field("id_customer") int idCustomer);
+    @FormUrlEncoded
+    @POST("delete_foto.php")
+    Call<ResponseBody> deleteFoto(@Field("id_customer") int idCustomer);
 
+    @FormUrlEncoded
+    @POST("updateProfile.php")
+    Call<UpdateProfileResponse> updateProfile(
+            @Field("id_customer") String idCustomer,
+            @Field("nama_customer") String namaCustomer,
+            @Field("email_customer") String emailCustomer
+    );
 }

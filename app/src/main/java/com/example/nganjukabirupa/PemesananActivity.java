@@ -9,11 +9,14 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.bumptech.glide.Glide;
 
 import org.json.JSONObject;
 
@@ -38,7 +41,6 @@ public class PemesananActivity extends AppCompatActivity {
     private int hargaDewasa = 0;
     private int hargaAnak = 0;
     private int tarifAsuransi = 0;
-
     private int idWisata;
 
     @Override
@@ -47,37 +49,48 @@ public class PemesananActivity extends AppCompatActivity {
         setContentView(R.layout.activity_pemesanan);
 
         // INIT VIEW
-        tvTotalHarga = findViewById(R.id.tvTotal);
-        tvLabelDewasa = findViewById(R.id.tvLabelDewasa);
-        tvLabelAnak = findViewById(R.id.tvLabelAnak);
-        tvLabelAsuransi = findViewById(R.id.tvLabelAsuransi);
-        tvHargaDewasa = findViewById(R.id.tvHargaDewasa);
-        tvHargaAnak = findViewById(R.id.tvHargaAnak);
-        tvAsuransi = findViewById(R.id.tvAsuransi);
+        tvTotalHarga     = findViewById(R.id.tvTotal);
+        tvLabelDewasa    = findViewById(R.id.tvLabelDewasa);
+        tvLabelAnak      = findViewById(R.id.tvLabelAnak);
+        tvLabelAsuransi  = findViewById(R.id.tvLabelAsuransi);
+        tvHargaDewasa    = findViewById(R.id.tvHargaDewasa);
+        tvHargaAnak      = findViewById(R.id.tvHargaAnak);
+        tvAsuransi       = findViewById(R.id.tvAsuransi);
 
-        etTanggal = findViewById(R.id.etTanggal);
-        etNama = findViewById(R.id.etNama);
-        etTelepon = findViewById(R.id.etTelepon);
+        etTanggal        = findViewById(R.id.etTanggal);
+        etNama           = findViewById(R.id.etNama);
+        etTelepon        = findViewById(R.id.etTelepon);
 
-        btnJumlah = findViewById(R.id.btnJumlah);
+        btnJumlah        = findViewById(R.id.btnJumlah);
         ImageButton btnCalendar = findViewById(R.id.btnCalendar);
-        btnBayar = findViewById(R.id.btnBayar);
+        btnBayar         = findViewById(R.id.btnBayar);
 
         // BACK BUTTON
         ImageButton btnBack = findViewById(R.id.btnBack);
         btnBack.setOnClickListener(v -> onBackPressed());
 
         // GET DATA WISATA
-        idWisata = getIntent().getIntExtra("id_wisata", -1);
+        Intent intent = getIntent();
+        idWisata      = intent.getIntExtra("id_wisata", -1);
+        hargaDewasa   = intent.getIntExtra("hargaDewasa", 0);
+        hargaAnak     = intent.getIntExtra("hargaAnak", 0);
+        tarifAsuransi = intent.getIntExtra("tarifAsuransi", 1000);
+
         if (idWisata == -1) {
             Toast.makeText(this, "ID Wisata tidak valid", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
 
+        // SETUP BUTTONS
         setupCalendarPicker(btnCalendar);
         setupJumlahButton();
         setupBayarButton();
+
+        // Hitung total awal
+        hitungTotalHarga();
+
+        // Kalau mau tetap ambil harga terbaru dari backend
         loadHargaWisata();
     }
 
@@ -137,13 +150,16 @@ public class PemesananActivity extends AppCompatActivity {
 
             ApiService apiService = RetrofitClient.getClient().create(ApiService.class);
 
-            // ✅ Khusus Roro Kuning (misalnya idWisata == 2)
-            if (idWisata == 2) {
+            // Contoh: khusus idWisata tertentu (misalnya Roro Kuning)
+            if (idWisata == 13) {
                 Call<ResponseBody> call = apiService.insertRiwayat(
                         idCustomer,
                         idWisata,
                         tanggalDipilih,
-                        totalHarga
+                        totalHarga,
+                        nama,
+                        telepon,
+                        jumlahPengunjung
                 );
 
                 call.enqueue(new Callback<ResponseBody>() {
@@ -232,9 +248,9 @@ public class PemesananActivity extends AppCompatActivity {
                         rawStr = rawStr.substring(rawStr.indexOf("{"));
                         JSONObject jsonObject = new JSONObject(rawStr);
 
-                        hargaDewasa = jsonObject.optInt("tiketDewasa", 0);
-                        hargaAnak = jsonObject.optInt("tiketAnak", 0);
-                        tarifAsuransi = jsonObject.optInt("asuransi", 1000);
+                        hargaDewasa   = jsonObject.optInt("tiketDewasa", hargaDewasa);
+                        hargaAnak     = jsonObject.optInt("tiketAnak", hargaAnak);
+                        tarifAsuransi = jsonObject.optInt("asuransi", tarifAsuransi);
 
                         hitungTotalHarga();
 
@@ -267,5 +283,17 @@ public class PemesananActivity extends AppCompatActivity {
         tvHargaAnak.setText("Rp " + (jumlahAnak * hargaAnak));
         tvAsuransi.setText("Rp " + totalAsuransi);
         tvTotalHarga.setText("Rp " + totalHarga);
+    }
+
+    // Mapping gambar untuk wisata tetap
+    private int getDrawableForWisata(int idWisata) {
+        switch (idWisata) {
+            case 12: return R.drawable.wisata_air_terjun_sedudo;
+            case 13: return R.drawable.wisata_roro_kuning;
+            case 14: return R.drawable.wisata_goa_margotresno;
+            case 15: return R.drawable.wisata_sritanjung;
+            case 16: return R.drawable.wisata_tral;
+            default: return R.drawable.default_wisata;
+        }
     }
 }

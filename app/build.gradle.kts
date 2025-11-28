@@ -34,6 +34,7 @@ android {
 
 dependencies {
     implementation("androidx.core:core-ktx:1.12.0")
+    implementation("com.facebook.shimmer:shimmer:0.5.0")
     implementation("com.github.yalantis:ucrop:2.2.8-native")
     implementation("androidx.core:core-splashscreen:1.0.1")
     implementation("androidx.appcompat:appcompat:1.6.1")
