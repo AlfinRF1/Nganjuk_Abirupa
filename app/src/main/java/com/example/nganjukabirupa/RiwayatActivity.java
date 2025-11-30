@@ -10,6 +10,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.gson.Gson;
 
@@ -22,7 +23,9 @@ import retrofit2.Response;
 public class RiwayatActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private RiwayatAdapter adapter;
+    private SwipeRefreshLayout swipeRefresh;
     private static final String TAG = "RiwayatActivity";
+    private int idCustomer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,21 +33,23 @@ public class RiwayatActivity extends AppCompatActivity {
         setContentView(R.layout.activity_riwayat);
 
         recyclerView = findViewById(R.id.recyclerViewRiwayat);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        swipeRefresh = findViewById(R.id.swipeRefresh);
+
+        // LayoutManager normal: data tampil dari atas ke bawah
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
 
         // Ambil id_customer dari SharedPreferences
         SharedPreferences prefs = getSharedPreferences("user_session", MODE_PRIVATE);
         String idCustomerStr = prefs.getString("id_customer", null);
 
         if (idCustomerStr == null) {
-            // Redirect ke login kalau belum ada session
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
             finish();
             return;
         }
 
-        int idCustomer;
         try {
             idCustomer = Integer.parseInt(idCustomerStr);
         } catch (NumberFormatException e) {
@@ -54,13 +59,23 @@ public class RiwayatActivity extends AppCompatActivity {
             return;
         }
 
-        // Ambil data riwayat dari backend
+        // Listener refresh
+        swipeRefresh.setOnRefreshListener(() -> loadRiwayat());
+
+        // Load pertama kali
+        loadRiwayat();
+    }
+
+    private void loadRiwayat() {
+        swipeRefresh.setRefreshing(true); // tampilkan animasi refresh
+
         ApiService apiService = RetrofitClient.getClient().create(ApiService.class);
         Call<List<RiwayatModel>> call = apiService.getRiwayat(idCustomer);
 
         call.enqueue(new Callback<List<RiwayatModel>>() {
             @Override
             public void onResponse(Call<List<RiwayatModel>> call, Response<List<RiwayatModel>> response) {
+                swipeRefresh.setRefreshing(false); // stop animasi refresh
                 if (response.isSuccessful() && response.body() != null) {
                     List<RiwayatModel> riwayatList = response.body();
                     Log.d(TAG, "Raw response: " + new Gson().toJson(riwayatList));
@@ -69,9 +84,6 @@ public class RiwayatActivity extends AppCompatActivity {
                     if (riwayatList.isEmpty()) {
                         Toast.makeText(RiwayatActivity.this, "Belum ada riwayat transaksi", Toast.LENGTH_SHORT).show();
                     } else {
-                        // Pastikan setiap item punya id_transaksi & total_harga
-                        for (RiwayatModel item : riwayatList) {
-                        }
                         adapter = new RiwayatAdapter(riwayatList);
                         recyclerView.setAdapter(adapter);
                     }
@@ -83,6 +95,7 @@ public class RiwayatActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<List<RiwayatModel>> call, Throwable t) {
+                swipeRefresh.setRefreshing(false);
                 Log.e(TAG, "Network error: " + t.getMessage(), t);
                 Toast.makeText(RiwayatActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }

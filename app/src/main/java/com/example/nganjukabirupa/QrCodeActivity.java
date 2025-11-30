@@ -31,7 +31,7 @@ public class QrCodeActivity extends AppCompatActivity {
             Toast.makeText(this, "Data total tidak tersedia", Toast.LENGTH_SHORT).show();
         }
 
-        // ✅ set barcode sesuai idWisata
+        // set barcode sesuai idWisata
         int barcodeRes = getBarcodeDrawable(idWisata);
         imgBarcode.setImageResource(barcodeRes);
 
@@ -43,7 +43,7 @@ public class QrCodeActivity extends AppCompatActivity {
         });
     }
 
-    // ✅ mapping idWisata ke file drawable
+    // mapping idWisata ke file drawable
     private int getBarcodeDrawable(int idWisata) {
         switch (idWisata) {
             case 12: return R.drawable.sedudo;      // sedudo.jpg

@@ -119,14 +119,16 @@
                     android:singleLine="true"
                     android:hint="example@gmail.com"
                     android:inputType="textEmailAddress"/>
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_update"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Simpan Perubahan"
-                    android:background="@drawable/btn_update_bg"
                     android:textColor="@android:color/white"
-                    android:layout_marginTop="16dp"/>
+                    android:background="@drawable/btn_update_bg"
+                    app:backgroundTint="@null"
+                    android:layout_marginTop="16dp"
+                    app:rippleColor="@android:color/white"/>
             </LinearLayout>
         </LinearLayout>
     </androidx.cardview.widget.CardView>

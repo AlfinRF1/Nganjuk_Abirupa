@@ -7,7 +7,8 @@
     android:layout_height="match_parent"
     android:background="#F0F3F8"
     android:clipChildren="false"
-    android:clipToPadding="false">
+    android:clipToPadding="false"
+    tools:context=".DashboardActivity">
 
     <!-- HEADER -->
     <FrameLayout
@@ -112,20 +113,26 @@
         </LinearLayout>
     </com.facebook.shimmer.ShimmerFrameLayout>
 
-    <!-- RECYCLER VIEW (hidden dulu, muncul setelah data masuk) -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerWisata"
+    <!-- SWIPE REFRESH + RECYCLER VIEW -->
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshDashboard"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="25dp"
-        android:padding="8dp"
-        android:visibility="gone"
-        tools:listitem="@layout/item_wisata"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintTop_toBottomOf="@id/header"
         app:layout_constraintBottom_toTopOf="@id/footer"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerWisata"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="25dp"
+            android:padding="8dp"
+            android:visibility="gone"
+            tools:listitem="@layout/item_wisata"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <!-- FOOTER -->
     <LinearLayout

@@ -13,8 +13,10 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.facebook.shimmer.ShimmerFrameLayout;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,7 +31,8 @@ public class DashboardActivity extends AppCompatActivity {
     private List<WisataModel> wisataList = new ArrayList<>();
     private EditText searchInput;
     private TextView tvWelcome;
-    private ShimmerFrameLayout shimmerLayout; // ✅ shimmer
+    private ShimmerFrameLayout shimmerLayout;
+    private SwipeRefreshLayout swipeRefreshDashboard; // ✅ refresh
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,40 +50,21 @@ public class DashboardActivity extends AppCompatActivity {
 
         // Setup Shimmer + RecyclerView
         shimmerLayout = findViewById(R.id.shimmerLayout);
-        shimmerLayout.startShimmer(); // mulai shimmer
+        shimmerLayout.startShimmer();
 
         recyclerWisata = findViewById(R.id.recyclerWisata);
         recyclerWisata.setLayoutManager(new LinearLayoutManager(this));
         adapter = new WisataAdapter(DashboardActivity.this, wisataList);
         recyclerWisata.setAdapter(adapter);
 
-        // Panggil API
-        ApiService api = ApiClient.getClient().create(ApiService.class);
-        api.getAllWisata().enqueue(new Callback<WisataResponse>() {
-            @Override
-            public void onResponse(Call<WisataResponse> call, Response<WisataResponse> response) {
-                shimmerLayout.stopShimmer(); // ✅ stop shimmer
-                shimmerLayout.setVisibility(View.GONE); // sembunyikan shimmer
-                recyclerWisata.setVisibility(View.VISIBLE); // tampilkan data
-
-                if (response.isSuccessful() && response.body() != null) {
-                    wisataList.clear();
-                    wisataList.addAll(response.body().getData());
-                    adapter.notifyDataSetChanged();
-                    Log.d("Dashboard", "Jumlah data: " + wisataList.size());
-                } else {
-                    Log.e("Dashboard", "Response gagal / kosong");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<WisataResponse> call, Throwable t) {
-                shimmerLayout.stopShimmer();
-                shimmerLayout.setVisibility(View.GONE);
-                recyclerWisata.setVisibility(View.VISIBLE);
-                Log.e("Dashboard", "Error: " + t.getMessage());
-            }
+        // Setup SwipeRefreshLayout
+        swipeRefreshDashboard = findViewById(R.id.swipeRefreshDashboard);
+        swipeRefreshDashboard.setOnRefreshListener(() -> {
+            loadWisata(); // reload data saat swipe
         });
+
+        // Load data pertama kali
+        loadWisata();
 
         // Search filter
         searchInput = findViewById(R.id.searchInput);
@@ -98,5 +82,40 @@ public class DashboardActivity extends AppCompatActivity {
                 startActivity(new Intent(this, RiwayatActivity.class)));
         findViewById(R.id.navProfile).setOnClickListener(v ->
                 startActivity(new Intent(this, ProfileActivity.class)));
+    }
+
+    private void loadWisata() {
+        shimmerLayout.startShimmer();
+        shimmerLayout.setVisibility(View.VISIBLE);
+        recyclerWisata.setVisibility(View.GONE);
+
+        ApiService api = ApiClient.getClient().create(ApiService.class);
+        api.getAllWisata().enqueue(new Callback<WisataResponse>() {
+            @Override
+            public void onResponse(Call<WisataResponse> call, Response<WisataResponse> response) {
+                swipeRefreshDashboard.setRefreshing(false); // stop refresh animasi
+                shimmerLayout.stopShimmer();
+                shimmerLayout.setVisibility(View.GONE);
+                recyclerWisata.setVisibility(View.VISIBLE);
+
+                if (response.isSuccessful() && response.body() != null) {
+                    wisataList.clear();
+                    wisataList.addAll(response.body().getData());
+                    adapter.notifyDataSetChanged();
+                    Log.d("Dashboard", "Jumlah data: " + wisataList.size());
+                } else {
+                    Log.e("Dashboard", "Response gagal / kosong");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<WisataResponse> call, Throwable t) {
+                swipeRefreshDashboard.setRefreshing(false);
+                shimmerLayout.stopShimmer();
+                shimmerLayout.setVisibility(View.GONE);
+                recyclerWisata.setVisibility(View.VISIBLE);
+                Log.e("Dashboard", "Error: " + t.getMessage());
+            }
+        });
     }
 }

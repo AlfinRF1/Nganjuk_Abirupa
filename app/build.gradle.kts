@@ -46,6 +46,7 @@ dependencies {
     implementation("androidx.cardview:cardview:1.0.0")
     annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
     // Firebase & Google Sign-In
     implementation(platform("com.google.firebase:firebase-bom:33.5.0"))
     implementation("com.google.firebase:firebase-auth")

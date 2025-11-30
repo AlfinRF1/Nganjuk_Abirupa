@@ -72,7 +72,7 @@ public interface ApiService {
     Call<ResponseBody> insertPemesanan(
             @Field("nama_customer") String nama,
             @Field("tlp_costumer") String telepon,
-            @Field("tanggal_pesan") String tanggal,
+            @Field("tanggal") String tanggal,
             @Field("jml_tiket") String jumlah,
             @Field("harga_total") String total,
             @Field("id_wisata") String idWisata,
@@ -87,7 +87,7 @@ public interface ApiService {
             @Field("tanggal") String tanggal,
             @Field("harga_total") int hargaTotal,
             @Field("nama_customer") String nama,
-            @Field("tlp_customer") String telepon,
+            @Field("tlp_costumer") String telepon,
             @Field("jml_tiket") int jumlahTiket
     );
 
