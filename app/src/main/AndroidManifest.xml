@@ -20,7 +20,8 @@
         <!-- Launcher -->
         <activity
             android:name=".LoginActivity"
-            android:exported="true">
+            android:exported="true"
+            android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -28,29 +29,30 @@
         </activity>
 
         <!-- Aktivitas internal -->
-        <activity android:name=".MainActivity" android:exported="false" />
-        <activity android:name=".DashboardActivity" android:exported="false" />
-        <activity android:name=".ProfileActivity" android:exported="false" />
-        <activity android:name=".RegisterActivity" android:exported="false" />
-        <activity android:name=".PemesananActivity" android:exported="false" />
-        <activity android:name=".DetailGoa" android:exported="false" />
-        <activity android:name=".DetailWisata" android:exported="false" />
-        <activity android:name=".DetailWisataGeneric" android:exported="false" />
-        <activity android:name=".RiwayatActivity" android:exported="false" />
-        <activity android:name=".PilihPengunjungActivity" android:exported="false" />
-        <activity android:name=".DetailSedudo" android:exported="false" />
-        <activity android:name=".DetailSri" android:exported="false" />
-        <activity android:name=".DetailRoro" android:exported="false" />
-        <activity android:name=".DetailTral" android:exported="false" />
-        <activity android:name=".DetailRiwayatActivity" android:exported="false" />
-        <activity android:name=".QrCodeActivity" android:exported="false" />
+        <activity android:name=".MainActivity" android:exported="false" android:windowSoftInputMode="adjustPan"/>
+        <activity android:name=".DashboardActivity" android:exported="false" android:windowSoftInputMode="adjustPan"/>
+        <activity android:name=".ProfileActivity" android:exported="false" android:windowSoftInputMode="adjustPan"/>
+        <activity android:name=".RegisterActivity" android:exported="false" android:windowSoftInputMode="adjustPan"/>
+        <activity android:name=".PemesananActivity" android:exported="false" android:windowSoftInputMode="adjustPan"/>
+        <activity android:name=".DetailGoa" android:exported="false" android:windowSoftInputMode="adjustPan"/>
+        <activity android:name=".DetailWisata" android:exported="false" android:windowSoftInputMode="adjustPan"/>
+        <activity android:name=".DetailWisataGeneric" android:exported="false" android:windowSoftInputMode="adjustPan"/>
+        <activity android:name=".RiwayatActivity" android:exported="false" android:windowSoftInputMode="adjustPan"/>
+        <activity android:name=".PilihPengunjungActivity" android:exported="false" android:windowSoftInputMode="adjustPan"/>
+        <activity android:name=".DetailSedudo" android:exported="false" android:windowSoftInputMode="adjustPan"/>
+        <activity android:name=".DetailSri" android:exported="false" android:windowSoftInputMode="adjustPan"/>
+        <activity android:name=".DetailRoro" android:exported="false" android:windowSoftInputMode="adjustPan"/>
+        <activity android:name=".DetailTral" android:exported="false" android:windowSoftInputMode="adjustPan"/>
+        <activity android:name=".DetailRiwayatActivity" android:exported="false" android:windowSoftInputMode="adjustPan"/>
+        <activity android:name=".QrCodeActivity" android:exported="false" android:windowSoftInputMode="adjustPan"/>
 
         <!-- UCrop cropping activity -->
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan"/>
     </application>
 
 </manifest>

@@ -108,6 +108,7 @@ public interface ApiService {
     Call<UpdateProfileResponse> updateProfile(
             @Field("id_customer") String idCustomer,
             @Field("nama_customer") String namaCustomer,
-            @Field("email_customer") String emailCustomer
+            @Field("email_customer") String emailCustomer,
+            @Field("password") String password
     );
 }

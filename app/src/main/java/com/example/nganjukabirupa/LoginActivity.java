@@ -97,35 +97,62 @@ public class LoginActivity extends AppCompatActivity {
             finish();
         }
 
-        // Login manual
         btnLogin.setOnClickListener(v -> {
-            String nama = etUsername.getText().toString().trim();
-            String password = etPassword.getText().toString().trim();
+            String nama = etUsername.getText().toString();
+            String password = etPassword.getText().toString();
 
-            if (nama.isEmpty() || password.isEmpty()) {
+            // Trim dulu
+            String namaTrimmed = nama.trim();
+            String passwordTrimmed = password.trim();
+
+            // Validasi kosong
+            if (namaTrimmed.isEmpty() || passwordTrimmed.isEmpty()) {
                 Toast.makeText(this, "Nama dan password wajib diisi", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            LoginRequest request = new LoginRequest(nama, password);
+            // Validasi spasi di awal/akhir
+            if (!nama.equals(namaTrimmed)) {
+                etUsername.setError("Username tidak boleh ada spasi di awal/akhir");
+                return;
+            }
+            if (!password.equals(passwordTrimmed)) {
+                etPassword.setError("Password tidak boleh ada spasi di awal/akhir");
+                return;
+            }
+
+            // Kalau mau larang spasi di tengah juga:
+            if (namaTrimmed.contains(" ")) {
+                etUsername.setError("Username tidak boleh mengandung spasi");
+                return;
+            }
+
+            // Lanjut login
+            LoginRequest request = new LoginRequest(namaTrimmed, passwordTrimmed);
             ApiService apiService = RetrofitClient.getClient().create(ApiService.class);
 
             apiService.login(request).enqueue(new Callback<LoginResponse>() {
                 @Override
                 public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
-                    if (response.isSuccessful() && response.body() != null && response.body().success) {
-                        saveSession(
-                                response.body().id_customer,
-                                response.body().nama_customer,
-                                response.body().email_customer,
-                                null
-                        );
-                        Toast.makeText(LoginActivity.this, "Login berhasil!", Toast.LENGTH_SHORT).show();
-                        startActivity(new Intent(LoginActivity.this, DashboardActivity.class));
-                        finish();
+                    if (response.isSuccessful() && response.body() != null) {
+                        LoginResponse res = response.body();
+
+                        if (res.success) {
+                            saveSession(
+                                    res.id_customer,
+                                    res.nama_customer != null ? res.nama_customer : namaTrimmed,
+                                    res.email_customer != null ? res.email_customer : "",
+                                    null // login manual tidak ada photoUrl
+                            );
+
+                            Toast.makeText(LoginActivity.this, res.message, Toast.LENGTH_SHORT).show();
+                            startActivity(new Intent(LoginActivity.this, DashboardActivity.class));
+                            finish();
+                        } else {
+                            Toast.makeText(LoginActivity.this, res.message, Toast.LENGTH_SHORT).show();
+                        }
                     } else {
-                        String msg = response.body() != null ? response.body().message : "Login gagal";
-                        Toast.makeText(LoginActivity.this, msg, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(LoginActivity.this, "Login gagal", Toast.LENGTH_SHORT).show();
                     }
                 }
 
@@ -174,19 +201,27 @@ public class LoginActivity extends AppCompatActivity {
         apiService.googleLogin(request).enqueue(new Callback<LoginResponse>() {
             @Override
             public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
-                if (response.isSuccessful() && response.body() != null && response.body().success) {
-                    saveSession(
-                            response.body().id_customer,
-                            response.body().nama_customer != null ? response.body().nama_customer : name,
-                            response.body().email_customer != null ? response.body().email_customer : email,
-                            photoUrl
-                    );
-                    Toast.makeText(LoginActivity.this, "Login Google berhasil!", Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(LoginActivity.this, DashboardActivity.class));
-                    finish();
+                if (response.isSuccessful() && response.body() != null) {
+                    LoginResponse res = response.body();
+
+                    if (res.success) {
+                        saveSession(
+                                res.id_customer,
+                                res.nama_customer != null ? res.nama_customer : name,
+                                res.email_customer != null ? res.email_customer : email,
+                                photoUrl
+                        );
+
+                        // ✅ tampilkan pesan dari backend (akun lama vs akun baru)
+                        Toast.makeText(LoginActivity.this, res.message, Toast.LENGTH_SHORT).show();
+
+                        startActivity(new Intent(LoginActivity.this, DashboardActivity.class));
+                        finish();
+                    } else {
+                        Toast.makeText(LoginActivity.this, res.message, Toast.LENGTH_SHORT).show();
+                    }
                 } else {
-                    String msg = response.body() != null ? response.body().message : "Login gagal";
-                    Toast.makeText(LoginActivity.this, msg, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this, "Login gagal", Toast.LENGTH_SHORT).show();
                 }
             }
 

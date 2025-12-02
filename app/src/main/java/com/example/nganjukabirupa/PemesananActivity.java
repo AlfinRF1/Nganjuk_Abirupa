@@ -87,6 +87,7 @@ public class PemesananActivity extends AppCompatActivity {
         setupJumlahButton();
         setupBayarButton();
 
+
         // Hitung total awal
         hitungTotalHarga();
 
@@ -127,7 +128,15 @@ public class PemesananActivity extends AppCompatActivity {
         btnBayar.setOnClickListener(v -> {
 
             String nama = etNama.getText().toString().trim();
+            if (!nama.matches("^[a-zA-Z0-9 ]+$")) {
+                Toast.makeText(this, "Nama tidak boleh mengandung karakter khusus", Toast.LENGTH_SHORT).show();
+                return;
+            }
             String telepon = etTelepon.getText().toString().trim();
+            if (!telepon.matches("^\\+?[0-9]+$")) {
+                Toast.makeText(this, "Nomor telepon hanya boleh angka", Toast.LENGTH_SHORT).show();
+                return;
+            }
             String tanggalDipilih = etTanggal.getText().toString().trim();
 
             SharedPreferences prefs = getSharedPreferences("user_session", MODE_PRIVATE);

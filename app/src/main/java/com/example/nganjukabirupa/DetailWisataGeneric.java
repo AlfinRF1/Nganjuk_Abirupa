@@ -100,7 +100,7 @@ public class DetailWisataGeneric extends AppCompatActivity {
                         String imageUrl = gambarExtra;
                         if (imageUrl != null && !imageUrl.isEmpty()) {
                             if (!imageUrl.startsWith("http")) {
-                                imageUrl = "https://nganjukabirupa.pbltifnganjuk.com/apimobile/images/" + imageUrl;
+                                imageUrl = "https://nganjukabirupa.pbltifnganjuk.com/assets/images/destinasi/" + imageUrl;
                             }
                             Glide.with(DetailWisataGeneric.this)
                                     .load(imageUrl)

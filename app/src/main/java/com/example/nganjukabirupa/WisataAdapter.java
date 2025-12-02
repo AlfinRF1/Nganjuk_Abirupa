@@ -2,7 +2,6 @@ package com.example.nganjukabirupa;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.view.LayoutInflater;
@@ -66,8 +65,9 @@ public class WisataAdapter extends RecyclerView.Adapter<WisataAdapter.WisataView
             default:
                 String imageUrl = wisata.getGambar();
                 if (imageUrl != null && !imageUrl.isEmpty()) {
+                    // ✅ Fix path ke folder yang benar
                     if (!imageUrl.startsWith("http")) {
-                        imageUrl = "https://nganjukabirupa.pbltifnganjuk.com/apimobile/images/" + imageUrl;
+                        imageUrl = "https://nganjukabirupa.pbltifnganjuk.com/assets/images/destinasi/" + imageUrl;
                     }
                     Glide.with(context)
                             .load(imageUrl)
@@ -81,7 +81,6 @@ public class WisataAdapter extends RecyclerView.Adapter<WisataAdapter.WisataView
                 break;
         }
 
-        // Klik item → buka detail
         // Klik item → buka detail
         holder.itemView.setOnClickListener(v -> {
             Intent intent;

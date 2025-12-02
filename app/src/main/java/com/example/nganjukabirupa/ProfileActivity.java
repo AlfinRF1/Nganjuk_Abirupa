@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -38,7 +39,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ProfileActivity extends AppCompatActivity {
 
-    private EditText etNama, etEmail;   // ganti TextView jadi EditText biar bisa CRUD
+    private EditText etNama, etEmail, etPassword;   // ✅ password opsional
     private ImageView imgPhoto;
     private Button btnLogout, btnUpdate;
 
@@ -47,6 +48,7 @@ public class ProfileActivity extends AppCompatActivity {
     private static final String KEY_EMAIL_CUSTOMER = "email_customer";
     private static final String KEY_NAMA_CUSTOMER = "nama_customer";
     private static final String KEY_PHOTO_URL = "photo_url";
+    private static final String KEY_PASSWORD_CUSTOMER = "password_customer"; // ✅ opsional
 
     private ActivityResultLauncher<Intent> galleryLauncher;
     private String id_customer;
@@ -56,20 +58,25 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        etNama   = findViewById(R.id.tv_user_name);   // sesuai XML
-        etEmail  = findViewById(R.id.tv_user_email);  // sesuai XML
+        etNama   = findViewById(R.id.tv_user_name);
+        etEmail  = findViewById(R.id.tv_user_email);
+        etPassword = findViewById(R.id.et_user_password); // ✅ tambahin di XML kalau mau
         imgPhoto = findViewById(R.id.iv_profile_photo);
         btnLogout = findViewById(R.id.btn_logout);
-        btnUpdate = findViewById(R.id.btn_update);    // tambahin tombol update di XML
+        btnUpdate = findViewById(R.id.btn_update);
 
         SharedPreferences prefs = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         id_customer = prefs.getString(KEY_ID_CUSTOMER, null);
         String email_customer = prefs.getString(KEY_EMAIL_CUSTOMER, null);
         String nama_customer = prefs.getString(KEY_NAMA_CUSTOMER, null);
         String photo_url = prefs.getString(KEY_PHOTO_URL, null);
+        String password_customer = prefs.getString(KEY_PASSWORD_CUSTOMER, null);
 
         etNama.setText(nama_customer != null ? nama_customer : "User");
         etEmail.setText(email_customer != null ? email_customer : "-");
+        if (etPassword != null) {
+            etPassword.setText(password_customer != null ? password_customer : "");
+        }
 
         if (photo_url != null && !photo_url.isEmpty()) {
             Glide.with(this)
@@ -106,21 +113,51 @@ public class ProfileActivity extends AppCompatActivity {
         }
 
         btnLogout.setOnClickListener(v -> {
-            prefs.edit().clear().apply();
-            startActivity(new Intent(ProfileActivity.this, LoginActivity.class));
-            finish();
+            new AlertDialog.Builder(ProfileActivity.this)
+                    .setTitle("Konfirmasi Logout")
+                    .setMessage("Apakah kamu yakin ingin logout?")
+                    .setPositiveButton("Ya", (dialog, which) -> {
+                        // Clear session pakai prefs yang sudah ada
+                        prefs.edit().clear().apply();
+
+                        Toast.makeText(ProfileActivity.this, "Logout berhasil", Toast.LENGTH_SHORT).show();
+
+                        Intent intent = new Intent(ProfileActivity.this, LoginActivity.class);
+                        startActivity(intent);
+                        finish();
+                    })
+                    .setNegativeButton("Batal", (dialog, which) -> dialog.dismiss())
+                    .show();
         });
 
-        // Tombol update username & email
         btnUpdate.setOnClickListener(v -> updateProfile());
     }
 
     private void updateProfile() {
         String newNama  = etNama.getText().toString().trim();
         String newEmail = etEmail.getText().toString().trim();
+        String newPass  = etPassword != null ? etPassword.getText().toString().trim() : "";
+
+        // Ambil data lama dari session
+        SessionManager sessionManager = new SessionManager(this);
+
+        String oldNama  = sessionManager.getNama();
+        String oldEmail = sessionManager.getEmail();
+
+        // Validasi email format
+        if (!Patterns.EMAIL_ADDRESS.matcher(newEmail).matches()) {
+            etEmail.setError("Format email tidak valid");
+            return;
+        }
+
+        // Cek apakah ada perubahan
+        if (newNama.equals(oldNama) && newEmail.equals(oldEmail) && newPass.isEmpty()) {
+            Toast.makeText(this, "Tidak ada perubahan pada profil", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         ApiService api = ApiClient.getClient().create(ApiService.class);
-        Call<UpdateProfileResponse> call = api.updateProfile(id_customer, newNama, newEmail);
+        Call<UpdateProfileResponse> call = api.updateProfile(id_customer, newNama, newEmail, newPass);
 
         call.enqueue(new Callback<UpdateProfileResponse>() {
             @Override
@@ -129,9 +166,9 @@ public class ProfileActivity extends AppCompatActivity {
                     UpdateProfileResponse res = response.body();
                     if ("success".equals(res.getStatus())) {
                         Toast.makeText(ProfileActivity.this, res.getMessage(), Toast.LENGTH_SHORT).show();
-                        ambilDataProfilById(id_customer);
+                        ambilDataProfilById(id_customer); // refresh data
                     } else {
-                        Toast.makeText(ProfileActivity.this, "Gagal: " + res.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ProfileActivity.this, res.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     Toast.makeText(ProfileActivity.this, "Server error: " + response.code(), Toast.LENGTH_SHORT).show();
