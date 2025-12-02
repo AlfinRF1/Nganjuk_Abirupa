@@ -12,6 +12,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -59,8 +61,27 @@ public class RiwayatAdapter extends RecyclerView.Adapter<RiwayatAdapter.ViewHold
         // Total harga langsung dari DB (tiket + asuransi)
         holder.tvTotalHarga.setText("Total Tiket : Rp. " + String.format("%,d", model.getTotalHarga()));
 
-        // Image sesuai nama wisata
-        holder.ivWisataImage.setImageResource(getDrawableForWisata(context, model.getNamaWisata()));
+        // ✅ Image: cek apakah wisata tetap atau generic
+        int drawableRes = getDrawableForWisata(model.getNamaWisata());
+        if (drawableRes != R.drawable.default_wisata) {
+            holder.ivWisataImage.setImageResource(drawableRes);
+        } else {
+            // kalau generic → load dari URL API
+            String imageUrl = model.getGambar();
+            if (!TextUtils.isEmpty(imageUrl)) {
+                if (!imageUrl.startsWith("http")) {
+                    imageUrl = "https://nganjukabirupa.pbltifnganjuk.com/assets/images/destinasi/" + imageUrl;
+                }
+                Glide.with(context)
+                        .load(imageUrl)
+                        .centerCrop()
+                        .placeholder(R.drawable.default_wisata)
+                        .error(R.drawable.default_wisata)
+                        .into(holder.ivWisataImage);
+            } else {
+                holder.ivWisataImage.setImageResource(R.drawable.default_wisata);
+            }
+        }
 
         // Format tanggal fleksibel
         String tanggalStr = "-";
@@ -109,8 +130,8 @@ public class RiwayatAdapter extends RecyclerView.Adapter<RiwayatAdapter.ViewHold
         return riwayatList != null ? riwayatList.size() : 0;
     }
 
-    // Pilih drawable sesuai nama wisata
-    private int getDrawableForWisata(Context context, String namaWisata) {
+    // Pilih drawable sesuai nama wisata tetap
+    private int getDrawableForWisata(String namaWisata) {
         if (namaWisata == null) return R.drawable.default_wisata;
         String lower = namaWisata.toLowerCase();
         if (lower.contains("sedudo")) return R.drawable.wisata_air_terjun_sedudo;
@@ -118,6 +139,6 @@ public class RiwayatAdapter extends RecyclerView.Adapter<RiwayatAdapter.ViewHold
         if (lower.contains("margo tresno")) return R.drawable.wisata_goa_margotresno;
         if (lower.contains("sri tanjung")) return R.drawable.wisata_sritanjung;
         if (lower.contains("anjuk ladang") || lower.contains("tral")) return R.drawable.wisata_tral;
-        return R.drawable.default_wisata;
+        return R.drawable.default_wisata; // default → nanti dicek Glide
     }
 }

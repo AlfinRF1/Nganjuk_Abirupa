@@ -19,31 +19,28 @@ public class QrCodeActivity extends AppCompatActivity {
 
         totalAmountText = findViewById(R.id.total_amount);
         backArrow = findViewById(R.id.back_arrow);
-        imgBarcode = findViewById(R.id.qr_code_image); // pastikan ada di layout
+        imgBarcode = findViewById(R.id.qr_code_image);
 
         // Ambil data dari Intent
         int totalHarga = getIntent().getIntExtra("total", 0);
         int idWisata = getIntent().getIntExtra("idWisata", -1);
 
+        // ✅ tampilkan total harga dari backend
         if (totalHarga > 0) {
             totalAmountText.setText("Total : Rp. " + String.format("%,d", totalHarga));
         } else {
+            totalAmountText.setText("Total : Rp. -");
             Toast.makeText(this, "Data total tidak tersedia", Toast.LENGTH_SHORT).show();
         }
 
-        // set barcode sesuai idWisata
-        int barcodeRes = getBarcodeDrawable(idWisata);
-        imgBarcode.setImageResource(barcodeRes);
+        // ✅ set barcode sesuai idWisata, fallback default
+        imgBarcode.setImageResource(getBarcodeDrawable(idWisata));
 
-        // Tombol kembali
-        backArrow.setOnClickListener(v -> {
-            Intent intent = new Intent(QrCodeActivity.this, RiwayatActivity.class);
-            startActivity(intent);
-            finish();
-        });
+        // Tombol kembali → cukup finish()
+        backArrow.setOnClickListener(v -> finish());
     }
 
-    // mapping idWisata ke file drawable
+    // ✅ mapping idWisata ke file drawable
     private int getBarcodeDrawable(int idWisata) {
         switch (idWisata) {
             case 12: return R.drawable.sedudo;      // sedudo.jpg

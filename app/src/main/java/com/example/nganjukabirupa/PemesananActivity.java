@@ -199,7 +199,7 @@ public class PemesananActivity extends AppCompatActivity {
                         telepon,
                         tanggalDipilih,
                         String.valueOf(jumlahPengunjung),
-                        String.valueOf(totalHarga),
+                        "0", // ✅ kirim 0, backend yang hitung total
                         String.valueOf(idWisata),
                         String.valueOf(idCustomer)
                 );

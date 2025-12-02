@@ -25,6 +25,9 @@ public class RiwayatModel {
     @SerializedName("metode_pembayaran")
     private String metodePembayaran = "QRIS"; // default tetap boleh
 
+    @SerializedName("gambar")   // ✅ tambahin field gambar
+    private String gambar;
+
     // Getter
     public String getIdTransaksi() { return idTransaksi; }
     public String getNamaWisata() { return namaWisata; }
@@ -33,9 +36,11 @@ public class RiwayatModel {
     public int getTotalHarga() { return totalHarga; }
     public String getStatus() { return status != null ? status : "Selesai"; }
     public String getMetodePembayaran() { return metodePembayaran; }
+    public String getGambar() { return gambar; }   // ✅ getter gambar
 
     // Setter opsional
     public void setMetodePembayaran(String metodePembayaran) {
         this.metodePembayaran = metodePembayaran != null ? metodePembayaran : "QRIS";
     }
+    public void setGambar(String gambar) { this.gambar = gambar; } // ✅ setter gambar
 }

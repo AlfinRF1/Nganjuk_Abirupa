@@ -26,8 +26,17 @@ public class WisataAdapter extends RecyclerView.Adapter<WisataAdapter.WisataView
 
     public WisataAdapter(Context context, List<WisataModel> wisataList) {
         this.context = context;
-        this.wisataList = wisataList;
+        this.wisataList = new ArrayList<>(wisataList);
         this.wisataListFull = new ArrayList<>(wisataList); // copy awal
+    }
+
+    // ✅ Method untuk update data dari API
+    public void setData(List<WisataModel> newList) {
+        wisataList.clear();
+        wisataList.addAll(newList);
+        wisataListFull.clear();
+        wisataListFull.addAll(newList); // refresh backup list
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -65,7 +74,6 @@ public class WisataAdapter extends RecyclerView.Adapter<WisataAdapter.WisataView
             default:
                 String imageUrl = wisata.getGambar();
                 if (imageUrl != null && !imageUrl.isEmpty()) {
-                    // ✅ Fix path ke folder yang benar
                     if (!imageUrl.startsWith("http")) {
                         imageUrl = "https://nganjukabirupa.pbltifnganjuk.com/assets/images/destinasi/" + imageUrl;
                     }
@@ -90,7 +98,7 @@ public class WisataAdapter extends RecyclerView.Adapter<WisataAdapter.WisataView
                 case 14: intent = new Intent(context, DetailGoa.class); break;
                 case 15: intent = new Intent(context, DetailSri.class); break;
                 case 16: intent = new Intent(context, DetailTral.class); break;
-                default: intent = new Intent(context, DetailWisataGeneric.class); break; // ✅ ganti ke generic
+                default: intent = new Intent(context, DetailWisataGeneric.class); break; // ✅ generic
             }
 
             // kirim extras

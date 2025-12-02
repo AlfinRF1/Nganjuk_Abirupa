@@ -67,61 +67,70 @@ public class DetailWisataGeneric extends AppCompatActivity {
         call.enqueue(new Callback<WisataModel>() {
             @Override
             public void onResponse(Call<WisataModel> call, Response<WisataModel> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    WisataModel data = response.body();
+                if (!isFinishing() && !isDestroyed()) { // ✅ amanin lifecycle
+                    if (response.isSuccessful() && response.body() != null) {
+                        WisataModel data = response.body();
 
-                    // Fallback: kalau API kosong, pakai extras
-                    String nama = data.getNamaWisata();
-                    if (nama == null || nama.isEmpty()) nama = namaExtra;
+                        // Fallback: kalau API kosong, pakai extras
+                        String nama = data.getNamaWisata();
+                        if (nama == null || nama.isEmpty()) nama = namaExtra;
 
-                    tvNamaWisata.setText(nama != null ? nama : "Nama wisata belum tersedia");
-                    tvLokasi.setText(data.getLokasi() != null ? data.getLokasi() : (lokasiExtra != null ? lokasiExtra : "Lokasi belum tersedia"));
-                    tvDeskripsi.setText(data.getDeskripsi() != null ? data.getDeskripsi() : (deskripsiExtra != null ? deskripsiExtra : "Deskripsi belum tersedia"));
-                    tvFasilitas.setText(data.getFasilitas() != null ? data.getFasilitas() : (fasilitasExtra != null ? fasilitasExtra : "Fasilitas belum tersedia"));
+                        tvNamaWisata.setText(nama != null ? nama : "Nama wisata belum tersedia");
+                        tvLokasi.setText(data.getLokasi() != null ? data.getLokasi() : (lokasiExtra != null ? lokasiExtra : "Lokasi belum tersedia"));
+                        tvDeskripsi.setText(data.getDeskripsi() != null ? data.getDeskripsi() : (deskripsiExtra != null ? deskripsiExtra : "Deskripsi belum tersedia"));
+                        tvFasilitas.setText(data.getFasilitas() != null ? data.getFasilitas() : (fasilitasExtra != null ? fasilitasExtra : "Fasilitas belum tersedia"));
 
-                    // ✅ harga tiket aman + fallback
-                    hargaDewasa = data.getTiketDewasa();
-                    if (hargaDewasa == 0) {
-                        hargaDewasa = intent.getIntExtra("hargaDewasa", 0);
-                    }
-
-                    hargaAnak = data.getTiketAnak();
-                    if (hargaAnak == 0) {
-                        hargaAnak = intent.getIntExtra("hargaAnak", 0);
-                    }
-
-                    tvHargaTiket.setText("Dewasa: Rp " + hargaDewasa + "\nAnak-anak: Rp " + hargaAnak);
-
-                    // ✅ Gambar: kalau id 12–16 pakai drawable, selain itu pakai Glide
-                    int imageResId = getDrawableForWisata(idWisata);
-                    if (imageResId != R.drawable.default_wisata) {
-                        imgHeader.setImageResource(imageResId);
-                    } else {
-                        String imageUrl = gambarExtra;
-                        if (imageUrl != null && !imageUrl.isEmpty()) {
-                            if (!imageUrl.startsWith("http")) {
-                                imageUrl = "https://nganjukabirupa.pbltifnganjuk.com/assets/images/destinasi/" + imageUrl;
-                            }
-                            Glide.with(DetailWisataGeneric.this)
-                                    .load(imageUrl)
-                                    .placeholder(R.drawable.default_wisata)
-                                    .error(R.drawable.default_wisata)
-                                    .into(imgHeader);
-                        } else {
-                            imgHeader.setImageResource(R.drawable.default_wisata);
+                        // ✅ harga tiket aman + fallback
+                        hargaDewasa = data.getTiketDewasa();
+                        if (hargaDewasa == 0) {
+                            hargaDewasa = intent.getIntExtra("hargaDewasa", 0);
                         }
+
+                        hargaAnak = data.getTiketAnak();
+                        if (hargaAnak == 0) {
+                            hargaAnak = intent.getIntExtra("hargaAnak", 0);
+                        }
+
+                        tvHargaTiket.setText("Dewasa: Rp " + hargaDewasa + "\nAnak-anak: Rp " + hargaAnak);
+
+                        // ✅ Gambar: kalau id 12–16 pakai drawable, selain itu pakai Glide
+                        int imageResId = getDrawableForWisata(idWisata);
+                        if (imageResId != R.drawable.default_wisata) {
+                            imgHeader.setImageResource(imageResId);
+                        } else {
+                            String imageUrl = data.getGambar(); // ambil dari API dulu
+                            if (imageUrl == null || imageUrl.isEmpty()) {
+                                imageUrl = gambarExtra; // fallback dari intent
+                            }
+                            Log.d("DetailGeneric", "Gambar dari API/fallback: " + imageUrl);
+
+                            if (imageUrl != null && !imageUrl.isEmpty()) {
+                                if (!imageUrl.startsWith("http")) {
+                                    imageUrl = "https://nganjukabirupa.pbltifnganjuk.com/assets/images/destinasi/" + imageUrl;
+                                }
+                                Glide.with(DetailWisataGeneric.this) // pakai activity context
+                                        .load(imageUrl)
+                                        .placeholder(R.drawable.default_wisata)
+                                        .error(R.drawable.default_wisata)
+                                        .into(imgHeader);
+                            } else {
+                                imgHeader.setImageResource(R.drawable.default_wisata);
+                            }
+                        }
+
+                        Log.d("DetailGeneric", "HargaDewasa=" + hargaDewasa + ", HargaAnak=" + hargaAnak);
+
+                    } else {
+                        Toast.makeText(DetailWisataGeneric.this, "Gagal ambil data", Toast.LENGTH_SHORT).show();
                     }
-
-                    Log.d("DetailGeneric", "HargaDewasa=" + hargaDewasa + ", HargaAnak=" + hargaAnak);
-
-                } else {
-                    Toast.makeText(DetailWisataGeneric.this, "Gagal ambil data", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<WisataModel> call, Throwable t) {
-                Toast.makeText(DetailWisataGeneric.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                if (!isFinishing() && !isDestroyed()) {
+                    Toast.makeText(DetailWisataGeneric.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -138,9 +147,7 @@ public class DetailWisataGeneric extends AppCompatActivity {
 
         // Tombol Back
         btnBack.setOnClickListener(v -> {
-            Intent backIntent = new Intent(DetailWisataGeneric.this, DashboardActivity.class);
-            startActivity(backIntent);
-            finish();
+            finish(); // ✅ cukup finish biar balik ke activity sebelumnya
         });
     }
 

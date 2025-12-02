@@ -27,7 +27,6 @@ public interface ApiService {
     @POST("register.php")
     Call<RegisterResponse> register(@Body RegisterRequest request);
 
-
     // LOGIN
     @Headers("Content-Type: application/json")
     @POST("login.php")
@@ -36,7 +35,6 @@ public interface ApiService {
     @Headers("Content-Type: application/json")
     @POST("google_login.php")
     Call<LoginResponse> googleLogin(@Body GoogleLoginRequest request);
-
 
     // PROFILE
     @Headers("Content-Type: application/json")
@@ -74,7 +72,7 @@ public interface ApiService {
             @Field("tlp_costumer") String telepon,
             @Field("tanggal") String tanggal,
             @Field("jml_tiket") String jumlah,
-            @Field("harga_total") String total,
+            @Field("harga_total") String total, // isi "0" saja
             @Field("id_wisata") String idWisata,
             @Field("id_customer") String idCustomer
     );

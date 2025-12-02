@@ -59,9 +59,7 @@ public class DashboardActivity extends AppCompatActivity {
 
         // Setup SwipeRefreshLayout
         swipeRefreshDashboard = findViewById(R.id.swipeRefreshDashboard);
-        swipeRefreshDashboard.setOnRefreshListener(() -> {
-            loadWisata(); // reload data saat swipe
-        });
+        swipeRefreshDashboard.setOnRefreshListener(this::loadWisata);
 
         // Load data pertama kali
         loadWisata();
@@ -99,10 +97,9 @@ public class DashboardActivity extends AppCompatActivity {
                 recyclerWisata.setVisibility(View.VISIBLE);
 
                 if (response.isSuccessful() && response.body() != null) {
-                    wisataList.clear();
-                    wisataList.addAll(response.body().getData());
-                    adapter.notifyDataSetChanged();
-                    Log.d("Dashboard", "Jumlah data: " + wisataList.size());
+                    List<WisataModel> newData = response.body().getData();
+                    adapter.setData(newData); // ✅ refresh data + backup list
+                    Log.d("Dashboard", "Jumlah data: " + newData.size());
                 } else {
                     Log.e("Dashboard", "Response gagal / kosong");
                 }

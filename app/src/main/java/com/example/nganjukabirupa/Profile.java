@@ -15,7 +15,7 @@ public class Profile {
     @SerializedName("no_tlp")
     private String noTelp;
 
-    @SerializedName("foto")   // ← WAJIB ADA
+    @SerializedName("foto")
     private String foto;
 
     // Getter
