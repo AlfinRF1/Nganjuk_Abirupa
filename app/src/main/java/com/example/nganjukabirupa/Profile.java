@@ -3,6 +3,7 @@ package com.example.nganjukabirupa;
 import com.google.gson.annotations.SerializedName;
 
 public class Profile {
+
     @SerializedName("id_customer")
     private String idCustomer;
 
@@ -16,7 +17,7 @@ public class Profile {
     private String noTelp;
 
     @SerializedName("foto")
-    private String foto;
+    private String foto; // path relatif dari backend, contoh: "uploads/nama_file.jpg"
 
     // Getter
     public String getIdCustomer() {
@@ -36,6 +37,27 @@ public class Profile {
     }
 
     public String getFoto() {
-        return foto;   // ← getter foto
+        return foto;
+    }
+
+    // Setter (opsional, kalau mau update object di runtime)
+    public void setIdCustomer(String idCustomer) {
+        this.idCustomer = idCustomer;
+    }
+
+    public void setNamaCustomer(String namaCustomer) {
+        this.namaCustomer = namaCustomer;
+    }
+
+    public void setEmailCustomer(String emailCustomer) {
+        this.emailCustomer = emailCustomer;
+    }
+
+    public void setNoTelp(String noTelp) {
+        this.noTelp = noTelp;
+    }
+
+    public void setFoto(String foto) {
+        this.foto = foto;
     }
 }

@@ -13,8 +13,8 @@ public class ProfileRequest {
     @SerializedName("email_customer")
     private String emailCustomer;
 
-    @SerializedName("photo_url")
-    private String photoUrl;
+    @SerializedName("foto") // 🔥 ganti, sesuai field backend
+    private String foto;
 
     // Constructor 1 parameter (ambil profil by ID)
     public ProfileRequest(String idCustomer) {
@@ -22,16 +22,17 @@ public class ProfileRequest {
     }
 
     // Constructor 4 parameter (update profil lengkap)
-    public ProfileRequest(String idCustomer, String namaCustomer, String emailCustomer, String photoUrl) {
+    public ProfileRequest(String idCustomer, String namaCustomer, String emailCustomer, String foto) {
         this.idCustomer = idCustomer;
         this.namaCustomer = namaCustomer;
         this.emailCustomer = emailCustomer;
-        this.photoUrl = photoUrl;
+        this.foto = foto;
     }
 
     // Constructor kosong
     public ProfileRequest() {}
 
+    // Getter & Setter
     public String getIdCustomer() { return idCustomer; }
     public void setIdCustomer(String idCustomer) { this.idCustomer = idCustomer; }
 
@@ -41,6 +42,6 @@ public class ProfileRequest {
     public String getEmailCustomer() { return emailCustomer; }
     public void setEmailCustomer(String emailCustomer) { this.emailCustomer = emailCustomer; }
 
-    public String getPhotoUrl() { return photoUrl; }
-    public void setPhotoUrl(String photoUrl) { this.photoUrl = photoUrl; }
+    public String getFoto() { return foto; }
+    public void setFoto(String foto) { this.foto = foto; }
 }

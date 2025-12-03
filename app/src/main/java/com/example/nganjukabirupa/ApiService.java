@@ -45,14 +45,12 @@ public interface ApiService {
     @POST("get_profile_by_email.php")
     Call<ProfileResponse> getProfileByEmail(@Body EmailRequest request);
 
-
     // DATA WISATA
     @GET("get_detail_wisata.php")
     Call<WisataModel> getDetailWisata(@Query("id") int id);
 
     @GET("get_detail_wisata.php")
     Call<ResponseBody> getDetailWisataRaw(@Query("id") int id);
-
 
     // CHECK NAMA USER
     @GET("check_nama.php")
@@ -99,8 +97,9 @@ public interface ApiService {
 
     @FormUrlEncoded
     @POST("delete_foto.php")
-    Call<ResponseBody> deleteFoto(@Field("id_customer") int idCustomer);
+    Call<ResponseBody> deleteFoto(@Field("id_customer") String idCustomer); // 🔥 ganti ke String biar konsisten
 
+    // UPDATE PROFILE
     @FormUrlEncoded
     @POST("updateProfile.php")
     Call<UpdateProfileResponse> updateProfile(

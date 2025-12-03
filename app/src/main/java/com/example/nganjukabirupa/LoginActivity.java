@@ -41,6 +41,9 @@ public class LoginActivity extends AppCompatActivity {
     private GoogleSignInClient googleSignInClient;
     private FirebaseAuth firebaseAuth;
 
+    // -------------------------
+    // GOOGLE SIGN-IN LAUNCHER
+    // -------------------------
     private final ActivityResultLauncher<Intent> googleSignInLauncher =
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
                 if (result.getResultCode() == RESULT_OK) {
@@ -48,7 +51,9 @@ public class LoginActivity extends AppCompatActivity {
                     Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
                     try {
                         GoogleSignInAccount account = task.getResult(ApiException.class);
-                        firebaseAuthWithGoogle(account.getIdToken());
+                        if (account != null) {
+                            firebaseAuthWithGoogle(account.getIdToken());
+                        }
                     } catch (ApiException e) {
                         Toast.makeText(this, "Google Sign-In gagal: " + e.getStatusCode(), Toast.LENGTH_SHORT).show();
                     }
@@ -89,7 +94,7 @@ public class LoginActivity extends AppCompatActivity {
                 .build();
         googleSignInClient = GoogleSignIn.getClient(this, gso);
 
-        // Auto-login kalau session ada
+        // Auto-login session
         SharedPreferences prefs = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         boolean fromRegister = getIntent().getBooleanExtra("fromRegister", false);
         if (prefs.contains(KEY_ID_CUSTOMER) && !fromRegister) {
@@ -97,21 +102,21 @@ public class LoginActivity extends AppCompatActivity {
             finish();
         }
 
+        // -------------------------
+        // Login Manual
+        // -------------------------
         btnLogin.setOnClickListener(v -> {
             String nama = etUsername.getText().toString();
             String password = etPassword.getText().toString();
 
-            // Trim dulu
             String namaTrimmed = nama.trim();
             String passwordTrimmed = password.trim();
 
-            // Validasi kosong
             if (namaTrimmed.isEmpty() || passwordTrimmed.isEmpty()) {
                 Toast.makeText(this, "Nama dan password wajib diisi", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            // Validasi spasi di awal/akhir
             if (!nama.equals(namaTrimmed)) {
                 etUsername.setError("Username tidak boleh ada spasi di awal/akhir");
                 return;
@@ -121,13 +126,11 @@ public class LoginActivity extends AppCompatActivity {
                 return;
             }
 
-            // Kalau mau larang spasi di tengah juga:
             if (namaTrimmed.contains(" ")) {
                 etUsername.setError("Username tidak boleh mengandung spasi");
                 return;
             }
 
-            // Lanjut login
             LoginRequest request = new LoginRequest(namaTrimmed, passwordTrimmed);
             ApiService apiService = RetrofitClient.getClient().create(ApiService.class);
 
@@ -136,15 +139,13 @@ public class LoginActivity extends AppCompatActivity {
                 public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
                     if (response.isSuccessful() && response.body() != null) {
                         LoginResponse res = response.body();
-
                         if (res.success) {
                             saveSession(
                                     res.id_customer,
                                     res.nama_customer != null ? res.nama_customer : namaTrimmed,
                                     res.email_customer != null ? res.email_customer : "",
-                                    null // login manual tidak ada photoUrl
+                                    null
                             );
-
                             Toast.makeText(LoginActivity.this, res.message, Toast.LENGTH_SHORT).show();
                             startActivity(new Intent(LoginActivity.this, DashboardActivity.class));
                             finish();
@@ -163,19 +164,20 @@ public class LoginActivity extends AppCompatActivity {
             });
         });
 
-        // Login Google
+        // -------------------------
+        // Google Sign-In
+        // -------------------------
         googleSignInButton.setOnClickListener(v -> {
             googleSignInClient.signOut().addOnCompleteListener(this, task -> {
                 Intent signInIntent = googleSignInClient.getSignInIntent();
                 googleSignInLauncher.launch(signInIntent);
             });
         });
-
-        tvRegisterLink.setOnClickListener(v -> {
-            startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
-        });
     }
 
+    // -------------------------
+    // Firebase Auth Google
+    // -------------------------
     private void firebaseAuthWithGoogle(String idToken) {
         AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
         firebaseAuth.signInWithCredential(credential)
@@ -183,20 +185,24 @@ public class LoginActivity extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         FirebaseUser user = firebaseAuth.getCurrentUser();
                         if (user != null) {
-                            String email = user.getEmail() != null ? user.getEmail() : "user@example.com";
-                            String name = user.getDisplayName() != null ? user.getDisplayName() : "User";
+                            String email = user.getEmail();
+                            String name = user.getDisplayName();
                             String photoUrl = user.getPhotoUrl() != null ? user.getPhotoUrl().toString() : null;
+
                             sendUserToBackend(email, name, photoUrl);
                         }
                     } else {
-                        Toast.makeText(LoginActivity.this, "Autentikasi Google gagal.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Autentikasi Google gagal.", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
 
+    // -------------------------
+    // Kirim Google Login ke Backend
+    // -------------------------
     private void sendUserToBackend(String email, String name, String photoUrl) {
         ApiService apiService = RetrofitClient.getClient().create(ApiService.class);
-        GoogleLoginRequest request = new GoogleLoginRequest(name, email);
+        GoogleLoginRequest request = new GoogleLoginRequest(name, email, photoUrl);
 
         apiService.googleLogin(request).enqueue(new Callback<LoginResponse>() {
             @Override
@@ -212,9 +218,7 @@ public class LoginActivity extends AppCompatActivity {
                                 photoUrl
                         );
 
-                        // ✅ tampilkan pesan dari backend (akun lama vs akun baru)
                         Toast.makeText(LoginActivity.this, res.message, Toast.LENGTH_SHORT).show();
-
                         startActivity(new Intent(LoginActivity.this, DashboardActivity.class));
                         finish();
                     } else {
@@ -232,11 +236,13 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    // -------------------------
+    // Simpan Session
+    // -------------------------
     private void saveSession(String id_customer, String nama, String email, String photoUrl) {
         SharedPreferences prefs = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
 
-        // ✅ Clear dulu biar data lama nggak nyangkut
         editor.clear();
 
         if (id_customer != null) editor.putString(KEY_ID_CUSTOMER, id_customer);

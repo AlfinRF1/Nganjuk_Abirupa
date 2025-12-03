@@ -1,14 +1,11 @@
 package com.example.nganjukabirupa;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
@@ -27,6 +24,9 @@ import com.yalantis.ucrop.UCrop;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -39,7 +39,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ProfileActivity extends AppCompatActivity {
 
-    private EditText etNama, etEmail, etPassword;   // ✅ password opsional
+    private EditText etNama, etEmail, etPassword;
     private ImageView imgPhoto;
     private Button btnLogout, btnUpdate;
 
@@ -47,8 +47,8 @@ public class ProfileActivity extends AppCompatActivity {
     private static final String KEY_ID_CUSTOMER = "id_customer";
     private static final String KEY_EMAIL_CUSTOMER = "email_customer";
     private static final String KEY_NAMA_CUSTOMER = "nama_customer";
-    private static final String KEY_PHOTO_URL = "photo_url";
-    private static final String KEY_PASSWORD_CUSTOMER = "password_customer"; // ✅ opsional
+    private static final String KEY_PHOTO_PATH = "foto";
+    private static final String KEY_PASSWORD_CUSTOMER = "password_customer";
 
     private ActivityResultLauncher<Intent> galleryLauncher;
     private String id_customer;
@@ -58,9 +58,9 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        etNama   = findViewById(R.id.tv_user_name);
-        etEmail  = findViewById(R.id.tv_user_email);
-        etPassword = findViewById(R.id.et_user_password); // ✅ tambahin di XML kalau mau
+        etNama = findViewById(R.id.tv_user_name);
+        etEmail = findViewById(R.id.tv_user_email);
+        etPassword = findViewById(R.id.et_user_password);
         imgPhoto = findViewById(R.id.iv_profile_photo);
         btnLogout = findViewById(R.id.btn_logout);
         btnUpdate = findViewById(R.id.btn_update);
@@ -69,18 +69,16 @@ public class ProfileActivity extends AppCompatActivity {
         id_customer = prefs.getString(KEY_ID_CUSTOMER, null);
         String email_customer = prefs.getString(KEY_EMAIL_CUSTOMER, null);
         String nama_customer = prefs.getString(KEY_NAMA_CUSTOMER, null);
-        String photo_url = prefs.getString(KEY_PHOTO_URL, null);
+        String fotoPath = prefs.getString(KEY_PHOTO_PATH, null);
         String password_customer = prefs.getString(KEY_PASSWORD_CUSTOMER, null);
 
         etNama.setText(nama_customer != null ? nama_customer : "User");
         etEmail.setText(email_customer != null ? email_customer : "-");
-        if (etPassword != null) {
-            etPassword.setText(password_customer != null ? password_customer : "");
-        }
+        etPassword.setText(password_customer != null ? password_customer : "");
 
-        if (photo_url != null && !photo_url.isEmpty()) {
+        if (fotoPath != null && !fotoPath.isEmpty()) {
             Glide.with(this)
-                    .load(photo_url)
+                    .load(ApiClient.BASE_URL_UPLOAD + fotoPath)
                     .placeholder(R.drawable.default_profile_placeholder)
                     .error(R.drawable.default_profile_placeholder)
                     .into(imgPhoto);
@@ -88,18 +86,23 @@ public class ProfileActivity extends AppCompatActivity {
             imgPhoto.setImageResource(R.drawable.default_profile_placeholder);
         }
 
-        // Launcher galeri
+        // Gallery launcher
         galleryLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
-                    if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
-                        Uri imageUri = result.getData().getData();
-                        if (imageUri != null) {
-                            Uri destinationUri = Uri.fromFile(new File(getCacheDir(), "cropped.jpg"));
-                            UCrop.of(imageUri, destinationUri)
-                                    .withAspectRatio(1, 1)
-                                    .withMaxResultSize(500, 500)
-                                    .start(ProfileActivity.this);
+                    if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                        Uri picked = result.getData().getData();
+                        if (picked != null) {
+                            Uri sourceLocal = copyUriToCache(picked);
+                            Uri destLocal = Uri.fromFile(new File(getCacheDir(), "crop_" + System.currentTimeMillis() + ".jpg"));
+                            if (sourceLocal != null) {
+                                UCrop.of(sourceLocal, destLocal)
+                                        .withAspectRatio(1, 1)
+                                        .withMaxResultSize(1000, 1000)
+                                        .start(ProfileActivity.this);
+                            } else {
+                                Toast.makeText(this, "Gagal membaca gambar", Toast.LENGTH_SHORT).show();
+                            }
                         }
                     }
                 }
@@ -117,13 +120,9 @@ public class ProfileActivity extends AppCompatActivity {
                     .setTitle("Konfirmasi Logout")
                     .setMessage("Apakah kamu yakin ingin logout?")
                     .setPositiveButton("Ya", (dialog, which) -> {
-                        // Clear session pakai prefs yang sudah ada
                         prefs.edit().clear().apply();
-
                         Toast.makeText(ProfileActivity.this, "Logout berhasil", Toast.LENGTH_SHORT).show();
-
-                        Intent intent = new Intent(ProfileActivity.this, LoginActivity.class);
-                        startActivity(intent);
+                        startActivity(new Intent(ProfileActivity.this, LoginActivity.class));
                         finish();
                     })
                     .setNegativeButton("Batal", (dialog, which) -> dialog.dismiss())
@@ -133,53 +132,22 @@ public class ProfileActivity extends AppCompatActivity {
         btnUpdate.setOnClickListener(v -> updateProfile());
     }
 
-    private void updateProfile() {
-        String newNama  = etNama.getText().toString().trim();
-        String newEmail = etEmail.getText().toString().trim();
-        String newPass  = etPassword != null ? etPassword.getText().toString().trim() : "";
-
-        // Ambil data lama dari session
-        SessionManager sessionManager = new SessionManager(this);
-
-        String oldNama  = sessionManager.getNama();
-        String oldEmail = sessionManager.getEmail();
-
-        // Validasi email format
-        if (!Patterns.EMAIL_ADDRESS.matcher(newEmail).matches()) {
-            etEmail.setError("Format email tidak valid");
-            return;
-        }
-
-        // Cek apakah ada perubahan
-        if (newNama.equals(oldNama) && newEmail.equals(oldEmail) && newPass.isEmpty()) {
-            Toast.makeText(this, "Tidak ada perubahan pada profil", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        ApiService api = ApiClient.getClient().create(ApiService.class);
-        Call<UpdateProfileResponse> call = api.updateProfile(id_customer, newNama, newEmail, newPass);
-
-        call.enqueue(new Callback<UpdateProfileResponse>() {
-            @Override
-            public void onResponse(Call<UpdateProfileResponse> call, Response<UpdateProfileResponse> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    UpdateProfileResponse res = response.body();
-                    if ("success".equals(res.getStatus())) {
-                        Toast.makeText(ProfileActivity.this, res.getMessage(), Toast.LENGTH_SHORT).show();
-                        ambilDataProfilById(id_customer); // refresh data
-                    } else {
-                        Toast.makeText(ProfileActivity.this, res.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    Toast.makeText(ProfileActivity.this, "Server error: " + response.code(), Toast.LENGTH_SHORT).show();
+    private Uri copyUriToCache(Uri source) {
+        try {
+            File out = new File(getCacheDir(), "src_" + System.currentTimeMillis() + ".jpg");
+            try (InputStream in = getContentResolver().openInputStream(source);
+                 OutputStream os = new FileOutputStream(out)) {
+                byte[] buf = new byte[8192];
+                int len;
+                while ((len = in.read(buf)) != -1) {
+                    os.write(buf, 0, len);
                 }
             }
-
-            @Override
-            public void onFailure(Call<UpdateProfileResponse> call, Throwable t) {
-                Toast.makeText(ProfileActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
+            return Uri.fromFile(out);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     private void showFotoOptionsDialog() {
@@ -194,53 +162,55 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void openGallery() {
-        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         galleryLauncher.launch(intent);
     }
 
-    private String getRealPathFromUri(Context context, Uri uri) {
-        String filePath = null;
-        if ("content".equalsIgnoreCase(uri.getScheme())) {
-            Cursor cursor = null;
-            try {
-                String[] projection = {MediaStore.Images.Media.DATA};
-                cursor = context.getContentResolver().query(uri, projection, null, null, null);
-                if (cursor != null && cursor.moveToFirst()) {
-                    int columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-                    filePath = cursor.getString(columnIndex);
-                }
-            } catch (Exception e) { e.printStackTrace(); }
-            finally { if (cursor != null) cursor.close(); }
-        } else if ("file".equalsIgnoreCase(uri.getScheme())) {
-            filePath = uri.getPath();
-        }
-        return filePath;
-    }
+    private void updateProfile() {
+        String newNama = etNama.getText().toString().trim();
+        String newEmail = etEmail.getText().toString().trim();
+        String newPass = etPassword.getText().toString().trim();
 
-    private void uploadImageToServer(Uri imageUri, String idCustomer) {
-        String filePath = getRealPathFromUri(this, imageUri);
-        if (filePath == null) {
-            Toast.makeText(this, "Gagal mendapatkan file path", Toast.LENGTH_SHORT).show();
+        if (!Patterns.EMAIL_ADDRESS.matcher(newEmail).matches()) {
+            etEmail.setError("Format email tidak valid");
             return;
         }
 
-        File file = new File(filePath);
+        ApiService api = ApiClient.getClient().create(ApiService.class);
+        Call<UpdateProfileResponse> call = api.updateProfile(id_customer, newNama, newEmail, newPass);
 
-        RequestBody idBody = RequestBody.create(
-                okhttp3.MediaType.parse("text/plain"), idCustomer
-        );
+        call.enqueue(new Callback<UpdateProfileResponse>() {
+            @Override
+            public void onResponse(Call<UpdateProfileResponse> call, Response<UpdateProfileResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    UpdateProfileResponse res = response.body();
+                    Toast.makeText(ProfileActivity.this, res.getMessage(), Toast.LENGTH_SHORT).show();
+                    if ("success".equals(res.getStatus())) ambilDataProfilById(id_customer);
+                } else {
+                    Toast.makeText(ProfileActivity.this, "Server error: " + response.code(), Toast.LENGTH_SHORT).show();
+                }
+            }
 
-        RequestBody requestFile = RequestBody.create(
-                okhttp3.MediaType.parse("image/*"), file
-        );
-        MultipartBody.Part fotoPart = MultipartBody.Part.createFormData(
-                "foto", file.getName(), requestFile
-        );
+            @Override
+            public void onFailure(Call<UpdateProfileResponse> call, Throwable t) {
+                Toast.makeText(ProfileActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void uploadImageToServer(Uri imageUri, String idCustomer) {
+        File file = new File(imageUri.getPath());
+        if (!file.exists() || file.length() == 0) {
+            Toast.makeText(this, "File crop tidak ditemukan", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        RequestBody idBody = RequestBody.create(okhttp3.MediaType.parse("text/plain"), idCustomer);
+        RequestBody fileBody = RequestBody.create(okhttp3.MediaType.parse("image/*"), file);
+        MultipartBody.Part fotoPart = MultipartBody.Part.createFormData("foto", file.getName(), fileBody);
 
         ApiService api = ApiClient.getClient().create(ApiService.class);
-        Call<ResponseBody> call = api.updateFoto(idBody, fotoPart);
-
-        call.enqueue(new Callback<ResponseBody>() {
+        api.updateFoto(idBody, fotoPart).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response.isSuccessful()) {
@@ -248,7 +218,6 @@ public class ProfileActivity extends AppCompatActivity {
                     ambilDataProfilById(idCustomer);
                 } else {
                     Toast.makeText(ProfileActivity.this, "Gagal update foto", Toast.LENGTH_SHORT).show();
-                    try { Log.e("UPLOAD_ERROR", response.errorBody().string()); } catch (Exception e){ e.printStackTrace();}
                 }
             }
 
@@ -261,21 +230,32 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void deleteFotoProfile() {
         ApiService api = ApiClient.getClient().create(ApiService.class);
-        api.deleteFoto(Integer.parseInt(id_customer)).enqueue(new Callback<ResponseBody>() {
+        api.deleteFoto(id_customer).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if (response.isSuccessful()) {
+                if (response.isSuccessful() && response.body() != null) {
                     try {
                         String body = response.body().string();
                         JSONObject json = new JSONObject(body);
-                        if (json.optString("status").equals("success")) {
-                            Toast.makeText(ProfileActivity.this, "Foto berhasil dihapus", Toast.LENGTH_SHORT).show();
+
+                        String status = json.optString("status");
+                        String message = json.optString("message");
+
+                        if ("success".equals(status)) {
+                            Toast.makeText(ProfileActivity.this,
+                                    message.toLowerCase().contains("sudah kosong") ?
+                                            "Foto memang sudah kosong" : "Foto berhasil dihapus",
+                                    Toast.LENGTH_SHORT).show();
+
                             imgPhoto.setImageResource(R.drawable.default_profile_placeholder);
                             ambilDataProfilById(id_customer);
                         } else {
-                            Toast.makeText(ProfileActivity.this, "Gagal hapus: " + json.optString("message"), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(ProfileActivity.this, "Gagal hapus: " + message, Toast.LENGTH_SHORT).show();
                         }
-                    } catch (Exception e) { e.printStackTrace(); }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(ProfileActivity.this, "Parse response error", Toast.LENGTH_SHORT).show();
+                    }
                 } else {
                     Toast.makeText(ProfileActivity.this, "Server error: " + response.code(), Toast.LENGTH_SHORT).show();
                 }
@@ -290,7 +270,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void ambilDataProfilById(String idCustomer) {
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(ApiClient.BASE_URL)
+                .baseUrl(ApiClient.BASE_URL_API)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
@@ -305,27 +285,25 @@ public class ProfileActivity extends AppCompatActivity {
                     if (profile != null) {
                         String nama = profile.getNamaCustomer() != null ? profile.getNamaCustomer() : "";
                         String email = profile.getEmailCustomer() != null ? profile.getEmailCustomer() : "";
-
                         etNama.setText(nama);
                         etEmail.setText(email);
 
                         String fotoPath = profile.getFoto();
-                        String fotoUrl = (fotoPath == null || fotoPath.isEmpty()) ? "" :
-                                (fotoPath.startsWith("http") ? fotoPath : ApiClient.BASE_URL + fotoPath);
-
-                        if (!isFinishing() && !isDestroyed()) {
+                        if (fotoPath != null && !fotoPath.isEmpty()) {
                             Glide.with(ProfileActivity.this)
-                                    .load(fotoUrl)
+                                    .load(ApiClient.BASE_URL_UPLOAD + fotoPath)
                                     .placeholder(R.drawable.default_profile_placeholder)
                                     .error(R.drawable.default_profile_placeholder)
                                     .into(imgPhoto);
+                        } else {
+                            imgPhoto.setImageResource(R.drawable.default_profile_placeholder);
                         }
 
                         SharedPreferences prefs = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
                         prefs.edit()
                                 .putString(KEY_NAMA_CUSTOMER, nama)
                                 .putString(KEY_EMAIL_CUSTOMER, email)
-                                .putString(KEY_PHOTO_URL, fotoUrl)
+                                .putString(KEY_PHOTO_PATH, fotoPath)
                                 .apply();
                     }
                 } else {
@@ -346,12 +324,17 @@ public class ProfileActivity extends AppCompatActivity {
         if (resultCode == RESULT_OK && requestCode == UCrop.REQUEST_CROP) {
             Uri resultUri = UCrop.getOutput(data);
             if (resultUri != null) {
-                imgPhoto.setImageURI(resultUri);
-                uploadImageToServer(resultUri, id_customer);
+                File f = new File(resultUri.getPath());
+                if (f.exists() && f.length() > 0) {
+                    imgPhoto.setImageURI(resultUri);
+                    uploadImageToServer(resultUri, id_customer);
+                } else {
+                    Toast.makeText(this, "Hasil crop tidak valid", Toast.LENGTH_SHORT).show();
+                }
             }
         } else if (resultCode == UCrop.RESULT_ERROR) {
             Throwable cropError = UCrop.getError(data);
-            Toast.makeText(this, "Crop error: " + cropError.getMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Crop error: " + (cropError != null ? cropError.getMessage() : "unknown"), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -361,11 +344,11 @@ public class ProfileActivity extends AppCompatActivity {
         ImageView previewImage = previewView.findViewById(R.id.preview_image);
 
         SharedPreferences prefs = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        String photoUrl = prefs.getString(KEY_PHOTO_URL, null);
+        String fotoPath = prefs.getString(KEY_PHOTO_PATH, null);
 
-        if (photoUrl != null && !photoUrl.isEmpty()) {
+        if (fotoPath != null && !fotoPath.isEmpty()) {
             Glide.with(this)
-                    .load(photoUrl)
+                    .load(ApiClient.BASE_URL_UPLOAD + fotoPath)
                     .placeholder(R.drawable.default_profile_placeholder)
                     .error(R.drawable.default_profile_placeholder)
                     .into(previewImage);
