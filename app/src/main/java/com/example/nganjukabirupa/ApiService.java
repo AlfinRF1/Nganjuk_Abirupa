@@ -57,7 +57,7 @@ public interface ApiService {
     Call<CheckNamaResponse> checkNama(@Query("nama_customer") String nama_customer);
 
     @GET("get_riwayat.php")
-    Call<List<RiwayatModel>> getRiwayat(@Query("id_customer") int idCustomer);
+    Call<RiwayatResponse> getRiwayat(@Query("id_customer") int idCustomer);
 
     @GET("get_all_wisata.php")
     Call<WisataResponse> getAllWisata();
@@ -69,12 +69,11 @@ public interface ApiService {
             @Field("nama_customer") String nama,
             @Field("tlp_costumer") String telepon,
             @Field("tanggal") String tanggal,
-            @Field("jml_tiket") String jumlah,
-            @Field("harga_total") String total, // isi "0" saja
+            @Field("jml_tiket") String jmlTiket,      // 💡 jadi String
+            @Field("harga_total") String hargaTotal,  // 💡 tambahkan 0 jika backend mau hitung sendiri
             @Field("id_wisata") String idWisata,
             @Field("id_customer") String idCustomer
     );
-
     @FormUrlEncoded
     @POST("insert_riwayat.php")
     Call<ResponseBody> insertRiwayat(

@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
@@ -52,6 +51,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     private ActivityResultLauncher<Intent> galleryLauncher;
     private String id_customer;
+    private SharedPreferences prefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,20 +65,20 @@ public class ProfileActivity extends AppCompatActivity {
         btnLogout = findViewById(R.id.btn_logout);
         btnUpdate = findViewById(R.id.btn_update);
 
-        SharedPreferences prefs = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        prefs = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         id_customer = prefs.getString(KEY_ID_CUSTOMER, null);
         String email_customer = prefs.getString(KEY_EMAIL_CUSTOMER, null);
         String nama_customer = prefs.getString(KEY_NAMA_CUSTOMER, null);
-        String fotoPath = prefs.getString(KEY_PHOTO_PATH, null);
+        String fotoCustomer = prefs.getString(KEY_PHOTO_PATH, null);
         String password_customer = prefs.getString(KEY_PASSWORD_CUSTOMER, null);
 
         etNama.setText(nama_customer != null ? nama_customer : "User");
         etEmail.setText(email_customer != null ? email_customer : "-");
         etPassword.setText(password_customer != null ? password_customer : "");
 
-        if (fotoPath != null && !fotoPath.isEmpty()) {
+        if (fotoCustomer != null && !fotoCustomer.isEmpty()) {
             Glide.with(this)
-                    .load(ApiClient.BASE_URL_UPLOAD + fotoPath)
+                    .load(ApiClient.BASE_URL_UPLOAD + fotoCustomer)
                     .placeholder(R.drawable.default_profile_placeholder)
                     .error(R.drawable.default_profile_placeholder)
                     .into(imgPhoto);
@@ -109,20 +109,32 @@ public class ProfileActivity extends AppCompatActivity {
         );
 
         imgPhoto.setOnClickListener(v -> showFotoOptionsDialog());
-        imgPhoto.setOnLongClickListener(v -> { showPreviewDialog(); return true; });
+        imgPhoto.setOnLongClickListener(v -> {
+            showPreviewDialog();
+            return true;
+        });
 
         if (id_customer != null) {
             ambilDataProfilById(id_customer);
         }
 
+        // 🔹 LOGOUT AMAN
         btnLogout.setOnClickListener(v -> {
             new AlertDialog.Builder(ProfileActivity.this)
                     .setTitle("Konfirmasi Logout")
                     .setMessage("Apakah kamu yakin ingin logout?")
                     .setPositiveButton("Ya", (dialog, which) -> {
-                        prefs.edit().clear().apply();
+                        // Hapus semua session
+                        SharedPreferences.Editor editor = prefs.edit();
+                        editor.clear();
+                        editor.apply();
+
                         Toast.makeText(ProfileActivity.this, "Logout berhasil", Toast.LENGTH_SHORT).show();
-                        startActivity(new Intent(ProfileActivity.this, LoginActivity.class));
+
+                        // Start LoginActivity dan bersihkan semua activity sebelumnya
+                        Intent intent = new Intent(ProfileActivity.this, LoginActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
                         finish();
                     })
                     .setNegativeButton("Batal", (dialog, which) -> dialog.dismiss())

@@ -85,6 +85,11 @@ public class LoginActivity extends AppCompatActivity {
         btnLogin = findViewById(R.id.btn_login);
         googleSignInButton = findViewById(R.id.googleSignInButton);
         tvRegisterLink = findViewById(R.id.tv_register_link);
+        tvRegisterLink.setOnClickListener(v -> {
+            Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+            startActivity(intent);
+        });
+
 
         firebaseAuth = FirebaseAuth.getInstance();
 

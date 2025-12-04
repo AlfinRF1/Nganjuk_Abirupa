@@ -25,7 +25,7 @@ public class QrCodeActivity extends AppCompatActivity {
         int totalHarga = getIntent().getIntExtra("total", 0);
         int idWisata = getIntent().getIntExtra("idWisata", -1);
 
-        // ✅ tampilkan total harga dari backend
+        // Tampilkan total harga
         if (totalHarga > 0) {
             totalAmountText.setText("Total : Rp. " + String.format("%,d", totalHarga));
         } else {
@@ -33,21 +33,42 @@ public class QrCodeActivity extends AppCompatActivity {
             Toast.makeText(this, "Data total tidak tersedia", Toast.LENGTH_SHORT).show();
         }
 
-        // ✅ set barcode sesuai idWisata, fallback default
+        // Set barcode sesuai idWisata
         imgBarcode.setImageResource(getBarcodeDrawable(idWisata));
 
-        // Tombol kembali → cukup finish()
-        backArrow.setOnClickListener(v -> finish());
+        // Tombol kembali
+        backArrow.setOnClickListener(v -> goBackToRiwayat());
     }
 
-    // ✅ mapping idWisata ke file drawable
+    // Mapping idWisata ke drawable
     private int getBarcodeDrawable(int idWisata) {
         switch (idWisata) {
-            case 12: return R.drawable.sedudo;      // sedudo.jpg
-            case 13: return R.drawable.tral;        // tral.jpeg
-            case 14: return R.drawable.goa;         // goa.jpeg
-            case 15: return R.drawable.sritanjung;  // sritanjung.jpeg
+            case 12: return R.drawable.sedudo;
+            case 13: return R.drawable.tral;
+            case 14: return R.drawable.goa;
+            case 15: return R.drawable.sritanjung;
             default: return R.drawable.barcode_default;
         }
     }
+
+    // Custom back ke RiwayatActivity tanpa double activity
+    private void goBackToRiwayat() {
+        Intent intent = new Intent(QrCodeActivity.this, RiwayatActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(intent);
+        finish();
+    }
+
+    // Override tombol back fisik
+    @Override
+    public void onBackPressed() {
+        // Navigasi ke RiwayatActivity
+        Intent intent = new Intent(QrCodeActivity.this, RiwayatActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(intent);
+
+        // Panggil super agar warning hilang
+        super.onBackPressed();
+    }
+
 }

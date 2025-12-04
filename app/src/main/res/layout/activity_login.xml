@@ -196,10 +196,13 @@
                     android:fontFamily="@font/poppins_font_family"
                     android:text="Belum memiliki akun? registrasi"
                     android:textSize="12sp"
+                    android:clickable="true"
+                    android:focusable="true"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.502"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/googleSignInButton" />
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </ScrollView>

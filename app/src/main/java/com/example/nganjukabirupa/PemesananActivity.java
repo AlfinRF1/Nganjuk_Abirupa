@@ -5,18 +5,14 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-
-import com.bumptech.glide.Glide;
 
 import org.json.JSONObject;
 
@@ -48,32 +44,13 @@ public class PemesananActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pemesanan);
 
-        // INIT VIEW
-        tvTotalHarga     = findViewById(R.id.tvTotal);
-        tvLabelDewasa    = findViewById(R.id.tvLabelDewasa);
-        tvLabelAnak      = findViewById(R.id.tvLabelAnak);
-        tvLabelAsuransi  = findViewById(R.id.tvLabelAsuransi);
-        tvHargaDewasa    = findViewById(R.id.tvHargaDewasa);
-        tvHargaAnak      = findViewById(R.id.tvHargaAnak);
-        tvAsuransi       = findViewById(R.id.tvAsuransi);
-
-        etTanggal        = findViewById(R.id.etTanggal);
-        etNama           = findViewById(R.id.etNama);
-        etTelepon        = findViewById(R.id.etTelepon);
-
-        btnJumlah        = findViewById(R.id.btnJumlah);
-        ImageButton btnCalendar = findViewById(R.id.btnCalendar);
-        btnBayar         = findViewById(R.id.btnBayar);
-
-        // BACK BUTTON
-        ImageButton btnBack = findViewById(R.id.btnBack);
-        btnBack.setOnClickListener(v -> onBackPressed());
+        initViews();
 
         // GET DATA WISATA
         Intent intent = getIntent();
-        idWisata      = intent.getIntExtra("id_wisata", -1);
-        hargaDewasa   = intent.getIntExtra("hargaDewasa", 0);
-        hargaAnak     = intent.getIntExtra("hargaAnak", 0);
+        idWisata = intent.getIntExtra("id_wisata", -1);
+        hargaDewasa = intent.getIntExtra("hargaDewasa", 0);
+        hargaAnak = intent.getIntExtra("hargaAnak", 0);
         tarifAsuransi = intent.getIntExtra("tarifAsuransi", 1000);
 
         if (idWisata == -1) {
@@ -82,32 +59,45 @@ public class PemesananActivity extends AppCompatActivity {
             return;
         }
 
-        // SETUP BUTTONS
-        setupCalendarPicker(btnCalendar);
+        setupCalendarPicker();
         setupJumlahButton();
         setupBayarButton();
 
-
-        // Hitung total awal
         hitungTotalHarga();
-
-        // Kalau mau tetap ambil harga terbaru dari backend
         loadHargaWisata();
     }
 
-    private void setupCalendarPicker(ImageButton btnCalendar) {
+    private void initViews() {
+        tvTotalHarga = findViewById(R.id.tvTotal);
+        tvLabelDewasa = findViewById(R.id.tvLabelDewasa);
+        tvLabelAnak = findViewById(R.id.tvLabelAnak);
+        tvLabelAsuransi = findViewById(R.id.tvLabelAsuransi);
+        tvHargaDewasa = findViewById(R.id.tvHargaDewasa);
+        tvHargaAnak = findViewById(R.id.tvHargaAnak);
+        tvAsuransi = findViewById(R.id.tvAsuransi);
+        etTanggal = findViewById(R.id.etTanggal);
+        etNama = findViewById(R.id.etNama);
+        etTelepon = findViewById(R.id.etTelepon);
+        btnJumlah = findViewById(R.id.btnJumlah);
+        btnBayar = findViewById(R.id.btnBayar);
+
+        ImageButton btnBack = findViewById(R.id.btnBack);
+        btnBack.setOnClickListener(v -> onBackPressed());
+    }
+
+    private void setupCalendarPicker() {
+        ImageButton btnCalendar = findViewById(R.id.btnCalendar);
         btnCalendar.setOnClickListener(v -> {
             Calendar calendar = Calendar.getInstance();
-            int year = calendar.get(Calendar.YEAR);
-            int month = calendar.get(Calendar.MONTH);
-            int day = calendar.get(Calendar.DAY_OF_MONTH);
-
             DatePickerDialog datePickerDialog = new DatePickerDialog(
                     PemesananActivity.this,
-                    (view, selectedYear, selectedMonth, selectedDay) -> {
-                        String tanggal = String.format("%04d-%02d-%02d", selectedYear, selectedMonth + 1, selectedDay);
+                    (view, year, month, day) -> {
+                        String tanggal = String.format("%04d-%02d-%02d", year, month + 1, day);
                         etTanggal.setText(tanggal);
-                    }, year, month, day
+                    },
+                    calendar.get(Calendar.YEAR),
+                    calendar.get(Calendar.MONTH),
+                    calendar.get(Calendar.DAY_OF_MONTH)
             );
             datePickerDialog.show();
         });
@@ -126,31 +116,30 @@ public class PemesananActivity extends AppCompatActivity {
 
     private void setupBayarButton() {
         btnBayar.setOnClickListener(v -> {
-
             String nama = etNama.getText().toString().trim();
-            if (!nama.matches("^[a-zA-Z0-9 ]+$")) {
-                Toast.makeText(this, "Nama tidak boleh mengandung karakter khusus", Toast.LENGTH_SHORT).show();
-                return;
-            }
             String telepon = etTelepon.getText().toString().trim();
-            if (!telepon.matches("^\\+?[0-9]+$")) {
-                Toast.makeText(this, "Nomor telepon hanya boleh angka", Toast.LENGTH_SHORT).show();
-                return;
-            }
             String tanggalDipilih = etTanggal.getText().toString().trim();
+            int jumlahPengunjung = jumlahDewasa + jumlahAnak;
 
-            SharedPreferences prefs = getSharedPreferences("user_session", MODE_PRIVATE);
-            int idCustomer = Integer.parseInt(prefs.getString("id_customer", "-1"));
-
-            if (nama.isEmpty() || telepon.isEmpty() || tanggalDipilih.isEmpty() || jumlahDewasa + jumlahAnak == 0) {
-                Toast.makeText(this, "Lengkapi semua data sebelum bayar", Toast.LENGTH_SHORT).show();
+            // Validasi input
+            if (!validasiInput(nama, telepon, tanggalDipilih)) return;
+            if (jumlahPengunjung == 0) {
+                Toast.makeText(this, "Pilih jumlah pengunjung dulu", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            int jumlahPengunjung = jumlahDewasa + jumlahAnak;
-            int totalTiket = (jumlahDewasa * hargaDewasa) + (jumlahAnak * hargaAnak);
-            int totalAsuransi = jumlahPengunjung * tarifAsuransi;
-            int totalHarga = totalTiket + totalAsuransi;
+            // Ambil idCustomer dari SharedPreferences
+            SharedPreferences prefs = getSharedPreferences("user_session", MODE_PRIVATE);
+            String idCustomerStr = prefs.getString("id_customer", "").trim();
+            if (idCustomerStr.isEmpty()) {
+                Toast.makeText(this, "User belum login", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // Hitung total harga
+            int totalHarga = (jumlahDewasa * hargaDewasa)
+                    + (jumlahAnak * hargaAnak)
+                    + (jumlahPengunjung * tarifAsuransi);
 
             ProgressDialog progress = new ProgressDialog(this);
             progress.setMessage("Proses transaksi...");
@@ -159,78 +148,75 @@ public class PemesananActivity extends AppCompatActivity {
 
             ApiService apiService = RetrofitClient.getClient().create(ApiService.class);
 
-            // Contoh: khusus idWisata tertentu (misalnya Roro Kuning)
-            if (idWisata == 13) {
-                Call<ResponseBody> call = apiService.insertRiwayat(
-                        idCustomer,
-                        idWisata,
-                        tanggalDipilih,
-                        totalHarga,
-                        nama,
-                        telepon,
-                        jumlahPengunjung
-                );
+            // Kirim ke insert_pemesanan.php
+            Call<ResponseBody> call = apiService.insertPemesanan(
+                    nama,
+                    telepon,
+                    tanggalDipilih,
+                    String.valueOf(jumlahPengunjung),
+                    String.valueOf(totalHarga),
+                    String.valueOf(idWisata),
+                    idCustomerStr
+            );
 
-                call.enqueue(new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        progress.dismiss();
-                        if (response.isSuccessful()) {
-                            Toast.makeText(PemesananActivity.this, "Transaksi Roro Kuning selesai", Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(PemesananActivity.this, RiwayatActivity.class);
-                            startActivity(intent);
-                            finish();
-                        } else {
-                            Toast.makeText(PemesananActivity.this, "Gagal simpan riwayat", Toast.LENGTH_SHORT).show();
+            call.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    progress.dismiss();
+                    if (response.isSuccessful() && response.body() != null) {
+                        try {
+                            String raw = response.body().string().trim();
+                            JSONObject obj = new JSONObject(raw);
+
+                            if ("success".equals(obj.optString("status"))) {
+                                int total = obj.optInt("harga_total", totalHarga);
+
+                                Intent intent = new Intent(PemesananActivity.this, QrCodeActivity.class);
+                                intent.putExtra("nama", nama);
+                                intent.putExtra("telepon", telepon);
+                                intent.putExtra("tanggal", tanggalDipilih);
+                                intent.putExtra("jumlah", jumlahPengunjung);
+                                intent.putExtra("total", total);
+                                intent.putExtra("idWisata", idWisata);
+                                startActivity(intent);
+                                finish();
+                            } else {
+                                Toast.makeText(PemesananActivity.this, obj.optString("message"), Toast.LENGTH_SHORT).show();
+                            }
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            Toast.makeText(PemesananActivity.this, "Error parsing response", Toast.LENGTH_SHORT).show();
                         }
+                    } else {
+                        Toast.makeText(PemesananActivity.this, "Gagal menyimpan transaksi", Toast.LENGTH_SHORT).show();
                     }
+                }
 
-                    @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-                        progress.dismiss();
-                        Toast.makeText(PemesananActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-            } else {
-                // Default flow → insert_pemesanan + QR
-                Call<ResponseBody> call = apiService.insertPemesanan(
-                        nama,
-                        telepon,
-                        tanggalDipilih,
-                        String.valueOf(jumlahPengunjung),
-                        "0", // ✅ kirim 0, backend yang hitung total
-                        String.valueOf(idWisata),
-                        String.valueOf(idCustomer)
-                );
-
-                call.enqueue(new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        progress.dismiss();
-                        if (response.isSuccessful()) {
-                            Intent intent = new Intent(PemesananActivity.this, QrCodeActivity.class);
-                            intent.putExtra("nama", nama);
-                            intent.putExtra("telepon", telepon);
-                            intent.putExtra("tanggal", tanggalDipilih);
-                            intent.putExtra("jumlah", jumlahPengunjung);
-                            intent.putExtra("total", totalHarga);
-                            intent.putExtra("idWisata", idWisata);
-                            startActivity(intent);
-                            finish();
-                        } else {
-                            Toast.makeText(PemesananActivity.this, "Gagal simpan transaksi", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-                        progress.dismiss();
-                        Toast.makeText(PemesananActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    progress.dismiss();
+                    Toast.makeText(PemesananActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
         });
+    }
+
+
+    private boolean validasiInput(String nama, String telepon, String tanggal) {
+        if (nama.isEmpty() || telepon.isEmpty() || tanggal.isEmpty() || jumlahDewasa + jumlahAnak == 0) {
+            Toast.makeText(this, "Lengkapi semua data sebelum bayar", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if (!nama.matches("^[a-zA-Z0-9 ]+$")) {
+            Toast.makeText(this, "Nama tidak boleh mengandung karakter khusus", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if (!telepon.matches("^\\+?[0-9]+$")) {
+            Toast.makeText(this, "Nomor telepon hanya boleh angka", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
     }
 
     @Override
@@ -253,12 +239,11 @@ public class PemesananActivity extends AppCompatActivity {
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     try {
-                        String rawStr = response.body().string();
-                        rawStr = rawStr.substring(rawStr.indexOf("{"));
+                        String rawStr = response.body().string().trim(); // trim spasi
                         JSONObject jsonObject = new JSONObject(rawStr);
 
-                        hargaDewasa   = jsonObject.optInt("tiketDewasa", hargaDewasa);
-                        hargaAnak     = jsonObject.optInt("tiketAnak", hargaAnak);
+                        hargaDewasa = jsonObject.optInt("tiketDewasa", hargaDewasa);
+                        hargaAnak = jsonObject.optInt("tiketAnak", hargaAnak);
                         tarifAsuransi = jsonObject.optInt("asuransi", tarifAsuransi);
 
                         hitungTotalHarga();
@@ -292,17 +277,5 @@ public class PemesananActivity extends AppCompatActivity {
         tvHargaAnak.setText("Rp " + (jumlahAnak * hargaAnak));
         tvAsuransi.setText("Rp " + totalAsuransi);
         tvTotalHarga.setText("Rp " + totalHarga);
-    }
-
-    // Mapping gambar untuk wisata tetap
-    private int getDrawableForWisata(int idWisata) {
-        switch (idWisata) {
-            case 12: return R.drawable.wisata_air_terjun_sedudo;
-            case 13: return R.drawable.wisata_roro_kuning;
-            case 14: return R.drawable.wisata_goa_margotresno;
-            case 15: return R.drawable.wisata_sritanjung;
-            case 16: return R.drawable.wisata_tral;
-            default: return R.drawable.default_wisata;
-        }
     }
 }

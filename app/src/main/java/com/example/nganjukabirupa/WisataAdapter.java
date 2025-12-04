@@ -2,11 +2,12 @@ package com.example.nganjukabirupa;
 
 import android.content.Context;
 import android.content.Intent;
-import android.widget.Filter;
-import android.widget.Filterable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -27,15 +28,14 @@ public class WisataAdapter extends RecyclerView.Adapter<WisataAdapter.WisataView
     public WisataAdapter(Context context, List<WisataModel> wisataList) {
         this.context = context;
         this.wisataList = new ArrayList<>(wisataList);
-        this.wisataListFull = new ArrayList<>(wisataList); // copy awal
+        this.wisataListFull = new ArrayList<>(wisataList);
     }
 
-    // ✅ Method untuk update data dari API
     public void setData(List<WisataModel> newList) {
         wisataList.clear();
         wisataList.addAll(newList);
         wisataListFull.clear();
-        wisataListFull.addAll(newList); // refresh backup list
+        wisataListFull.addAll(newList);
         notifyDataSetChanged();
     }
 
@@ -53,24 +53,14 @@ public class WisataAdapter extends RecyclerView.Adapter<WisataAdapter.WisataView
         holder.tvWisataName.setText(wisata.getNamaWisata());
         holder.tvWisataLocation.setText(wisata.getLokasi());
 
-        // ✅ Mapping drawable untuk 5 wisata tetap
+        // Mapping gambar
         int id = wisata.getIdWisata();
         switch (id) {
-            case 12:
-                holder.imgWisata.setImageResource(R.drawable.wisata_air_terjun_sedudo);
-                break;
-            case 13:
-                holder.imgWisata.setImageResource(R.drawable.wisata_roro_kuning);
-                break;
-            case 14:
-                holder.imgWisata.setImageResource(R.drawable.wisata_goa_margotresno);
-                break;
-            case 15:
-                holder.imgWisata.setImageResource(R.drawable.wisata_sritanjung);
-                break;
-            case 16:
-                holder.imgWisata.setImageResource(R.drawable.wisata_tral);
-                break;
+            case 12: holder.imgWisata.setImageResource(R.drawable.wisata_air_terjun_sedudo); break;
+            case 13: holder.imgWisata.setImageResource(R.drawable.wisata_roro_kuning); break;
+            case 14: holder.imgWisata.setImageResource(R.drawable.wisata_goa_margotresno); break;
+            case 15: holder.imgWisata.setImageResource(R.drawable.wisata_sritanjung); break;
+            case 16: holder.imgWisata.setImageResource(R.drawable.wisata_tral); break;
             default:
                 String imageUrl = wisata.getGambar();
                 if (imageUrl != null && !imageUrl.isEmpty()) {
@@ -89,33 +79,38 @@ public class WisataAdapter extends RecyclerView.Adapter<WisataAdapter.WisataView
                 break;
         }
 
-        // Klik item → buka detail
-        holder.itemView.setOnClickListener(v -> {
-            Intent intent;
-            switch (id) {
-                case 12: intent = new Intent(context, DetailSedudo.class); break;
-                case 13: intent = new Intent(context, DetailRoro.class); break;
-                case 14: intent = new Intent(context, DetailGoa.class); break;
-                case 15: intent = new Intent(context, DetailSri.class); break;
-                case 16: intent = new Intent(context, DetailTral.class); break;
-                default: intent = new Intent(context, DetailWisataGeneric.class); break; // ✅ generic
-            }
+        // Klik seluruh item → buka detail
+        holder.itemView.setOnClickListener(v -> openDetail(wisata));
 
-            // kirim extras
-            intent.putExtra("id_wisata", wisata.getIdWisata());
-            intent.putExtra("nama_wisata", wisata.getNamaWisata());
-            intent.putExtra("lokasi", wisata.getLokasi());
-            intent.putExtra("deskripsi", wisata.getDeskripsi());
-            intent.putExtra("tiket", "Dewasa : " + wisata.getTiketDewasa() +
-                    "\nAnak-anak : " + wisata.getTiketAnak() +
-                    "\nAsuransi : " + wisata.getAsuransi());
-            intent.putExtra("fasilitas", wisata.getFasilitas());
-            intent.putExtra("gambar", wisata.getGambar());
-            intent.putExtra("hargaDewasa", wisata.getTiketDewasa());
-            intent.putExtra("hargaAnak", wisata.getTiketAnak());
-            intent.putExtra("tarifAsuransi", wisata.getAsuransi());
-            context.startActivity(intent);
-        });
+        // Klik tombol "Selengkapnya" → buka detail
+        holder.btnDetail.setOnClickListener(v -> openDetail(wisata));
+    }
+
+    private void openDetail(WisataModel wisata) {
+        Intent intent;
+        switch (wisata.getIdWisata()) {
+            case 12: intent = new Intent(context, DetailSedudo.class); break;
+            case 13: intent = new Intent(context, DetailRoro.class); break;
+            case 14: intent = new Intent(context, DetailGoa.class); break;
+            case 15: intent = new Intent(context, DetailSri.class); break;
+            case 16: intent = new Intent(context, DetailTral.class); break;
+            default: intent = new Intent(context, DetailWisataGeneric.class); break;
+        }
+
+        intent.putExtra("id_wisata", wisata.getIdWisata());
+        intent.putExtra("nama_wisata", wisata.getNamaWisata());
+        intent.putExtra("lokasi", wisata.getLokasi());
+        intent.putExtra("deskripsi", wisata.getDeskripsi());
+        intent.putExtra("tiket", "Dewasa : " + wisata.getTiketDewasa() +
+                "\nAnak-anak : " + wisata.getTiketAnak() +
+                "\nAsuransi : " + wisata.getAsuransi());
+        intent.putExtra("fasilitas", wisata.getFasilitas());
+        intent.putExtra("gambar", wisata.getGambar());
+        intent.putExtra("hargaDewasa", wisata.getTiketDewasa());
+        intent.putExtra("hargaAnak", wisata.getTiketAnak());
+        intent.putExtra("tarifAsuransi", wisata.getAsuransi());
+
+        context.startActivity(intent);
     }
 
     @Override
@@ -123,7 +118,6 @@ public class WisataAdapter extends RecyclerView.Adapter<WisataAdapter.WisataView
         return wisataList.size();
     }
 
-    // ✅ Implementasi Filterable
     @Override
     public Filter getFilter() {
         return wisataFilter;
@@ -160,12 +154,14 @@ public class WisataAdapter extends RecyclerView.Adapter<WisataAdapter.WisataView
     public static class WisataViewHolder extends RecyclerView.ViewHolder {
         ImageView imgWisata;
         TextView tvWisataName, tvWisataLocation;
+        Button btnDetail;
 
         public WisataViewHolder(@NonNull View itemView) {
             super(itemView);
             imgWisata = itemView.findViewById(R.id.imgWisata);
             tvWisataName = itemView.findViewById(R.id.tvWisataName);
             tvWisataLocation = itemView.findViewById(R.id.tvWisataLocation);
+            btnDetail = itemView.findViewById(R.id.btnDetail);
         }
     }
 }

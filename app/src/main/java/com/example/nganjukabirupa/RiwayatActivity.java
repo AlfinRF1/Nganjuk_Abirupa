@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,6 +20,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class RiwayatActivity extends AppCompatActivity {
+
     private RecyclerView recyclerView;
     private RiwayatAdapter adapter;
     private SwipeRefreshLayout swipeRefresh;
@@ -35,17 +35,14 @@ public class RiwayatActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerViewRiwayat);
         swipeRefresh = findViewById(R.id.swipeRefresh);
 
-        // LayoutManager normal: data tampil dari atas ke bawah
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         // Ambil id_customer dari SharedPreferences
         SharedPreferences prefs = getSharedPreferences("user_session", MODE_PRIVATE);
         String idCustomerStr = prefs.getString("id_customer", null);
 
         if (idCustomerStr == null) {
-            Intent intent = new Intent(this, LoginActivity.class);
-            startActivity(intent);
+            startActivity(new Intent(this, LoginActivity.class));
             finish();
             return;
         }
@@ -53,36 +50,43 @@ public class RiwayatActivity extends AppCompatActivity {
         try {
             idCustomer = Integer.parseInt(idCustomerStr);
         } catch (NumberFormatException e) {
-            Intent intent = new Intent(this, LoginActivity.class);
-            startActivity(intent);
+            startActivity(new Intent(this, LoginActivity.class));
             finish();
             return;
         }
 
-        // Listener refresh
-        swipeRefresh.setOnRefreshListener(() -> loadRiwayat());
+        // Listener refresh manual
+        swipeRefresh.setOnRefreshListener(this::loadRiwayat);
 
         // Load pertama kali
         loadRiwayat();
     }
 
+    // 🔹 Reload otomatis tiap balik ke activity
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadRiwayat();
+    }
+
     private void loadRiwayat() {
-        swipeRefresh.setRefreshing(true); // tampilkan animasi refresh
+        swipeRefresh.setRefreshing(true);
 
         ApiService apiService = RetrofitClient.getClient().create(ApiService.class);
-        Call<List<RiwayatModel>> call = apiService.getRiwayat(idCustomer);
+        Call<RiwayatResponse> call = apiService.getRiwayat(idCustomer);
 
-        call.enqueue(new Callback<List<RiwayatModel>>() {
+        call.enqueue(new Callback<RiwayatResponse>() {
             @Override
-            public void onResponse(Call<List<RiwayatModel>> call, Response<List<RiwayatModel>> response) {
-                swipeRefresh.setRefreshing(false); // stop animasi refresh
+            public void onResponse(Call<RiwayatResponse> call, Response<RiwayatResponse> response) {
+                swipeRefresh.setRefreshing(false);
                 if (response.isSuccessful() && response.body() != null) {
-                    List<RiwayatModel> riwayatList = response.body();
+                    List<RiwayatModel> riwayatList = response.body().getData();
                     Log.d(TAG, "Raw response: " + new Gson().toJson(riwayatList));
-                    Log.d(TAG, "Jumlah data riwayat: " + riwayatList.size());
+                    Log.d(TAG, "Jumlah data riwayat: " + (riwayatList != null ? riwayatList.size() : 0));
 
-                    if (riwayatList.isEmpty()) {
+                    if (riwayatList == null || riwayatList.isEmpty()) {
                         Toast.makeText(RiwayatActivity.this, "Belum ada riwayat transaksi", Toast.LENGTH_SHORT).show();
+                        recyclerView.setAdapter(null);
                     } else {
                         adapter = new RiwayatAdapter(riwayatList);
                         recyclerView.setAdapter(adapter);
@@ -94,7 +98,7 @@ public class RiwayatActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<List<RiwayatModel>> call, Throwable t) {
+            public void onFailure(Call<RiwayatResponse> call, Throwable t) {
                 swipeRefresh.setRefreshing(false);
                 Log.e(TAG, "Network error: " + t.getMessage(), t);
                 Toast.makeText(RiwayatActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
@@ -102,16 +106,16 @@ public class RiwayatActivity extends AppCompatActivity {
         });
     }
 
-    public void onHomeClicked(View view) {
+    public void onHomeClicked(android.view.View view) {
         startActivity(new Intent(RiwayatActivity.this, DashboardActivity.class));
         finish();
     }
 
-    public void onRiwayatClicked(View view) {
+    public void onRiwayatClicked(android.view.View view) {
         Toast.makeText(this, "Kamu sudah di halaman Riwayat", Toast.LENGTH_SHORT).show();
     }
 
-    public void onProfileClicked(View view) {
+    public void onProfileClicked(android.view.View view) {
         startActivity(new Intent(RiwayatActivity.this, ProfileActivity.class));
         finish();
     }
