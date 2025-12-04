@@ -69,8 +69,8 @@ public interface ApiService {
             @Field("nama_customer") String nama,
             @Field("tlp_costumer") String telepon,
             @Field("tanggal") String tanggal,
-            @Field("jml_tiket") String jmlTiket,      // 💡 jadi String
-            @Field("harga_total") String hargaTotal,  // 💡 tambahkan 0 jika backend mau hitung sendiri
+            @Field("jml_tiket") String jmlTiket,
+            @Field("harga_total") String hargaTotal,
             @Field("id_wisata") String idWisata,
             @Field("id_customer") String idCustomer
     );
