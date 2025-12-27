@@ -17,10 +17,11 @@
         android:theme="@style/Theme.NganjukAbirupa"
         android:networkSecurityConfig="@xml/network_security_config">
 
-        <!-- Launcher -->
+        <!-- Splash screen sebagai launcher -->
         <activity
-            android:name=".LoginActivity"
+            android:name=".SplashScreenActivity"
             android:exported="true"
+            android:theme="@style/Theme.NganjukAbirupa.Splash"
             android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -29,6 +30,7 @@
         </activity>
 
         <!-- Aktivitas internal -->
+        <activity android:name=".LoginActivity" android:exported="false" android:windowSoftInputMode="adjustPan"/>
         <activity android:name=".MainActivity" android:exported="false" android:windowSoftInputMode="adjustPan"/>
         <activity android:name=".DashboardActivity" android:exported="false" android:windowSoftInputMode="adjustPan"/>
         <activity android:name=".ProfileActivity" android:exported="false" android:windowSoftInputMode="adjustPan"/>

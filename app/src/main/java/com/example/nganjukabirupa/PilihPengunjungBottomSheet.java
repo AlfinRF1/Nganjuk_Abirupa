@@ -29,7 +29,7 @@ public class PilihPengunjungBottomSheet extends BottomSheetDialogFragment {
 
     private PengunjungDialogListener listener;
 
-    // ✅ cara aman: set listener dari Activity sebelum show()
+    // set listener dari Activity sebelum show()
     public void setListener(PengunjungDialogListener listener) {
         this.listener = listener;
     }
@@ -41,7 +41,7 @@ public class PilihPengunjungBottomSheet extends BottomSheetDialogFragment {
             @Nullable ViewGroup container,
             @Nullable Bundle savedInstanceState
     ) {
-        // ✅ gunakan layout khusus bottomsheet
+        // gunakan layout khusus bottomsheet
         return inflater.inflate(R.layout.bottomsheet_pilihpengunjung, container, false);
     }
 

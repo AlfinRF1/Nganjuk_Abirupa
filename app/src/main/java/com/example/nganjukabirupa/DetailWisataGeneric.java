@@ -67,7 +67,7 @@ public class DetailWisataGeneric extends AppCompatActivity {
         call.enqueue(new Callback<WisataModel>() {
             @Override
             public void onResponse(Call<WisataModel> call, Response<WisataModel> response) {
-                if (!isFinishing() && !isDestroyed()) { // ✅ amanin lifecycle
+                if (!isFinishing() && !isDestroyed()) { // amanin lifecycle
                     if (response.isSuccessful() && response.body() != null) {
                         WisataModel data = response.body();
 
@@ -80,7 +80,7 @@ public class DetailWisataGeneric extends AppCompatActivity {
                         tvDeskripsi.setText(data.getDeskripsi() != null ? data.getDeskripsi() : (deskripsiExtra != null ? deskripsiExtra : "Deskripsi belum tersedia"));
                         tvFasilitas.setText(data.getFasilitas() != null ? data.getFasilitas() : (fasilitasExtra != null ? fasilitasExtra : "Fasilitas belum tersedia"));
 
-                        // ✅ harga tiket aman + fallback
+                        // harga tiket aman + fallback
                         hargaDewasa = data.getTiketDewasa();
                         if (hargaDewasa == 0) {
                             hargaDewasa = intent.getIntExtra("hargaDewasa", 0);
@@ -93,7 +93,7 @@ public class DetailWisataGeneric extends AppCompatActivity {
 
                         tvHargaTiket.setText("Dewasa: Rp " + hargaDewasa + "\nAnak-anak: Rp " + hargaAnak);
 
-                        // ✅ Gambar: kalau id 12–16 pakai drawable, selain itu pakai Glide
+                        // Gambar: kalau id 12–16 pakai drawable, selain itu pakai Glide
                         int imageResId = getDrawableForWisata(idWisata);
                         if (imageResId != R.drawable.default_wisata) {
                             imgHeader.setImageResource(imageResId);
@@ -147,7 +147,7 @@ public class DetailWisataGeneric extends AppCompatActivity {
 
         // Tombol Back
         btnBack.setOnClickListener(v -> {
-            finish(); // ✅ cukup finish biar balik ke activity sebelumnya
+            finish(); // cukup finish biar balik ke activity sebelumnya
         });
     }
 

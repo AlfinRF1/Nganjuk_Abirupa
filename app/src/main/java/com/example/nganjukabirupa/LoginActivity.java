@@ -117,24 +117,14 @@ public class LoginActivity extends AppCompatActivity {
             String namaTrimmed = nama.trim();
             String passwordTrimmed = password.trim();
 
+            // Cek wajib isi
             if (namaTrimmed.isEmpty() || passwordTrimmed.isEmpty()) {
                 Toast.makeText(this, "Nama dan password wajib diisi", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            if (!nama.equals(namaTrimmed)) {
-                etUsername.setError("Username tidak boleh ada spasi di awal/akhir");
-                return;
-            }
-            if (!password.equals(passwordTrimmed)) {
-                etPassword.setError("Password tidak boleh ada spasi di awal/akhir");
-                return;
-            }
-
-            if (namaTrimmed.contains(" ")) {
-                etUsername.setError("Username tidak boleh mengandung spasi");
-                return;
-            }
+            // 🚫 Hapus semua pengecekan spasi
+            // Tidak perlu cek spasi di awal/akhir atau di tengah
 
             LoginRequest request = new LoginRequest(namaTrimmed, passwordTrimmed);
             ApiService apiService = RetrofitClient.getClient().create(ApiService.class);

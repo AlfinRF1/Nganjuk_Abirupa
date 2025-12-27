@@ -13,7 +13,7 @@ public class ProfileRequest {
     @SerializedName("email_customer")
     private String emailCustomer;
 
-    @SerializedName("foto") // 🔥 ganti, sesuai field backend
+    @SerializedName("foto") // field backend
     private String foto;
 
     // Constructor 1 parameter (ambil profil by ID)

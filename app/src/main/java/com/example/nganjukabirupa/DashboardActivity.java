@@ -32,7 +32,7 @@ public class DashboardActivity extends AppCompatActivity {
     private EditText searchInput;
     private TextView tvWelcome;
     private ShimmerFrameLayout shimmerLayout;
-    private SwipeRefreshLayout swipeRefreshDashboard; // ✅ refresh
+    private SwipeRefreshLayout swipeRefreshDashboard;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,7 +98,7 @@ public class DashboardActivity extends AppCompatActivity {
 
                 if (response.isSuccessful() && response.body() != null) {
                     List<WisataModel> newData = response.body().getData();
-                    adapter.setData(newData); // ✅ refresh data + backup list
+                    adapter.setData(newData); // refresh data + backup list
                     Log.d("Dashboard", "Jumlah data: " + newData.size());
                 } else {
                     Log.e("Dashboard", "Response gagal / kosong");

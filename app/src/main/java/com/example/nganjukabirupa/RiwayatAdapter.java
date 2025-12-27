@@ -61,7 +61,7 @@ public class RiwayatAdapter extends RecyclerView.Adapter<RiwayatAdapter.ViewHold
         // Total harga langsung dari DB (tiket + asuransi)
         holder.tvTotalHarga.setText("Total Tiket : Rp. " + String.format("%,d", model.getTotalHarga()));
 
-        // ✅ Image: cek apakah wisata tetap atau generic
+        // Image: cek apakah wisata tetap atau generic
         int drawableRes = getDrawableForWisata(model.getNamaWisata());
         if (drawableRes != R.drawable.default_wisata) {
             holder.ivWisataImage.setImageResource(drawableRes);

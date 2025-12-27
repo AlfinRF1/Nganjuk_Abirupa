@@ -47,11 +47,9 @@ public class SplashScreenActivity extends AppCompatActivity {
     }
 
     private void fadeInView(View view, long duration) {
-        view.setVisibility(View.INVISIBLE);
         Animation fadeIn = new AlphaAnimation(0, 1);
         fadeIn.setDuration(duration);
         fadeIn.setFillAfter(true);
         view.startAnimation(fadeIn);
-        view.setVisibility(View.VISIBLE);
     }
 }

@@ -80,7 +80,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="Login atau Register sekarang! untuk menikmati semua fitur yang tersedia di Nganjuk Abirupa by A4/STECUUU"
+                    android:text="Login atau Register sekarang! untuk menikmati semua fitur yang tersedia di Nganjuk Abirupa"
                     android:textColor="#616161"
                     android:fontFamily="@font/poppins_font_family"
                     android:textSize="12sp"

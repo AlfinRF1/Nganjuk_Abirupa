@@ -14,14 +14,12 @@ public class WisataModel {
     private String lokasi;
 
     @SerializedName("tiket_dewasa")
-    private int tiketDewasa; // ✅ langsung int
+    private int tiketDewasa;
 
     @SerializedName("tiket_anak")
-    private int tiketAnak;   // ✅ langsung int
-
+    private int tiketAnak;
     @SerializedName("biaya_asuransi")
-    private int asuransi;    // ✅ ambil dari API
-
+    private int asuransi;
     @SerializedName("fasilitas")
     private String fasilitas;
 

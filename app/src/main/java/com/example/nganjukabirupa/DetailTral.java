@@ -62,7 +62,7 @@ public class DetailTral extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null) {
                     WisataModel data = response.body();
 
-                    // ✅ fallback nama wisata
+                    // fallback nama wisata
                     String nama = data.getNamaWisata();
                     if (nama == null || nama.isEmpty()) {
                         nama = namaExtra;
@@ -73,11 +73,11 @@ public class DetailTral extends AppCompatActivity {
                     tvDeskripsi.setText(data.getDeskripsi() != null ? data.getDeskripsi() : "Deskripsi belum tersedia");
                     tvFasilitas.setText(data.getFasilitas() != null ? data.getFasilitas() : "Fasilitas belum tersedia");
 
-                    // ✅ langsung ambil int dari model
+                    // langsung ambil int dari model
                     hargaDewasa = data.getTiketDewasa();
                     hargaAnak   = data.getTiketAnak();
 
-                    // ✅ fallback ke extras kalau API kosong
+                    // fallback ke extras kalau API kosong
                     if (hargaDewasa == 0) {
                         hargaDewasa = getIntent().getIntExtra("hargaDewasa", 0);
                     }

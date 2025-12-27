@@ -96,7 +96,7 @@ public interface ApiService {
 
     @FormUrlEncoded
     @POST("delete_foto.php")
-    Call<ResponseBody> deleteFoto(@Field("id_customer") String idCustomer); // 🔥 ganti ke String biar konsisten
+    Call<ResponseBody> deleteFoto(@Field("id_customer") String idCustomer);
 
     // UPDATE PROFILE
     @FormUrlEncoded

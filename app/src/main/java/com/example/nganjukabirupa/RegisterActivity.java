@@ -145,7 +145,7 @@ public class RegisterActivity extends AppCompatActivity {
                     Toast.makeText(RegisterActivity.this, res.getMessage(), Toast.LENGTH_SHORT).show();
 
                     if (res.isSuccess()) {
-                        // ✅ Simpan id_customer ke SharedPreferences
+                        // Simpan id_customer ke SharedPreferences
                         String idCustomer = res.getIdCustomer();
                         getSharedPreferences("user_session", MODE_PRIVATE)
                                 .edit()

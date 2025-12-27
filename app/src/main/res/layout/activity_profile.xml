@@ -130,7 +130,7 @@
                     android:textSize="12sp"
                     android:ellipsize="end"
                     android:singleLine="true"
-                    android:hint="Password Baru"
+                    android:hint="Isi untuk ganti password"
                     android:inputType="textPassword"
                     android:layout_marginBottom="12dp"/>
 

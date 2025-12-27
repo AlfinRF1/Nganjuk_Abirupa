@@ -188,6 +188,16 @@ public class ProfileActivity extends AppCompatActivity {
             return;
         }
 
+        SharedPreferences prefs = getSharedPreferences("user_session", MODE_PRIVATE);
+        String oldNama = prefs.getString("nama_customer", "");
+        String oldEmail = prefs.getString("email_customer", "");
+
+        //  cek apakah ada perubahan
+        if (newNama.equals(oldNama) && newEmail.equals(oldEmail) && newPass.isEmpty()) {
+            Toast.makeText(this, "Tidak ada perubahan data", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         ApiService api = ApiClient.getClient().create(ApiService.class);
         Call<UpdateProfileResponse> call = api.updateProfile(id_customer, newNama, newEmail, newPass);
 
